@@ -2,7 +2,7 @@
      Copyright (C) Steve Martin, 2019.
 */
 
-/*! \file Awesomefaucet_board.h \brief Define each of the pins for the USB load box project. */
+/*! \file Awesomefaucet_board.h \brief Define each of the pins for the Awesomefaucet project. */
 //*****************************************************************************
 //
 // File Name            : 'Awesomefaucet_board.h'
