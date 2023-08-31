@@ -1,0 +1,17 @@
+8/31/2023 S.M.
+
+Was getting a child process failed message on my Windows 11 laptop
+
+Had to replace:
+
+ C:\WinAVR-20100110\utils\bin\msys-1.0.dll
+
+With one from:
+
+ C:\MinGW\msys\1.0\bin\msys-1.0.dll
+ 
+As explained on this URL:
+ 
+  https://stackoverflow.com/questions/33679486/eclipse-using-mingw-make-fails-without-msys
+  
+File size went up by a few kB if not mistaken
