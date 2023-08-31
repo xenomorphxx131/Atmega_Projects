@@ -1,21 +1,9 @@
 #ifndef AWESOMEFAUCET_SCPI_H_
 #define AWESOMEFAUCET_SCPI_H_
 
-    #include <string.h>
-    #include <stdio.h>
-    #include <ctype.h>
-    #include <avr/io.h>
-    #include <avr/wdt.h>
-    #include <avr/power.h>
-    #include <avr/interrupt.h>
-    #include <avr/eeprom.h>
-    #include <avr/pgmspace.h>
-    #include <LUFA/Version.h>
-    #include <LUFA/Drivers/USB/USB.h>
+    #include <stdlib.h>					// atoi used in 'scpi_laser_power'
     #include <process_USB.h>
-    #include <i2c_twi.h>
-    #include <bootloader.h>
-    #include <stdlib.h>
+    #include <bootloader.h>				// 'Jump_To_Bootloader'
     #include <VL6180X_SM.h>
     #include "scpi_config.h"
     #include "Awesomefaucet_board.h"
@@ -28,10 +16,6 @@
 	#define	FIRMWARE_REV		"1.2"
 	#define NUL					'\0'
 	#define DEL_KEY				127
-	#define	NO					0
-	#define FALSE				0
-	#define YES					1
-	#define TRUE				1
 /**************************************************************************
 *  Create a data structure to contain the various IO pointers             *
 *  that need global scope                                                 *

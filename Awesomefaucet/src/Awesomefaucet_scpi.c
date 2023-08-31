@@ -64,7 +64,7 @@ void scpi_process_cmd_P( char * input_string, scpi_commands_P_t cmd_array_P[], I
 	while (token != NUL)
 	{//--------------------------------------------------------------->	// Search for new tokens
  		argument = strpbrk(token, " ");									// Check for space indicating an argument
- 		valid_command = NO;
+ 		valid_command = false;
 		if (argument[0] == ' ' ) // or other chars
 		{	argument[0] = NUL;											// Terminates last token
 			argument++;													// Move argument pointer past space
@@ -131,7 +131,7 @@ bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_comm
 					return true;
 				} else if (parent_ptr == NULL) {
 					break;
-				} else if(parent_ptr->implied == YES) {
+				} else if(parent_ptr->implied == true) {
 					current_ptr = parent_ptr;
 				} else {
 					break;
@@ -205,7 +205,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	int i = 0;
 	// 1 Top NULL node
 	command_array_P[i].name      = PSTR("NULL");
-	command_array_P[i].implied    = YES;
+	command_array_P[i].implied    = true;
 	command_array_P[i].parent     = NULL;
 	command_array_P[i++].function   = &scpi_null_func;
 	//   [:]*CLS
@@ -215,7 +215,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	//   [:]*OPC
 	// 2 [:]*OPC?
 	command_array_P[i].name      = PSTR("*OPC?");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &st_OPC_q;
 	//   [:]*RST
@@ -229,7 +229,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 ***************************************************************************/
 	// 3 [[:]SYSTem]
 	command_array_P[i].name      = PSTR("SYSTem");
-	command_array_P[i].implied    = YES;
+	command_array_P[i].implied    = true;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_empty_func; // ****** Careful here, Loadbox_scpi.c refers to this directly as "&command_array_P[2]"
 
@@ -237,26 +237,26 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 
 		// 4 [[:]SYSTem:]:RST
 		command_array_P[i].name      = PSTR("RST");
-		command_array_P[i].implied    = NO;
+		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-1];
 		command_array_P[i++].function = &scpi_empty_func;
 
 			// 5 [[:]SYSTem:]:RST:BTLOader
 			command_array_P[i].name      = PSTR("BTLOader");
-			command_array_P[i].implied    = NO;
+			command_array_P[i].implied    = false;
 			command_array_P[i].parent     = &command_array_P[i-1];
 			command_array_P[i++].function = &sys_rst_btloader;
 
 		// 6 [[:]SYSTem:]ERRor?
 		command_array_P[i].name      = PSTR("ERRor?");
-		command_array_P[i].implied    = NO;
+		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-3];
 		command_array_P[i++].function = &sys_error_q;
 	// [[:]SYSTem:]ERRor
 	// [[:]SYSTem:]ERRor:NEXT?
 	// 7 [[:]SYSTem:][:]VERSion?
 		command_array_P[i].name      = PSTR("VERSion?");
-		command_array_P[i].implied    = NO;
+		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-4]; // 
 		command_array_P[i++].function = &scpi_ver;
 	// [[:]STATus]
@@ -272,82 +272,82 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
     
 	// 8 [:]*IDN?
 	command_array_P[i].name       = PSTR("*IDN?");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_IDN_q;
     
 	command_array_P[i].name       = PSTR("DEBUG");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &debug;
     
 	command_array_P[i].name       = PSTR("GET");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
     
         command_array_P[i].name       = PSTR("RANGE");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_get_range;
     
         command_array_P[i].name       = PSTR("ALS");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_get_als;
     
 	command_array_P[i].name       = PSTR("CLRI2C");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &clr_i2c;
     
 	command_array_P[i].name       = PSTR("LASER");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
     
         command_array_P[i].name       = PSTR("ON");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_laser_on;
         
         command_array_P[i].name       = PSTR("OFF");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_laser_off;
         
         command_array_P[i].name       = PSTR("POWER");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-3];
         command_array_P[i++].function = &scpi_laser_power;
         
 	command_array_P[i].name       = PSTR("WATER");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
     
         command_array_P[i].name       = PSTR("ON");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_water_on;
         
         command_array_P[i].name       = PSTR("OFF");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_water_off;
         
 	command_array_P[i].name       = PSTR("DARK");
-	command_array_P[i].implied    = NO;
+	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
     
         command_array_P[i].name       = PSTR("GET");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_get_floordarkness;
         
         command_array_P[i].name       = PSTR("STORE");
-        command_array_P[i].implied    = NO;
+        command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_store_floordarkness;
 	
@@ -570,11 +570,11 @@ void clr_i2c (char *arg, IO_pointers_t IO)
 /**************************************************************************
 *  SCPI Laser On                                                          *
 ***************************************************************************/
-void scpi_laser_on(char *arg, IO_pointers_t IO) { laser_on(YES); }
+void scpi_laser_on(char *arg, IO_pointers_t IO) { laser_on(true); }
 /**************************************************************************
 *  SCPI Laser Off                                                         *
 ***************************************************************************/
-void scpi_laser_off (char *arg, IO_pointers_t IO) { laser_on(NO); }
+void scpi_laser_off (char *arg, IO_pointers_t IO) { laser_on(false); }
 /**************************************************************************
 *  Laser On/Off                                                           *
 ***************************************************************************/
@@ -598,11 +598,11 @@ void laser_power(uint8_t power) { OCR4D = power; }
 /**************************************************************************
 *  SCPI Water On                                                          *
 ***************************************************************************/
-void scpi_water_on (char *arg, IO_pointers_t IO) { water_on(YES); }
+void scpi_water_on (char *arg, IO_pointers_t IO) { water_on(true); }
 /**************************************************************************
 *  SCPI Water Off                                                         *
 ***************************************************************************/
-void scpi_water_off (char *arg, IO_pointers_t IO) { water_on(NO); }
+void scpi_water_off (char *arg, IO_pointers_t IO) { water_on(false); }
 /**************************************************************************
 *  Water On                                                               *
 ***************************************************************************/

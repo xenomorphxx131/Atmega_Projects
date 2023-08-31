@@ -5,15 +5,15 @@
     uint16_t            laser_timer                 = 0;  // Can count up to 65,535 1.024ms INTs (~64 seconds)
     uint16_t            water_on_debounce_timer     = 0;
     uint16_t            laser_brightness_timer      = 0;
-    uint8_t             steady_foot_counter     = 0;
+    uint8_t             steady_foot_counter     	= 0;
     double              IIR_range_reading           = 0;
     double              largest_reading             = 0;
-    bool                water_debounce_timer_armed  = NO;
-    bool                water_debounce_timer_en     = NO;
-    bool                update_laser_value          = NO;
-    bool                foot_present                = NO;
-    bool                enable_water                = NO;
-    bool                update_timers               = NO;
+    bool                water_debounce_timer_armed  = false;
+    bool                water_debounce_timer_en     = false;
+    bool                update_laser_value          = false;
+    bool                foot_present                = false;
+    bool                enable_water                = false;
+    bool                update_timers               = false;
 /**************************************************************************
 *                            Main                                         *
 ***************************************************************************/
@@ -94,13 +94,13 @@ int main(void)
 *    Interrupt Service Routine for Timer 0 (62.5ns * 64 * 256 = 1.024ms)    *
 *****************************************************************************/
 ISR(TIMER0_OVF_vect)
-{ update_timers = YES; }
+{ update_timers = true; }
 /****************************************************************************
 *    Process Range Reading                                                  *
 *****************************************************************************/
 void process_range_reading()
 {
-    bool foot_present_now = NO;
+    bool foot_present_now = false;
     if (range_measurement_ready())
     {
         IIR_range_reading = 0.88 * IIR_range_reading + 0.12 * get_range();
@@ -108,19 +108,19 @@ void process_range_reading()
         if (IIR_range_reading > largest_reading)
             largest_reading = IIR_range_reading;
 
-        foot_present_now = (IIR_range_reading < largest_reading - DETECTION_HEIGHT * ONE_mm) ? YES : NO;
+        foot_present_now = (IIR_range_reading < largest_reading - DETECTION_HEIGHT * ONE_mm) ? true : false;
         
         if (!foot_present_now)
         {
             steady_foot_counter = 0;
-            foot_present = NO;
+            foot_present = false;
         }
         
         if (foot_present_now && (steady_foot_counter <= STEADY_FOOT_COUNT))
             steady_foot_counter++;
         
         if (steady_foot_counter > STEADY_FOOT_COUNT)
-            foot_present = YES;
+            foot_present = true;
     }
     else if (!range_sensor_busy())
         start_range_measurement();
@@ -132,15 +132,15 @@ void update_water()
 {
     if (foot_present)
     {
-        water_on(YES);
-        water_debounce_timer_armed = YES;
-        water_debounce_timer_en = NO;
+        water_on(true);
+        water_debounce_timer_armed = true;
+        water_debounce_timer_en = false;
         water_on_debounce_timer = 0;
     }
     else if (water_debounce_timer_armed)
         {
-            water_debounce_timer_armed = NO;
-            water_debounce_timer_en = YES;
+            water_debounce_timer_armed = false;
+            water_debounce_timer_en = true;
         }
 }
 /****************************************************************************
@@ -161,7 +161,7 @@ void update_laser(IO_pointers_t IO)
         laser_power(power * get_darkness_setting());
         // fprintf(IO.USB_stream, "Brightness:     %d\r\n", brightness);
         // fprintf(IO.USB_stream, "power Set to:   %d\r\n", power * floor_darkness);
-        update_laser_value = NO;
+        update_laser_value = false;
     }
 }
 /****************************************************************************
@@ -171,13 +171,13 @@ void process_soft_timers()
 {    
     if (update_timers) //  Should happen every 1.024ms
     {
-        update_timers = NO;
+        update_timers = false;
         
         laser_brightness_timer++;
         if (laser_brightness_timer == ONE_SECOND * 5) // change to ONE_MINUTE after debug??
         {
             start_ALS_measurement();
-            update_laser_value = YES;
+            update_laser_value = true;
             laser_brightness_timer = 0;
         }
         
@@ -186,8 +186,8 @@ void process_soft_timers()
         
         if (water_on_debounce_timer == ONE_SECOND * 2)
         {
-            water_on(NO);
-            water_debounce_timer_en = NO;
+            water_on(false);
+            water_debounce_timer_en = false;
             water_on_debounce_timer = 0;
         }
         
@@ -195,34 +195,3 @@ void process_soft_timers()
             largest_reading -= LEAKAGE_RATE; //Leaky integrator leakage rate
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

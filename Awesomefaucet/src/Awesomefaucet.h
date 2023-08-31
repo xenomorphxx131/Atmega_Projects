@@ -1,22 +1,6 @@
 #ifndef AWESOMEFAUCET_H_
 #define AWESOMEFAUCET_H_
 
-    #include <avr/io.h>
-    #include <avr/wdt.h>
-    #include <avr/power.h>
-    #include <avr/interrupt.h>
-    #include <avr/pgmspace.h>
-    #include <avr/eeprom.h>
-    #include <string.h>
-    #include <stdio.h>
-    #include <ctype.h>
-    #include <util/delay.h>
-    #include <LUFA/Version.h>
-    #include <LUFA/Drivers/USB/USB.h>
-    #include <process_USB.h>
-    #include <i2c_twi.h>
-    #include <VL6180X_SM.h>
-    #include "Awesomefaucet_board.h"
     #include "Awesomefaucet_scpi.h"
     
     #define round(x) ((x)>=0 ? (long)((x)+0.5):(long)((x)-0.5))
