@@ -3,9 +3,10 @@
  *  Awesomefaucet Laser                                                     *
  *                                                                          *
  ****************************************************************************/
- #include "Awesomefaucet_laser.h"
+#include "Awesomefaucet_laser.h"
  
- extern bool update_laser_value;
+extern bool update_laser_value;
+
 /****************************************************************************
  *    Laser Control                                                         *
  ****************************************************************************/

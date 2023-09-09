@@ -1,27 +1,32 @@
+/****************************************************************************
+ *                                                                          *
+ *  Awesomefaucet                                                           *
+ *                                                                          *
+ ****************************************************************************/
+
 #include "Awesomefaucet.h"
+
 /**************************************************************************
 *  Create the timer update control global                                 *
 ***************************************************************************/
-    uint16_t            laser_timer                 = 0;  // Can count up to 65,535 1.024ms INTs (~64 seconds)
-    uint16_t            water_on_debounce_timer     = 0;
-    uint16_t            laser_brightness_timer      = 0;
-    uint8_t             steady_foot_counter     	= 0;
-    double              IIR_range_reading           = 0;
-    double              largest_reading             = 0;
-    bool                water_debounce_timer_armed  = false;
-    bool                water_debounce_timer_en     = false;
-    bool                update_laser_value          = false;
-    bool                foot_present                = false;
-    bool                enable_water                = false;
-    bool                update_timers               = false;
+uint16_t    water_on_debounce_timer     = 0;
+uint16_t    laser_brightness_timer      = 0;
+uint8_t     steady_foot_counter     	= 0;
+double      IIR_range_reading           = 0;
+double      largest_reading             = 0;
+bool        water_debounce_timer_armed  = false;
+bool        water_debounce_timer_en     = false;
+bool        update_laser_value          = false;
+bool        foot_present                = false;
+bool        update_timers               = false;
 /**************************************************************************
 *                            Main                                         *
 ***************************************************************************/
 int main(void)
 {
-/**************************************************************************
-*  Create data structures                                                 *
-***************************************************************************/
+    /**************************************************************************
+    *  Create data structures                                                 *
+    ***************************************************************************/
     static FILE         USB_stream;                         // Create the USB Stream data
     i2c_twi_port_t      i2cport;
     IO_pointers_t       IO;                                 // Create the passable IO pointer
@@ -29,9 +34,9 @@ int main(void)
     int                 str_len = 0;                        // Length of incoming string
     scpi_commands_P_t   commands_P[COMMAND_ARRAY_SIZE];     // Create the SCPI command array
     CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USB_stream);
-/**************************************************************************
-*  Assign values to data structures and setup hardware                    *
-***************************************************************************/
+    /**************************************************************************
+    *  Assign values to data structures and setup hardware                    *
+    ***************************************************************************/
     IO.USB_stream = &USB_stream;                    // Assign the USB stream field
     IO.I2C_port = &i2cport;                         // Assign the I2C stream field
     i2cport.sdaport = &SDAPORT;                     // Assign the SDAPORT field
@@ -77,9 +82,9 @@ int main(void)
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
     Setup_ScpiCommandsArray_P (commands_P);         // Build the command array (mostly pointers to PROGMEM)
     VL6180X_Setup();                                // Enter the super secret setup commands for the VL6180x
-/****************************************************************************
- *        Main Loop                                                         *
- ****************************************************************************/
+    /****************************************************************************
+     *        Main Loop                                                         *
+     ****************************************************************************/
     while(true)
     {
         process_USB();                              // Seems to block if I stop a Putty session.
@@ -89,12 +94,14 @@ int main(void)
         update_water();
         update_laser();
     }
-} // main()
+}
 /****************************************************************************
 *    Interrupt Service Routine for Timer 0 (62.5ns * 64 * 256 = 1.024ms)    *
 *****************************************************************************/
 ISR(TIMER0_OVF_vect)
-{ update_timers = true; }
+{
+    update_timers = true;
+}
 /****************************************************************************
 *    Process Range Reading                                                  *
 *****************************************************************************/
@@ -126,25 +133,7 @@ void process_range_reading()
         start_range_measurement();
 }
 /****************************************************************************
-*    Water Control                                                          *
-*****************************************************************************/
-void update_water()
-{
-    if (foot_present)
-    {
-        water_on(true);
-        water_debounce_timer_armed = true;
-        water_debounce_timer_en = false;
-        water_on_debounce_timer = 0;
-    }
-    else if (water_debounce_timer_armed)
-    {
-        water_debounce_timer_armed = false;
-        water_debounce_timer_en = true;
-    }
-}
-/****************************************************************************
-*                                                                           *
+*     Process Soft Timers                                                   *
 *****************************************************************************/
 void process_soft_timers()
 {    

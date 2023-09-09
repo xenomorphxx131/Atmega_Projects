@@ -1,8 +1,15 @@
+/****************************************************************************
+ *                                                                          *
+ *  Awesomefaucet                                                           *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifndef AWESOMEFAUCET_H_
 #define AWESOMEFAUCET_H_
 
     #include "Awesomefaucet_scpi.h"
     #include "Awesomefaucet_laser.h"
+    #include "Awesomefaucet_water.h"
     
     #define round(x) ((x)>=0 ? (long)((x)+0.5):(long)((x)-0.5))
     #define ONE_SECOND round(1 / 0.001024) // Should be 977-ish
