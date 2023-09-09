@@ -87,7 +87,7 @@ int main(void)
         process_soft_timers();
         process_range_reading();
         update_water();
-        update_laser(IO);
+        update_laser();
     }
 } // main()
 /****************************************************************************
@@ -138,30 +138,9 @@ void update_water()
         water_on_debounce_timer = 0;
     }
     else if (water_debounce_timer_armed)
-        {
-            water_debounce_timer_armed = false;
-            water_debounce_timer_en = true;
-        }
-}
-/****************************************************************************
-*    Laser Control                                                          *
-*****************************************************************************/
-void update_laser(IO_pointers_t IO)
-{
-    // Brightness seems to go from about 1 or 2
-    // in low light to 50 in moderate indoor light.
-    uint16_t brightness = 0;
-    uint8_t power = 0;
-    if (update_laser_value)
     {
-        brightness = get_als_blocking();
-        power = (uint8_t)round(brightness / 50 * MAX_LASER_POWER);
-        if (power < 1) power = 1;
-        if (power > MAX_LASER_POWER) power = MAX_LASER_POWER;
-        laser_power(power * get_darkness_setting());
-        // fprintf(IO.USB_stream, "Brightness:     %d\r\n", brightness);
-        // fprintf(IO.USB_stream, "power Set to:   %d\r\n", power * floor_darkness);
-        update_laser_value = false;
+        water_debounce_timer_armed = false;
+        water_debounce_timer_en = true;
     }
 }
 /****************************************************************************

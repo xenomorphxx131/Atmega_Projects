@@ -134,6 +134,7 @@ include $(LUFA_PATH)/LUFA/makefile
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c \
 	  Awesomefaucet_scpi.c \
+	  Awesomefaucet_laser.c \
 	  Descriptors.c \
 	  $(LUFA_SRC_USB) \
 	  $(LUFA_SRC_USBCLASS) \
@@ -141,11 +142,6 @@ SRC = $(TARGET).c \
 	  $(USB_PATH)/process_USB.c \
 	  $(BOOTLOADER_PATH)/bootloader.c\
 	  $(VL6180_PATH)/VL6180X_SM.c
-#	  $(FREERTOS_SOURCE_DIR)/tasks.c \
-#	  $(FREERTOS_SOURCE_DIR)/queue.c \
-#	  $(FREERTOS_SOURCE_DIR)/list.c \
-#	  $(FREERTOS_SOURCE_DIR)/portable/MemMang/heap_1.c \
-#	  $(FREERTOS_PORT_DIR)/port.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC =
