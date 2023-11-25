@@ -1,0 +1,1986 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+<html><!--(==============================================================)--><!--(Document created with RoboEditor. )============================--><!--(==============================================================)--><head>
+
+<title>SCPI Errors</title>
+
+<!--(Meta)==========================================================-->
+
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<meta name="generator" content="RoboHELP by eHelp Corporation - www.ehelp.com">
+<meta name="generator-major-version" content="0.1">
+<meta name="generator-minor-version" content="1">
+<meta name="filetype" content="kadov">
+<meta name="filetype-version" content="1">
+<meta name="page-count" content="1">
+<meta name="layout-height" content="6420">
+<meta name="layout-width" content="10009">
+
+
+<!--(Links)=========================================================-->
+
+ <link rel="stylesheet" href="SCPI_Errors_files/Reference_ns.css">
+<script type="text/javascript" language="JavaScript" title="WebHelpSplitCss">
+<!--
+if (navigator.appName !="Netscape")
+{   document.write("<link rel='stylesheet' href='../Reference.css'>");}
+//-->
+</script>
+<!--(Scripts)=======================================================-->
+
+<script language="javascript" src="SCPI_Errors_files/Help.js"></script>
+
+<script language="javascript">pth="../" 
+var n=4</script>
+
+<style type="text/css">
+<!--
+hr.whs1 {float: aligncenter; color: #800000;}
+h2.whs2 {margin-left: 40px;}
+hr.whs3 {float: aligncenter; width: 50%;}
+table.whs4 {x-cell-content-align: Center; float: alignleft; width: 100%; border-spacing: 0px; border-spacing: 0px;}
+col.whs5 {width: 30px;}
+col.whs6 {width: 150px;}
+tr.whs7 {x-cell-content-align: top;}
+td.whs8 {width: 30px; padding: 0in 2.7pt 0in 2.7pt; padding-left: 0px; padding-top: 0px; padding-right: 0px; border-bottom-style: None; border-right-style: None; border-left-style: None; border-top-style: None;}
+td.whs9 {width: 150px; padding: 0in 2.7pt 0in 2.7pt; padding-top: 0px; padding-left: 5px; padding-right: 0px; border-bottom-style: None; border-right-style: None; border-top-style: None;}
+td.whs10 {padding-left: 5px; border-bottom-style: None; border-top-style: None; border-right-style: None;}
+td.whs11 {width: 30px; padding: 0in 2.7pt 0in 2.7pt; padding-left: 0px; padding-top: 0px; padding-right: 0px; border-bottom-style: None; border-right-style: None; border-left-style: None;}
+td.whs12 {width: 150px; padding: 0in 2.7pt 0in 2.7pt; padding-top: 0px; padding-left: 5px; padding-right: 0px; border-bottom-style: None; border-right-style: None;}
+td.whs13 {padding: 0in 2.7pt 0in 2.7pt; padding-top: 0px; padding-right: 0px; padding-left: 5px; border-bottom-style: None; border-right-style: None;}
+p.whs14 {font-family: Arial;}
+td.whs15 {width: 30px; padding: 0in 2.7pt 0in 2.7pt; padding-left: 0px; padding-top: 0px; padding-right: 0px; border-right-style: None; border-left-style: None; border-bottom-style: None;}
+td.whs16 {width: 150px; padding: 0in 2.7pt 0in 2.7pt; padding-top: 0px; padding-left: 5px; padding-right: 0px; border-right-style: None; border-bottom-style: None;}
+table.whs17 {border-collapse: collapse; table-layout: fixed; float: alignleft; x-cell-content-align: Center; width: 100%; border-spacing: 0px; border-spacing: 0px;}
+col.whs18 {mso-width-source: userset; mso-width-alt: 1170; width: 30px;}
+col.whs19 {mso-width-source: userset; mso-width-alt: 6107; width: 150px;}
+col.whs20 {mso-width-source: userset; mso-width-alt: 20772;}
+td.whs21 {width: 30px; text-align: right; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; border-bottom-style: None; border-right-style: None; border-left-style: None; border-top-style: None;}
+p.whs22 {text-align: left;}
+td.whs23 {width: 150px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-right-style: None; border-top-style: None;}
+td.whs24 {padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-top-style: None; border-right-style: None;}
+td.whs25 {width: 30px; text-align: right; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; border-bottom-style: None; border-right-style: None; border-left-style: None;}
+td.whs26 {width: 150px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-right-style: None;}
+td.whs27 {padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-right-style: None;}
+td.whs28 {mso-ignore: colspan; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-right-style: None;}
+td.whs29 {width: 30px; text-align: right; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; border-right-style: None; border-left-style: None; border-bottom-style: None;}
+td.whs30 {width: 150px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-right-style: None; border-bottom-style: None;}
+table.whs31 {x-cell-content-align: Center; width: 100%; border-spacing: 0px; border-spacing: 0px;}
+table.whs32 {x-cell-content-align: Center; border-spacing: 0px; border-spacing: 0px;}
+col.whs33 {width: 50px;}
+col.whs34 {width: 100px;}
+td.whs35 {width: 50px; text-align: right; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; border-bottom-style: None; border-right-style: None; border-left-style: None; border-top-style: None;}
+td.whs36 {width: 100px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-right-style: None; border-top-style: None;}
+td.whs37 {mso-ignore: colspan; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-top-style: None; border-right-style: None;}
+td.whs38 {width: 50px; text-align: right; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; border-bottom-style: None; border-right-style: None; border-left-style: None;}
+td.whs39 {width: 100px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-bottom-style: None; border-right-style: None;}
+td.whs40 {width: 50px; text-align: right; padding-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; border-right-style: None; border-left-style: None; border-bottom-style: None;}
+td.whs41 {width: 100px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px; border-right-style: None; border-bottom-style: None;}
+tr.whs42 {x-cell-content-align: center;}
+div.whs43 {position: absolute; left: -100; top: 600;}
+img_whs44 {border-style: none; margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; vertical-align: baseline; width: 23px; height: 23px;}
+-->
+</style>
+<script type="text/javascript" language="JavaScript">
+<!--
+if ((navigator.appName == "Netscape") && (parseInt(navigator.appVersion) == 4))
+{
+  var strNSS = "<style type='text/css'>";
+  strNSS += "img_whs44 {margin-top:1;margin-bottom:1;margin-left:1;margin-right:1; }";
+  strNSS +="</style>";
+  document.write(strNSS);
+}
+//-->
+</script>
+<script type="text/javascript" language="JavaScript" title="WebHelpInlineScript">
+<!--
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//-->
+</script>
+<style type="text/css">
+<!--
+  div.WebHelpPopupMenu {position:absolute; left:0px; top:0px; z-index:4; visibility:hidden;}
+-->
+</style>
+<script type="text/javascript" language="javascript1.2" src="SCPI_Errors_files/whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="SCPI_Errors_files/whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="SCPI_Errors_files/whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="SCPI_Errors_files/whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="SCPI_Errors_files/whtopic.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+
+
+<body onscroll="scrolit(x1,y1);" onresize="calcCorner();">
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.gbWhTopic)
+{
+	if (window.addTocInfo)
+	{
+	addTocInfo("Product Support\nSCPI Errors");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(0);
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("../help.htm");
+addSearchFormHref("javascript:document.ehelpform.submit()");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	document.location.reload();
+//-->
+</script>
+<h1>SCPI Errors</h1>
+
+
+<!--(HR)============================================================-->
+<hr class="whs1" align="center" color="#800000">
+
+
+<h2>Standard SCPI Errors</h2>
+
+<h2 class="whs2"><a href="#100">-100 to -200 Command Errors</a></h2>
+
+<h2 class="whs2"><a href="#200">-200 to -299 Execution Errors</a></h2>
+
+<h2 class="whs2"><a href="#300">-300 to -399 SCPI Specified 
+ Device-Specific Errors</a></h2>
+
+<h2 class="whs2"><a href="#400+">-400 to -800 Query and System 
+ Errors</a></h2>
+
+<h2>&nbsp;</h2>
+
+<h2><a href="#PNASpecific">PNA specific Errors </a></h2>
+
+
+<!--(HR)============================================================-->
+<hr class="whs3" align="center" width="50%">
+
+
+<p class="Note">Note: See also <a href="http://na.tm.agilent.com/pna/help/WebHelp7_5/Support/PNA_Errors.htm">PNA Errors</a></p>
+
+<h3><a name="100"></a>-100 to -200 Command Errors</h3>
+
+<p>A command error indicates that the test set's GPIB parser has detected 
+ an IEEE 488.2 syntax error. When one of these errors is generated, the 
+ command error bit in the event status register is set.</p>
+
+<!--(Table)=========================================================-->
+<div align="left"><table x-use-null-cells="" class="whs4" width="100%" cellspacing="0">
+<colgroup><col class="whs5">
+<col class="whs6">
+<col>
+
+</colgroup><tbody><tr class="whs7" valign="top">
+<td class="whs8" width="30px">
+<p><span style="font-family: Arial;">-100</span></p></td>
+<td class="whs9" width="150px">
+<p><span style="font-family: Arial;">std_command</span></p></td>
+<td class="whs10">
+<p><span style="font-family: Arial;">Command - This event bit (Bit 5) indicates 
+ a syntax error, or a semantic error, or a GET command was entered, see 
+ IEEE 488.2, 11.5.1.1.4.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-101</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_invalidChar</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid character - Indicates a syntactic 
+ elements contains a character which is invalid for that type.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-102</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_syntax</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Syntax - Indicates that an unrecognized 
+ command or data type was encountered. For example, a string was received 
+ when the device does not accept strings.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-103</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_invalidSeparator</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid separator - The parser was 
+ expecting a separator and encountered an illegal character. For example, 
+ the semicolon was omitted after a program message </span>unit.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-104</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_wrongParamType</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Data type -The parser recognized a 
+ data element different than one allowed. For example, numeric or string 
+ data was expected but block data was encountered.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-105</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_GETNotAllowed</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">GET not allowed - Indicates a Group 
+ Execute Trigger was received within a program message. Correct the program 
+ so that the GET does not occur within the program </span>code.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-108</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_tooManyParameters</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Parameter not allowed - Indicates 
+ that more parameters were received than expected for the header. For example, 
+ *ESE common command only accepts one parameter, </span>so *ESE 0,1 is 
+ not allowed.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-109</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_tooFewParameters</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Missing parameter - Indicates that 
+ less parameters were received than required for the header. For example, 
+ *ESE requires one parameter, *ESE is not allowed.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-110</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_cmdHeader</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Command header - Indicates an error 
+ was detected in the header. This error is used when the device cannot 
+ detect the more specific errors -111 through -119.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-111</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_headerSeparator</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Header separator - Indicates that 
+ a character that is not a legal header separator was encountered while 
+ parsing the header.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-112</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_IDTooLong</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Program mnemonic too long - Indicates 
+ that the header contains more that twelve characters, see IEEE 488.2, 
+ 7.6.1.4.1.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-113</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_undefinedHeader</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Undefined header - Indicates the header 
+ is syntactically correct, but it is undefined for this specific device. 
+ For example, *XYZ is not defined for any device.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-114</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_suffixOutOfRange</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Header suffix out of range - Indicates 
+ the value of a header suffix attached to a program mnemonic makes the 
+ header invalid.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-120</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_numericData</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Numeric data - This error, as well 
+ as errors</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-121</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_invalidCharInNumber</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid character in number - Indicates 
+ an invalid character for the data type being parsed was encountered. For 
+ example, an alpha in a decimal numeric or a "9" </span>in octal 
+ data.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-123</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_exponentTooLarge</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Exponent too large - Indicates the 
+ magnitude of an exponent was greater than 32000, see IEEE 488.2, 7.7.2.4.1.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-124</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_decimalTooLong</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Too many digits - Indicates the mantissa 
+ of a decimal numeric data element contained more than 255 digits excluding 
+ leading zeros, see IEEE 488.2, 7.7.2.4.1.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-128</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_numericNotAllowed</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Numeric data not allowed - Indicates 
+ that a legal numeric data element was received, but the device does not 
+ accept one in this position for the header.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-130</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_suffix</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Suffix - This error, as well as errors 
+ -131 through -139, are generated when parsing a suffix. This particular 
+ error message is used if the device cannot detect </span>&nbsp;a 
+ more specific error.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-131</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_badSuffix</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid suffix - Indicates the suffix 
+ does not follow the syntax described in IEEE 488.2, 7.7.3.2, or the suffix 
+ is inappropriate for this device.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-134</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_suffixTooLong</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Suffix too long - Indicates the suffix 
+ contain more than 12 characters, see IEEE 488.2, 7.7.3.4.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-138</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_suffixNotAllowed</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Suffix not allowed - Indicates that 
+ a suffix was encountered after a numeric element that does not allow suffixes.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-140</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_charData</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Character data - This error, as well 
+ as errors</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-141</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_invalidCharData</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid character data - Indicates 
+ that the character data element contains an invalid character or the particular 
+ element received is not valid for the header.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-144</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_charDataTooLong</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Character data too long - Indicates 
+ the character data element contains more than twelve characters, see IEEE 
+ 488.2, 7.7.1.4.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-148</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_charNotAllowed</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Character data not allowed - Indicates 
+ a legal character data element was encountered where prohibited by the 
+ device.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-150</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_stringData</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">String data - This error, as well 
+ as errors</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-151</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_stringInvalid</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid string data - Indicates that 
+ a string data element was expected, but was invalid, see IEEE 488.2, 7.7.5.2. 
+ For example, an END message was received befo</span>re the terminal quote 
+ character.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-158</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_stringNotAllowed</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">String data not allowed - Indicates 
+ that a string data element was encountered but was not allowed by the 
+ device at this point in parsing.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-160</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_blockData</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Block data - This error, as well as 
+ errors -161 through -169, are generated when parsing a block data element. 
+ This particular error message is used if the devi</span>ce cannot detect 
+ a more specific error.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-161</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_badBlock</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid block data - Indicates a block 
+ data element was expected, but was invalid, see IEEE 488.2, 7.7.6.2. For 
+ example, and END message was received before the </span>end length was 
+ satisfied.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-168</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_blockNotAllowed</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Block data not allowed - Indicates 
+ a legal block data element was encountered, but not allowed by the device 
+ at this point in parsing.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-170</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_expr</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Expression - This error, as well as 
+ errors -171 through -179, are generated when parsing an expression data 
+ element. This particular error message is used if th</span>e device cannot 
+ detect a more specific error.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-171</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_invalidExpression</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid expression - Indicates the 
+ expression data element was invalid, see IEEE 488.2, 7.7.7.2. For example, 
+ unmatched parentheses or an illegal character.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-178</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_exprNotAllowed</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Expression data not allowed - Indicates 
+ a legal expression data was encountered, but was not allowed by the device 
+ at this point in parsing.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-180</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_macro</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Macro - This error, as well as error 
+ -181 through -189, are generated when defining a macro or execution a 
+ macro. This particular error message is used if the d</span>evice cannot 
+ detect a more specific error.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-181</span></p></td>
+<td class="whs12" width="150px">
+<p class="whs14">std_validOnly<span style="font-family: Arial;">InsideMacro</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid outside macro definition - 
+ Indicates that a macro parameter place holder was encountered outside 
+ of a macro definition.</span></p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs11" width="30px">
+<p><span style="font-family: Arial;">-183</span></p></td>
+<td class="whs12" width="150px">
+<p><span style="font-family: Arial;">std_invalidWithinMacro</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;">Invalid inside macro definition - 
+ Indicates that the program message unit sequence, sent with a *DDT or 
+ a *DMC command, is syntactically invalid, see IEEE 488.2</span>, 10.7.6.3.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td class="whs15" width="30px">
+<p><span style="font-family: Arial;">-184</span></p></td>
+<td class="whs16" width="150px">
+<p><span style="font-family: Arial;">std_macroParm</span></p></td>
+<td class="whs13">
+<p><span style="font-family: Arial;"><span style="mso-tab-count: 1;">&nbsp;</span>Macro 
+ parameter - Indicates that a command inside the macro definition had the 
+ wrong number or type of parameters.</span></p></td></tr>
+</tbody></table>
+</div><a name="200"></a>
+
+<h3>-200 to -299 Execution Errors </h3>
+
+<p>These errors are generated when something occurs that is incorrect in 
+ the current state of the instrument. These errors may be generated by 
+ a user action from either the remote or the manual user interface</p>
+
+<!--(Table)=========================================================-->
+<div align="left"><table x:str="" x-use-null-cells="" class="whs17" width="100%" cellspacing="0">
+<colgroup><col class="whs18">
+<col class="whs19">
+<col class="whs20">
+
+</colgroup><tbody><tr class="whs7" valign="top">
+<td x:num="" class="whs21" align="right" width="30px">
+<p class="whs22" align="left">-200</p></td>
+<td class="whs23" width="150px">
+<p>std_execGen</p></td>
+<td class="whs24">
+<p>Execution - This event bit (Bit 4) indicates a PROGRAM DATA element 
+ following a header was outside the legal input range or otherwise inconsistent 
+ with the device's capabilities, see IEEE 488.2, 11.5.1.1.5.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-201</p></td>
+<td class="whs26" width="150px">
+<p>std_invalidWhileInLocal</p></td>
+<td class="whs27">
+<p>Invalid while in local</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-202</p></td>
+<td class="whs26" width="150px">
+<p>std_settingsLost</p></td>
+<td class="whs27">
+<p>Settings lost due to rtl</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-203</p></td>
+<td class="whs26" width="150px">
+<p>std_commandProtected</p></td>
+<td colspan="1" class="whs28">
+<p>Command protected - Indicates that a legal password-protected program 
+ command or query could not be executed because the command was disabled.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-210</p></td>
+<td class="whs26" width="150px">
+<p>std_trigger</p></td>
+<td class="whs27">
+<p>Trigger</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-211</p></td>
+<td class="whs26" width="150px">
+<p>std_triggerIgnored</p></td>
+<td class="whs27">
+<p>Trigger ignored</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-212</p></td>
+<td class="whs26" width="150px">
+<p>std_armIgnored</p></td>
+<td class="whs27">
+<p>Arm ignored</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-213</p></td>
+<td class="whs26" width="150px">
+<p>std_initIgnored</p></td>
+<td class="whs27">
+<p>Init ignored</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-214</p></td>
+<td class="whs26" width="150px">
+<p>std_triggerDeadlock</p></td>
+<td class="whs27">
+<p>Trigger deadlock</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-215</p></td>
+<td class="whs26" width="150px">
+<p>std_armDeadlock</p></td>
+<td class="whs27">
+<p>Arm deadlock</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-220</p></td>
+<td class="whs26" width="150px">
+<p>std_parm</p></td>
+<td class="whs27">
+<p>Parameter - Indicates that a program data element related error occurred.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-221</p></td>
+<td class="whs26" width="150px">
+<p>std_settingsConflict</p></td>
+<td colspan="1" class="whs28">
+<p>Settings conflict - Indicates that a legal program data element was 
+ parsed but could not be executed due to the current device state.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-222</p></td>
+<td class="whs26" width="150px">
+<p>std_dataOutOfRange</p></td>
+<td class="whs27">
+<p>Data out of range - Indicates that a legal program data element was 
+ parsed but could not be executed because the interpreted value was outside 
+ the legal range defined by the devices</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-223</p></td>
+<td class="whs26" width="150px">
+<p>std_tooMuchData</p></td>
+<td class="whs27">
+<p>Too much data - Indicates that a legal program data element of block, 
+ expression, or string type was received that contained more data than 
+ the device could handle due to memory or related device-specific requirements.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-224</p></td>
+<td class="whs26" width="150px">
+<p>std_illegalParmValue</p></td>
+<td class="whs27">
+<p>Illegal parameter value - Indicates that the value selected was not 
+ part of the list of values given.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-225</p></td>
+<td class="whs26" width="150px">
+<p>std_noMemoryForOp</p></td>
+<td class="whs27">
+<p>Out of memory - The device has insufficient memory to perform the requested 
+ operation.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-226</p></td>
+<td class="whs26" width="150px">
+<p>std_listLength</p></td>
+<td colspan="1" class="whs28">
+<p>Lists not same length - Attempted to use LIST structure having individual 
+ LIST's of unequal lengths.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-230</p></td>
+<td class="whs26" width="150px">
+<p>std_dataCorruptOrStale</p></td>
+<td colspan="1" class="whs28">
+<p>Data corrupt or stale - Indicates invalid data, a new reading started 
+ but not completed since the last access.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-231</p></td>
+<td class="whs26" width="150px">
+<p>std_dataQuestionable</p></td>
+<td class="whs27">
+<p>Data questionable - Indicates that measurement accuracy is suspect.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-232</p></td>
+<td class="whs26" width="150px">
+<p>std_invalidFormat</p></td>
+<td class="whs27">
+<p>Invalid format</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-233</p></td>
+<td class="whs26" width="150px">
+<p>std_invalidVersion</p></td>
+<td class="whs27">
+<p>Invalid version - Indicates that a legal program data element was parsed 
+ but could not be executed because the version of the data is incorrect 
+ to the device. For example, a not supported file version, a not supported 
+ instrument version. </p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-240</p></td>
+<td class="whs26" width="150px">
+<p>std_hardware</p></td>
+<td colspan="1" class="whs28">
+<p>Hardware - Indicates that a legal program command or query could not 
+ be executed because of a hardware problem in the device.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-241</p></td>
+<td class="whs26" width="150px">
+<p>std_hardwareMissing</p></td>
+<td class="whs27">
+<p>Hardware missing - Indicates that a legal program command or query could 
+ not be executed because of missing device hardware. For example, an option 
+ was not installed.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-250</p></td>
+<td class="whs26" width="150px">
+<p>std_massStorage</p></td>
+<td class="whs27">
+<p>Mass storage - Indicates that a mass storage error occurred. The device 
+ cannot detect the more specific errors described for errors -251 through 
+ -259.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-251</p></td>
+<td class="whs26" width="150px">
+<p>std_missingMassStorage</p></td>
+<td colspan="1" class="whs28">
+<p>Missing mass storage - Indicates that a legal program command or query 
+ could not be executed because of missing mass storage.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-252</p></td>
+<td class="whs26" width="150px">
+<p>std_missingMedia</p></td>
+<td colspan="1" class="whs28">
+<p>Missing media - Indicates that a legal program command or query could 
+ not be executed because of missing media. For example, no disk.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-253</p></td>
+<td class="whs26" width="150px">
+<p>std_corruptMedia</p></td>
+<td class="whs27">
+<p>Corrupt media - Indicates that a legal program command or query could 
+ not be executed because of corrupt media. For example, bad disk or wrong 
+ format.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-254</p></td>
+<td class="whs26" width="150px">
+<p>std_mediaFull</p></td>
+<td class="whs27">
+<p>Media full- Indicates that a legal program command or query could not 
+ be executed because the media is full. For example, there is no room left 
+ on the disk.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-255</p></td>
+<td class="whs26" width="150px">
+<p>std_directoryFull</p></td>
+<td colspan="1" class="whs28">
+<p>Directory full - Indicates that a legal program command or query could 
+ not be executed because the media directory was full.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-256</p></td>
+<td class="whs26" width="150px">
+<p>std_fileNotFound</p></td>
+<td colspan="1" class="whs28">
+<p>File name not found - Indicates that a legal program command or query 
+ could not be executed because the file name was not found on the media.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-257</p></td>
+<td class="whs26" width="150px">
+<p>std_fileName</p></td>
+<td class="whs27">
+<p>File name - Indicates that a legal program command or query could not 
+ be executed because the file name on the device media was in error. For 
+ example, an attempt was made to read or copy a nonexistent file.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-258</p></td>
+<td class="whs26" width="150px">
+<p>std_mediaProtected</p></td>
+<td class="whs27">
+<p>Media protected - Indicates that a legal program command or query could 
+ not be executed becuse the media was protected. For example, the write-protect 
+ switch on a memory card was set.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-260</p></td>
+<td class="whs26" width="150px">
+<p>std_expression</p></td>
+<td class="whs27">
+<p>Expression</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-261</p></td>
+<td class="whs26" width="150px">
+<p>std_math</p></td>
+<td class="whs27">
+<p>Math<span style="mso-spacerun: yes;">&nbsp; </span>in expression</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-270</p></td>
+<td class="whs26" width="150px">
+<p>std_macroExecution</p></td>
+<td class="whs27">
+<p>Macro - Indicates that a macro related execution error occurred.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-271</p></td>
+<td class="whs26" width="150px">
+<p>std_macroSyntax</p></td>
+<td class="whs27">
+<p>Macro syntax - Indicates that a syntactically legal macro program data 
+ sequence, according to IEEE 488.2, 10.7.2, could not be executed due to 
+ a syntax error within the macro definition.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-272</p></td>
+<td class="whs26" width="150px">
+<p>std_macroExec</p></td>
+<td class="whs27">
+<p>Macro execution - Indicates that a syntactically legal macro program 
+ data sequence could not be executed due to some error in the macro definition, 
+ see IEEE 488.2, 10.7.6.3.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-273</p></td>
+<td class="whs26" width="150px">
+<p>std_badMacroName</p></td>
+<td colspan="1" class="whs28">
+<p>Illegal macro label - Indicates that the macro label was not accepted, 
+ it did not agree with the definition in IEEE 488.2, 10.7.3</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-274</p></td>
+<td class="whs26" width="150px">
+<p>std_macroPlaceholder	Ma</p></td>
+<td colspan="1" class="whs28">
+<p>cro parameter - Indicates that the macro definition improperly used 
+ a macro parameter placeholder, see IEEE 4882, 10.7.3.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-275</p></td>
+<td class="whs26" width="150px">
+<p>std_macroTooLong</p></td>
+<td class="whs27">
+<p>Macro definition too long - Indicates that a syntactically legal macro 
+ program data sequence could not be executed because the string of block 
+ contents were too long for the device to handle, IEEE 488.2, 10.7.6.1.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-276</p></td>
+<td class="whs26" width="150px">
+<p>std_macroRecursion</p></td>
+<td class="whs27">
+<p>Macro recursion - Indicates that a syntactically legal macro program 
+ data sequence count not be executed because it would be recursive, see 
+ IEEE 488.2, 10.7.6.6.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-277</p></td>
+<td class="whs26" width="150px">
+<p>std_cantRedefineMacro</p></td>
+<td colspan="1" class="whs28">
+<p>Macro redefinition not allowed - Indicates that redefining an existing 
+ macro label, see IEEE 488.2, 10.7.6.4.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-278</p></td>
+<td class="whs26" width="150px">
+<p>std_macroNotFound</p></td>
+<td class="whs27">
+<p>Macro header not found - Indicates that a legal macro label in the *GMS?, 
+ see IEEE 488.2, 10.13, could not be executed because the header was not 
+ previously defined.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-280</p></td>
+<td class="whs26" width="150px">
+<p>std_program</p></td>
+<td class="whs27">
+<p>Program</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-281</p></td>
+<td class="whs26" width="150px">
+<p>std_cantCreateProgram</p></td>
+<td class="whs27">
+<p>Cannot create program</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-282</p></td>
+<td class="whs26" width="150px">
+<p>std_illegalProgramName</p></td>
+<td class="whs27">
+<p>Illegal program name</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-283</p></td>
+<td class="whs26" width="150px">
+<p>std_illegalVarName</p></td>
+<td class="whs27">
+<p>Illegal variable name</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-284</p></td>
+<td class="whs26" width="150px">
+<p>std_programRunning</p></td>
+<td class="whs27">
+<p>Program currently running</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-285</p></td>
+<td class="whs26" width="150px">
+<p>std_programSyntax</p></td>
+<td class="whs27">
+<p>Program syntax</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-286</p></td>
+<td class="whs26" width="150px">
+<p>std_programRuntime</p></td>
+<td class="whs27">
+<p>Program runtime</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-290</p></td>
+<td class="whs26" width="150px">
+<p>std_memoryUse</p></td>
+<td class="whs27">
+<p>Memory use</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-291</p></td>
+<td class="whs26" width="150px">
+<p>std_execOutOfMemory</p></td>
+<td class="whs27">
+<p>Out of memory</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-292</p></td>
+<td class="whs26" width="150px">
+<p>std_nameNotFound</p></td>
+<td class="whs27">
+<p>Referenced name does not exist</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-293</p></td>
+<td class="whs26" width="150px">
+<p>std_nameAlreadyExists</p></td>
+<td class="whs27">
+<p>Referenced name already exists</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs29" align="right" width="30px">
+<p class="whs22" align="left">-294</p></td>
+<td class="whs30" width="150px">
+<p>std_incompatibleType</p></td>
+<td class="whs27">
+<p>Incompatible type</p></td></tr>
+</tbody></table>
+</div><h3><a name="300"></a>-300 to -399 SCPI Specified Device-Specific Errors 
+ </h3>
+
+<p>A device-specific error indicates that the instrument has detected an 
+ error that occurred because some operations did not properly complete, 
+ possibly due to an abnormal hardware or firmware condition. For example, 
+ an attempt by the user to set an out of range value will generate a device 
+ specific error. When one of these errors is generated, the device specific 
+ error bit in the event status register is set.</p>
+
+<!--(Table)=========================================================-->
+<table x-use-null-cells="" class="whs31" width="100%" cellspacing="0">
+<colgroup><col class="whs5">
+<col class="whs6">
+<col>
+
+</colgroup><tbody><tr class="whs7" valign="top">
+<td x:num="" class="whs21" align="right" width="30px">
+<p class="whs22" align="left">-300</p></td>
+<td class="whs23" width="150px">
+<p>std_deviceSpecific</p></td>
+<td class="whs24">
+<p>Device specific - This event bit (Bit 3) indicates that a device operation 
+ did not properly complete due to some condition, such as overrange see 
+ IEEE 488.2, 11.5.1.1.6.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-310</p></td>
+<td class="whs26" width="150px">
+<p>std_system</p></td>
+<td class="whs27">
+<p>System</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-311</p></td>
+<td class="whs26" width="150px">
+<p>std_memory</p></td>
+<td class="whs27">
+<p>Memory - Indicates some physical fault in the devices memory, such as 
+ a parity error.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-312</p></td>
+<td class="whs26" width="150px">
+<p>std_PUDmemoryLost</p></td>
+<td class="whs27">
+<p>PUD memory lost - Indicates protected user data saved by the *PUD command 
+ has been lost, see IEEE 488.2, 10.27.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-313</p></td>
+<td class="whs26" width="150px">
+<p>std_calMemoryLost</p></td>
+<td class="whs27">
+<p>Calibration memory lost - Indicates that nonvolatile calibration data 
+ used by the *CAL? command has been lost, see IEEE 488.2, 10.2.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-314</p></td>
+<td class="whs26" width="150px">
+<p>std_savRclMemoryLost</p></td>
+<td class="whs27">
+<p>Save/recall memory lost - Indicates that the nonvolatile data saved 
+ by the *SAV command has been lost, see IEEE 488.2, 10.33.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-315</p></td>
+<td class="whs26" width="150px">
+<p>std_configMemoryLost</p></td>
+<td class="whs27">
+<p>Configuration memory lost - Indicates that nonvolatile configuration 
+ data saved by the device has been lost.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-320</p></td>
+<td class="whs26" width="150px">
+<p>std_storageFault</p></td>
+<td class="whs27">
+<p>Storage fault - Indicates that the firmware detected a fault when using 
+ data storage. This is not an indication of physical damage or failure 
+ of any mass storage element. </p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-321</p></td>
+<td class="whs26" width="150px">
+<p>std_outOfMemory</p></td>
+<td class="whs27">
+<p>Out of memory - An internal operation needed more memory than was available</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-330</p></td>
+<td class="whs26" width="150px">
+<p>std_selfTestFailed</p></td>
+<td class="whs27">
+<p>Self-test failed - Indicates a problem with the device that is not covered 
+ by a specific error message. The device may require service.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-340</p></td>
+<td class="whs26" width="150px">
+<p>std_calFailed</p></td>
+<td class="whs27">
+<p>Calibration failed - Indicates a problem during calibration of the device 
+ that is not covered by a specific error.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-350</p></td>
+<td class="whs26" width="150px">
+<p>std_queueOverflow</p></td>
+<td class="whs27">
+<p>Queue overflow - Indicates that there is no room in the queue and an 
+ error occurred but was not recorded. This code is entered into the queue 
+ in lieu of the code that caused the error.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-360</p></td>
+<td class="whs26" width="150px">
+<p>std_comm</p></td>
+<td class="whs27">
+<p>Communication - This is the generic communication error for devices 
+ that cannot detect the more specific errors described for error -361 through 
+ -363.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-361</p></td>
+<td class="whs26" width="150px">
+<p>std_parity</p></td>
+<td class="whs27">
+<p>Parity<span style="mso-spacerun: yes;">&nbsp; </span>in program message 
+ - Parity bit not correct when data received for example, on a serial port.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">-362</p></td>
+<td class="whs26" width="150px">
+<p>std_framing</p></td>
+<td class="whs27">
+<p>Framing<span style="mso-spacerun: yes;">&nbsp; </span>in program message 
+ - A stop bit was not detected when data was received for example, on a 
+ serial port (for example, a baud rate mismatch). </p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs29" align="right" width="30px">
+<p class="whs22" align="left">-363</p></td>
+<td class="whs30" width="150px">
+<p>std_inputBufferOverrun</p></td>
+<td class="whs27">
+<p>Input buffer overrun - Software or hardware input buffer on serial port 
+ overflows with data caused by improper or nonexistent pacing.</p></td></tr>
+</tbody></table>
+
+<h3><a name="400+"></a>-400 to -800 Query and System Errors </h3>
+
+<p>A Query error is generated either when data in the instrument's GPIB 
+ output queue has been lost, or when an attempt is being made to read data 
+ from the output queue when no output is present or pending.&nbsp; </p>
+
+<!--(Table)=========================================================-->
+<table x-use-null-cells="" class="whs32" cellspacing="0">
+<colgroup><col class="whs33">
+<col class="whs34">
+<col>
+
+</colgroup><tbody><tr class="whs7" valign="top">
+<td x:num="" class="whs35" align="right" width="50px">
+<p class="whs22" align="left">-400</p></td>
+<td class="whs36" width="100px">
+<p>std_queryGen</p></td>
+<td colspan="1" class="whs37">
+<p>Query - This event bit (Bit 2) indicates that an attempt to read data 
+ from the Output Queues when no output is present or pending, to data in 
+ the Output Queue has been lost see IEEE488.2, 11.5.1.1.7.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs38" align="right" width="50px">
+<p class="whs22" align="left">-410</p></td>
+<td class="whs39" width="100px">
+<p>std_interrupted</p></td>
+<td colspan="1" class="whs28">
+<p>Query INTERRUPTED - Indicates the test set has been interrupted by a 
+ new program message before it finishes sending a RESPONSE MESSAGE see 
+ IEEE 488.2, 6.3.2.3.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs38" align="right" width="50px">
+<p class="whs22" align="left">-420</p></td>
+<td class="whs39" width="100px">
+<p>std_unterminated</p></td>
+<td colspan="1" class="whs28">
+<p>Query UNTERMINATED - Indicates an incomplete Query in the program see 
+ IEEE 488.2, 6.3.2.2.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs38" align="right" width="50px">
+<p class="whs22" align="left">-430</p></td>
+<td class="whs39" width="100px">
+<p>std_deadlocked</p></td>
+<td colspan="1" class="whs28">
+<p>Query DEADLOCKED - Indicates that the Input Buffer and Output Queue 
+ are full see IEEE 488.2, 6.3.1.7.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs38" align="right" width="50px">
+<p class="whs22" align="left">-440</p></td>
+<td class="whs39" width="100px">
+<p>std_responseNotAllowed</p></td>
+<td colspan="1" class="whs28">
+<p>Query UNTERMINATED after indefinite response - Indicates that a query 
+ was received in the same program message after a query requesting an indefinite 
+ response was executed see IEEE 488.2, 6.5.7.5.</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs38" align="right" width="50px">
+<p class="whs22" align="left">-500</p></td>
+<td class="whs39" width="100px">
+<p>std_powerOn</p></td>
+<td class="whs27">
+<p>Power on</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs38" align="right" width="50px">
+<p class="whs22" align="left">-600</p></td>
+<td class="whs39" width="100px">
+<p>std_userRequest</p></td>
+<td class="whs27">
+<p>User request</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs38" align="right" width="50px">
+<p class="whs22" align="left">-700</p></td>
+<td class="whs39" width="100px">
+<p>std_requestControl</p></td>
+<td class="whs27">
+<p>Request control</p></td></tr>
+
+<tr class="whs7" valign="top">
+<td x:num="" class="whs40" align="right" width="50px">
+<p class="whs22" align="left">-800</p></td>
+<td class="whs41" width="100px">
+<p>std_operationComplete</p></td>
+<td class="whs27">
+<p>Operation complete</p></td></tr>
+</tbody></table>
+
+. 
+
+<h3><a name="PNASpecific"></a>PNA Specific SCPI Errors</h3>
+
+<!--(Table)=========================================================-->
+<table x-use-null-cells="" class="whs31" width="100%" cellspacing="0">
+<colgroup><col class="whs5">
+<col class="whs6">
+<col>
+
+</colgroup><tbody><tr class="whs42" valign="middle">
+<td x:num="" class="whs21" align="right" width="30px">
+<p class="whs22" align="left">100</p></td>
+<td class="whs23" width="150px">
+<p>dupWindNum</p></td>
+<td class="whs24">
+<p>"Duplicate window number"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">101</p></td>
+<td class="whs26" width="150px">
+<p>windNumNotFound</p></td>
+<td class="whs27">
+<p>"Window number not found"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">102</p></td>
+<td class="whs26" width="150px">
+<p>failedWindCreate</p></td>
+<td class="whs27">
+<p>"Window creation failed"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">103</p></td>
+<td class="whs26" width="150px">
+<p>noCalcParamSelection</p></td>
+<td class="whs27">
+<p>"CALC measurement selection set to none"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">104</p></td>
+<td class="whs26" width="150px">
+<p>dupMeasName</p></td>
+<td class="whs27">
+<p>"Duplicate measurement name"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">105</p></td>
+<td class="whs26" width="150px">
+<p>dataNotFound</p></td>
+<td class="whs27">
+<p>"Requested data not available"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">106</p></td>
+<td class="whs26" width="150px">
+<p>measNotFound</p></td>
+<td class="whs27">
+<p>"Requested measurement not found"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">107</p></td>
+<td class="whs26" width="150px">
+<p>traceNotFound</p></td>
+<td class="whs27">
+<p>"Requested trace not found"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">108</p></td>
+<td class="whs26" width="150px">
+<p>notImplemented</p></td>
+<td class="whs27">
+<p>"Mnemonic not yet implemented"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">109</p></td>
+<td class="whs26" width="150px">
+<p>noDocument</p></td>
+<td class="whs27">
+<p>"No measurement container found"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">110</p></td>
+<td class="whs26" width="150px">
+<p>dupTraceNum</p></td>
+<td class="whs27">
+<p>"Duplicate trace number"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">111</p></td>
+<td class="whs26" width="150px">
+<p>titleStrTooLong</p></td>
+<td class="whs27">
+<p>"Title string exceeds 50 characters"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">112</p></td>
+<td class="whs26" width="150px">
+<p>memoryNotFound</p></td>
+<td class="whs27">
+<p>"Requested memory not found"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">113</p></td>
+<td class="whs26" width="150px">
+<p>exceedMaxTraces</p></td>
+<td class="whs27">
+<p>"Exceeded the maximum number of traces per window"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">114</p></td>
+<td class="whs26" width="150px">
+<p>SerNumNotFound</p></td>
+<td class="whs27">
+<p>"The serial number was not found. Please store the serial number."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">115</p></td>
+<td class="whs26" width="150px">
+<p>LoadFailed</p></td>
+<td class="whs27">
+<p>"The state was not loaded. Please check the file name."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">116</p></td>
+<td class="whs26" width="150px">
+<p>StoreFailed</p></td>
+<td class="whs27">
+<p>"The state was not stored. Please check the file and path names."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">117</p></td>
+<td class="whs26" width="150px">
+<p>File</p></td>
+<td class="whs27">
+<p>"An<span style="mso-spacerun: yes;">&nbsp; </span>in the File operation 
+ occurred. Please check file and path names."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">118</p></td>
+<td class="whs26" width="150px">
+<p>measChanConflict</p></td>
+<td class="whs27">
+<p>"Measurement does not belong to specified channel."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">119</p></td>
+<td class="whs26" width="150px">
+<p>exceedMaxWindows</p></td>
+<td class="whs27">
+<p>"Exceeded the maximum number of data windows"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">120</p></td>
+<td class="whs26" width="150px">
+<p>markerNotFound</p></td>
+<td class="whs27">
+<p>"The specified marker was not found."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">121</p></td>
+<td class="whs26" width="150px">
+<p>diagnostic</p></td>
+<td class="whs27">
+<p>"Diagnostic ."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">122</p></td>
+<td class="whs26" width="150px">
+<p>channelNotFound</p></td>
+<td class="whs27">
+<p>"The specified channel was not found."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">123</p></td>
+<td class="whs26" width="150px">
+<p>exceedMaxMeasurements</p></td>
+<td class="whs27">
+<p>"Exceeded the maximum number of allowed mesurements."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">124</p></td>
+<td class="whs26" width="150px">
+<p>parameterOutOfRange</p></td>
+<td class="whs27">
+<p>"The specified value was out of range."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">125</p></td>
+<td class="whs26" width="150px">
+<p>userRangeNotValid</p></td>
+<td class="whs27">
+<p>"The currently selected user range is not valid."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">126</p></td>
+<td class="whs26" width="150px">
+<p>referenceMarkerNotFound</p></td>
+<td class="whs27">
+<p>"The reference marker is not active."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">127</p></td>
+<td class="whs26" width="150px">
+<p>sweepSegmentNotFound</p></td>
+<td class="whs27">
+<p>"The sweep segment was not found."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">128</p></td>
+<td class="whs26" width="150px">
+<p>markerNotDelta</p></td>
+<td class="whs27">
+<p>"The specified marker is not a delta marker."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">129</p></td>
+<td class="whs26" width="150px">
+<p>printoutFailed</p></td>
+<td class="whs27">
+<p>"Attempt to output to a printer failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">130</p></td>
+<td class="whs26" width="150px">
+<p>memory_trace_not_compatible</p></td>
+<td class="whs27">
+<p>"Memory not compatible. Trace Math not applied."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">131</p></td>
+<td class="whs26" width="150px">
+<p>trace_math_reset</p></td>
+<td class="whs27">
+<p>"Memory not compatible. Trace Math turned off."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">132</p></td>
+<td class="whs26" width="150px">
+<p>hw_read_failed</p></td>
+<td class="whs27">
+<p>"Hardware read failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">133</p></td>
+<td class="whs26" width="150px">
+<p>hw_write_failed</p></td>
+<td class="whs27">
+<p>"Hardware write failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">134</p></td>
+<td class="whs26" width="150px">
+<p>dsp_active</p></td>
+<td class="whs27">
+<p>"Failed because DSP was not halted."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">135</p></td>
+<td class="whs26" width="150px">
+<p>secure_memory</p></td>
+<td class="whs27">
+<p>"Attempt to access secure memory region."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">136</p></td>
+<td class="whs26" width="150px">
+<p>snum_protected</p></td>
+<td class="whs27">
+<p>"The serial number is protected."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">137</p></td>
+<td class="whs26" width="150px">
+<p>snum_format_bad</p></td>
+<td class="whs27">
+<p>"The serial number format is bad."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">138</p></td>
+<td class="whs26" width="150px">
+<p>snum_already_set</p></td>
+<td class="whs27">
+<p>"The serial number is already set."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">139</p></td>
+<td class="whs26" width="150px">
+<p>hw_setting_failed</p></td>
+<td class="whs27">
+<p>"Hardware setting failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">140</p></td>
+<td class="whs26" width="150px">
+<p>cal_access_failed</p></td>
+<td class="whs27">
+<p>"Calibration data access failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">141</p></td>
+<td class="whs26" width="150px">
+<p>db_access_failed</p></td>
+<td class="whs27">
+<p>"Database access failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">142</p></td>
+<td class="whs26" width="150px">
+<p>memory_range_exceeded</p></td>
+<td class="whs27">
+<p>"Command exceeds usable memory range."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">143</p></td>
+<td class="whs26" width="150px">
+<p>lost_phase_lock</p></td>
+<td class="whs27">
+<p>"Phase lock has been lost."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">144</p></td>
+<td class="whs26" width="150px">
+<p>over_power</p></td>
+<td class="whs27">
+<p>"Detected too much power at input."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">145</p></td>
+<td class="whs26" width="150px">
+<p>ee_wrt_failed</p></td>
+<td class="whs27">
+<p>"EEPROM write failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">146</p></td>
+<td class="whs26" width="150px">
+<p>yig_cal_failed</p></td>
+<td class="whs27">
+<p>"YTO calibration failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">147</p></td>
+<td class="whs26" width="150px">
+<p>ramp_cal_failed</p></td>
+<td class="whs27">
+<p>"Analog ramp calibration failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">148</p></td>
+<td class="whs26" width="150px">
+<p>dspcom_bad</p></td>
+<td class="whs27">
+<p>"DSP communication failed."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">149</p></td>
+<td class="whs26" width="150px">
+<p>no_license_found</p></td>
+<td class="whs27">
+<p>"Request failed. The required license was not found."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">150</p></td>
+<td class="whs26" width="150px">
+<p>argLimited</p></td>
+<td class="whs27">
+<p>"The argument was out of range</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">151</p></td>
+<td class="whs26" width="150px">
+<p>markerBWNotFound</p></td>
+<td class="whs27">
+<p>"The Marker Bandwidth was not found."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">153</p></td>
+<td class="whs26" width="150px">
+<p>peakNotFound</p></td>
+<td class="whs27">
+<p>"The Peak was not found."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">154</p></td>
+<td class="whs26" width="150px">
+<p>targetNotFound</p></td>
+<td class="whs27">
+<p>"The Target search value was not found."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">155</p></td>
+<td class="whs26" width="150px">
+<p>calNotImpl</p></td>
+<td class="whs27">
+<p>"The Calibration feature requested is not implemented."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">156</p></td>
+<td class="whs26" width="150px">
+<p>calClassNotValidForCalType</p></td>
+<td class="whs27">
+<p>"SENS:CORR:CCH measurement selection set to none"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">158</p></td>
+<td class="whs26" width="150px">
+<p>calNotValidForConfidenceChe</p></td>
+<td class="whs27">
+<p>"Selected measurement does not have a calibration valid for Confidence 
+ Check"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">159</p></td>
+<td class="whs26" width="150px">
+<p>invalidPort</p></td>
+<td class="whs27">
+<p>"Specified port is out of range"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">160</p></td>
+<td class="whs26" width="150px">
+<p>invalidPortPath</p></td>
+<td class="whs27">
+<p><span style="mso-spacerun: yes;">&nbsp;</span>"ROUT:PATH:DEF:PORT 
+ &nbsp;<span>x</span>, 
+ y does not match measurement; setting to defaults"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">161</p></td>
+<td class="whs26" width="150px">
+<p>ioInvalidWrite</p></td>
+<td class="whs27">
+<p>"Attempted I/O write while port set to read only."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">162</p></td>
+<td class="whs26" width="150px">
+<p>ioInvalidRead</p></td>
+<td class="whs27">
+<p>"Attempted I/O read from write only port."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">163</p></td>
+<td class="whs26" width="150px">
+<p>calsetNotFound</p></td>
+<td class="whs27">
+<p>"Requested Cal Set was not found in Cal Set Storage."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">164</p></td>
+<td class="whs26" width="150px">
+<p>noCalSetSelected</p></td>
+<td class="whs27">
+<p>"There is no Cal Set currently selected for the specified channel."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">165</p></td>
+<td class="whs26" width="150px">
+<p>cantDeleteCalSetInUse</p></td>
+<td class="whs27">
+<p>"Cannot delete a Cal Set while it is being used."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">166</p></td>
+<td class="whs26" width="150px">
+<p>calsetStimChange</p></td>
+<td class="whs27">
+<p>"Channel stimulus settings changed to match selected Cal Set."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">167</p></td>
+<td class="whs26" width="150px">
+<p>exceedMaxCalSets</p></td>
+<td class="whs27">
+<p>"Exceeded the maximum number of cal sets."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">168</p></td>
+<td class="whs26" width="150px">
+<p>calCouldNotTurnOn</p></td>
+<td class="whs27">
+<p>"A valid calibration is required before correction can be turned 
+ on."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">169</p></td>
+<td class="whs26" width="150px">
+<p>standardMeasurementRequired</p></td>
+<td class="whs27">
+<p><span style="mso-spacerun: yes;">&nbsp;</span>"The attempted operation 
+ can only be performed on a standard measurement type."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">170</p></td>
+<td class="whs26" width="150px">
+<p>noDivisorBuffer</p></td>
+<td class="whs27">
+<p>"A valid divisor buffer is required before normalization can be 
+ turned on."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">171</p></td>
+<td class="whs26" width="150px">
+<p>InvalidReceiverPowerCalParagraph</p></td>
+<td class="whs27">
+<p>"Receiver power cal requires the measurement to be of unratioed 
+ power."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">172</p></td>
+<td class="whs26" width="150px">
+<p>ecalCouldNotConfigure</p></td>
+<td colspan="1" class="whs28">
+<p>"Could not configure the Electronic Calibration system. Check to 
+ see if the module is plugged into the proper connector."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">173</p></td>
+<td class="whs26" width="150px">
+<p>measHasNoMemoryAlg</p></td>
+<td class="whs27">
+<p>"This measurement does not support memory operations"</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">174</p></td>
+<td class="whs26" width="150px">
+<p>measHasNoNormalizeAlg</p></td>
+<td class="whs27">
+<p>"This measurement does not support normalize operations."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs25" align="right" width="30px">
+<p class="whs22" align="left">175</p></td>
+<td class="whs26" width="150px">
+<p>userCharacterizationNotFound</p></td>
+<td class="whs27">
+<p>"User characterization was not found in the Electronic Calibration 
+ module."</p></td></tr>
+
+<tr class="whs42" valign="middle">
+<td x:num="" class="whs29" align="right" width="30px">
+<p class="whs22" align="left">176</p></td>
+<td class="whs30" width="150px">
+<p>measInvalidBufferSize</p></td>
+<td class="whs27">
+<p>"The data provided has an invalid number of points. It could not 
+ be stored."</p></td></tr>
+</tbody></table>
+
+&nbsp; 
+
+<br>&nbsp; 
+ 
+
+<br>&nbsp;<br><div id="image" class="whs43">
+<p><img src="SCPI_Errors_files/Tp.gif" onload="calcCorner();" onclick="scrolToTop()" onmouseout="Tpout(this)" onmouseover="Tpovr(this)" onmousedown="Tpdwn(this);" class="img_whs44" align="bottom" width="23px" border="0" height="23px"></p>
+</div>
+
+<script type="text/javascript" language="javascript1.2">
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+//-->
+</script>
+<form method="POST" action="http://www.helpcommunity.com/ehelpapi.asp?cmd=WebSave" name="ehelpform" target="_top" style="display:'none';">
+<input name="data" value="2A0C020B00000053435049204572726F72730D020B00000053435049204572726F727311020F00000050726F6475637420537570706F727412020B00000053435049204572726F7273130208000000504E412048656C7015020800000068656C702E68746D1703730100003C3F786D6C2076657273696F6E3D22312E30223F3E0D0A3C21444F43545950452053595354454D20226568656C706F70742E647464223E0D0A3C46494C452D4F5054494F4E532046494C452D56455253494F4E3D2232222046494C452D4B45593D2234653534643235355F323335395F343362655F626465355F323337366232633262303661223E0D0A3C2F46494C452D4F5054494F4E533E0D0A3C4548454C502D4F5054494F4E5320464F524D41542D56455253494F4E3D22312E30223E0D0A203C4F5054494F4E5320454E41424C45443D224E4F2220454D4245444445443D2259455322204D41494E2D57494E444F572D4F4E4C593D224E4F2220434F4D4D554E4954592D4E4F544946593D224E4F222046495253542D504147453D224E4F542D534554223E0D0A203C2F4F5054494F4E533E0D0A203C425554544F4E2D4C4142454C3E5765625365617263680D0A203C2F425554544F4E2D4C4142454C3E0D0A3C2F4548454C502D4F5054494F4E533E18010400000002000000702A" type="hidden">
+</form>
+
+
+
+</body></html>
