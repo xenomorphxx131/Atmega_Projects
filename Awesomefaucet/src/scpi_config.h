@@ -36,6 +36,6 @@
 /**************************************************************************
 *  VERSIONS                                                               *
 ***************************************************************************/
-	#define FIRMWARE_VERSION	"FIRMWARE REV 2.0"
+	#define FIRMWARE_VERSION	"FIRMWARE REV 2.1"
 	
 #endif // SCPI_CONFIG_H_

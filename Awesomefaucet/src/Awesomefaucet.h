@@ -18,7 +18,6 @@
     #define DETECTION_HEIGHT 2.5
     #define STEADY_FOOT_COUNT 2
     #define LEAKAGE_RATE 0.00024
-    #define MAX_LASER_POWER 4
     
     void process_soft_timers(void);
     void process_range_reading(void);

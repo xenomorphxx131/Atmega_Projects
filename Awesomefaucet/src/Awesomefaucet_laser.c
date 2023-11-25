@@ -13,6 +13,7 @@ extern bool update_laser_value;
 void update_laser()
 {
     // Brightness seems to go from about 1 or 2 in low light to 50 in moderate indoor light.
+    // Set darkness setting in th range to 63
     uint16_t brightness = 0;
     uint8_t power = 0;
     if (update_laser_value)

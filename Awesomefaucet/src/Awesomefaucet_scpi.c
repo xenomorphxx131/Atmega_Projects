@@ -557,14 +557,14 @@ void start_ALS_measurement()
 ***************************************************************************/
 bool ALS_measurement_ready()
 {
-    return ((I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_REG_RESULT_INTERRUPT_STATUS_GPIO ) & 0x38 ) == (4 << 3));
+    return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_REG_RESULT_INTERRUPT_STATUS_GPIO ) & 0x38 ) == (4 << 3);
 }
 /**************************************************************************
 *  Measurement Running                                                    *
 ***************************************************************************/
 bool ALS_sensor_busy()
 {
-    return ((I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_REG_RESULT_ALS_STATUS ) & 0x01) == 0);
+    return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_REG_RESULT_ALS_STATUS ) & 0x01) == 0;
 }
 /**************************************************************************
 *  Clear Port                                                             *
@@ -576,11 +576,17 @@ void clr_i2c (char *arg, IO_pointers_t IO)
 /**************************************************************************
 *  SCPI Laser On                                                          *
 ***************************************************************************/
-void scpi_laser_on(char *arg, IO_pointers_t IO) { laser_on(true); }
+void scpi_laser_on(char *arg, IO_pointers_t IO)
+{
+    laser_on(true);
+}
 /**************************************************************************
 *  SCPI Laser Off                                                         *
 ***************************************************************************/
-void scpi_laser_off (char *arg, IO_pointers_t IO) { laser_on(false); }
+void scpi_laser_off (char *arg, IO_pointers_t IO)
+{
+    laser_on(false);
+}
 /**************************************************************************
 *  Laser On/Off                                                           *
 ***************************************************************************/
@@ -600,15 +606,24 @@ void scpi_laser_power(char *arg, IO_pointers_t IO)
 /**************************************************************************
 *  Laser Power                                                            *
 ***************************************************************************/
-void laser_power(uint8_t power) { OCR4D = power; }
+void laser_power(uint8_t power)
+{
+    OCR4D = power;
+}
 /**************************************************************************
 *  SCPI Water On                                                          *
 ***************************************************************************/
-void scpi_water_on (char *arg, IO_pointers_t IO) { water_on(true); }
+void scpi_water_on (char *arg, IO_pointers_t IO)
+{
+    water_on(true);
+}
 /**************************************************************************
 *  SCPI Water Off                                                         *
 ***************************************************************************/
-void scpi_water_off (char *arg, IO_pointers_t IO) { water_on(false); }
+void scpi_water_off (char *arg, IO_pointers_t IO)
+{
+    water_on(false);
+}
 /**************************************************************************
 *  Water On                                                               *
 ***************************************************************************/
