@@ -111,7 +111,6 @@ void process_range_reading()
     if (range_measurement_ready())
     {
         IIR_range_reading = 0.88 * IIR_range_reading + 0.12 * get_range();
-        start_range_measurement();
         if (IIR_range_reading > largest_reading)
             largest_reading = IIR_range_reading;
 
