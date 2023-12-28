@@ -3,17 +3,12 @@
  *  Awesomefaucet                                                           *
  *                                                                          *
  ****************************************************************************/
-
 #include "Awesomefaucet.h"
 
 /**************************************************************************
 *  Create the timer update control global                                 *
 ***************************************************************************/
-uint8_t     steady_foot_counter     	= 0;
-double      IIR_range_reading           = 0;
-double      largest_reading             = 0;
-bool        foot_present                = false;
-bool        update_timers               = false;
+bool update_timers = false;
 /**************************************************************************
 *                            Main                                         *
 ***************************************************************************/
@@ -96,33 +91,4 @@ int main(void)
 ISR(TIMER0_OVF_vect)
 {
     update_timers = true;
-}
-/****************************************************************************
-*    Process Range Reading                                                  *
-*****************************************************************************/
-void process_range_reading()
-{
-    bool foot_present_now = false;
-    if (range_measurement_ready())
-    {
-        IIR_range_reading = 0.88 * IIR_range_reading + 0.12 * get_range();
-        if (IIR_range_reading > largest_reading)
-            largest_reading = IIR_range_reading;
-
-        foot_present_now = (IIR_range_reading < largest_reading - DETECTION_HEIGHT * ONE_mm) ? true : false;
-        
-        if (!foot_present_now)
-        {
-            steady_foot_counter = 0;
-            foot_present = false;
-        }
-        
-        if (foot_present_now && (steady_foot_counter <= STEADY_FOOT_COUNT))
-            steady_foot_counter++;
-        
-        if (steady_foot_counter > STEADY_FOOT_COUNT)
-            foot_present = true;
-    }
-    else if (!range_sensor_busy())
-        start_range_measurement();
 }

@@ -40,6 +40,6 @@ void process_soft_timers()
         }
         
         if (largest_reading >= LEAKAGE_RATE)
-            largest_reading -= LEAKAGE_RATE; //Leaky integrator leakage rate
+            largest_reading -= LEAKAGE_RATE; // Leaky integrator leakage rate
     }
 }
