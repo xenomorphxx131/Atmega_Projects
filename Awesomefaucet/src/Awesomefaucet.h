@@ -21,5 +21,4 @@
     
     void process_soft_timers(void);
     void process_range_reading(void);
-    void update_water(void);
 #endif
