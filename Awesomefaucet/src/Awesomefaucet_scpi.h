@@ -10,9 +10,9 @@
     #include <stdlib.h>					// atoi used in 'scpi_laser_power'
     #include <process_USB.h>
     #include <bootloader.h>				// 'Jump_To_Bootloader'
-    #include <VL6180X_SM.h>
     #include "scpi_config.h"
     #include "Awesomefaucet_board.h"
+    #include "Awesomefaucet_sensor.h"
 /**************************************************************************
 * Create a data structure to contain the load box state                   *
 ***************************************************************************/
@@ -63,27 +63,18 @@ typedef struct scpi_node_P {
 	void st_WAI ( char *arg, IO_pointers_t IO );
     void debug (char *arg, IO_pointers_t IO);
     void scpi_get_range (char *arg, IO_pointers_t IO);
-    uint8_t get_range(void);
-    void start_range_measurement(void);
-    bool range_measurement_ready(void);
-    bool range_sensor_busy(void);
     void scpi_get_als(char *arg, IO_pointers_t IO);
-    uint16_t get_als_blocking(void);
-    uint16_t read_als(void);
-    void start_ALS_measurement(void);
-    bool ALS_measurement_ready(void);
-    bool ALS_sensor_busy(void);
+    void scpi_laser_power(char *arg, IO_pointers_t IO);
+    void scpi_water_on (char *arg, IO_pointers_t IO);
+    void scpi_water_off (char *arg, IO_pointers_t IO);
+    void scpi_store_floordarkness( char *arg, IO_pointers_t IO );
+    void scpi_get_floordarkness( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
     void scpi_laser_on (char *arg, IO_pointers_t IO);
     void scpi_laser_off (char *arg, IO_pointers_t IO);
     void laser_on(bool on);
-    void scpi_laser_power(char *arg, IO_pointers_t IO);
     void laser_power(uint8_t power);
-    void scpi_water_on (char *arg, IO_pointers_t IO);
-    void scpi_water_off (char *arg, IO_pointers_t IO);
     void water_on(bool on);
-    void scpi_store_floordarkness( char *arg, IO_pointers_t IO );
-    void scpi_get_floordarkness( char *arg, IO_pointers_t IO );
     uint8_t get_darkness_setting(void);
 	void remove_ws ( char *arg );
 /**************************************************************************
