@@ -136,7 +136,9 @@ SRC = $(TARGET).c \
 	  Awesomefaucet_scpi.c \
 	  Awesomefaucet_laser.c \
 	  Awesomefaucet_water.c \
+	  Awesomefaucet_range.c \
 	  Awesomefaucet_sensor.c \
+	  Awesomefaucet_timers.c \
 	  Descriptors.c \
 	  $(LUFA_SRC_USB) \
 	  $(LUFA_SRC_USBCLASS) \

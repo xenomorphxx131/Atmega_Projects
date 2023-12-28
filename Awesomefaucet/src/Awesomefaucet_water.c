@@ -6,7 +6,6 @@
 #include "Awesomefaucet_water.h"
 
 extern uint16_t water_on_debounce_timer;
-extern bool water_debounce_timer_armed;
 extern bool water_debounce_timer_en;
 extern bool foot_present;
 
@@ -15,6 +14,8 @@ extern bool foot_present;
  *****************************************************************************/
 void update_water()
 {
+	static bool water_debounce_timer_armed = false;
+	
     if (foot_present)
     {
         water_on(true);

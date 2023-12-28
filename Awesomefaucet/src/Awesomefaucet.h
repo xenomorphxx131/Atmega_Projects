@@ -10,15 +10,11 @@
     #include "Awesomefaucet_scpi.h"
     #include "Awesomefaucet_laser.h"
     #include "Awesomefaucet_water.h"
-    
-    #define round(x) ((x)>=0 ? (long)((x)+0.5):(long)((x)-0.5))
-    #define ONE_SECOND round(1 / 0.001024) // Should be 977-ish
-    #define ONE_MINUTE ONE_SECOND * 60
+    #include "Awesomefaucet_timers.h"
+
     #define ONE_mm 1
     #define DETECTION_HEIGHT 2.5
     #define STEADY_FOOT_COUNT 2
-    #define LEAKAGE_RATE 0.00024
-    
-    void process_soft_timers(void);
+
     void process_range_reading(void);
 #endif
