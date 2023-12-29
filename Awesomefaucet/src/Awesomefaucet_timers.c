@@ -9,8 +9,9 @@ extern bool update_timers;
 bool update_laser_value;
 uint16_t water_on_debounce_timer = 0;
 uint16_t laser_brightness_timer = 0;
-extern double largest_reading;
+// extern uint16_t largest_reading;
 bool water_debounce_timer_en = false;
+bool range_leakage_timeout = false;
 
 /****************************************************************************
 *     Process Soft Timers                                                   *
@@ -39,7 +40,8 @@ void process_soft_timers()
             water_on_debounce_timer = 0;
         }
         
-        if (largest_reading >= LEAKAGE_RATE)
-            largest_reading -= LEAKAGE_RATE; // Leaky integrator leakage rate
+		range_leakage_timeout = true;
+        // if (largest_reading >= LEAKAGE_RATE)
+            // largest_reading -= LEAKAGE_RATE; // Leaky integrator leakage rate
     }
 }

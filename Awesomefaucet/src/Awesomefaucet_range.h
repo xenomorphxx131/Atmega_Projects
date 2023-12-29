@@ -14,6 +14,7 @@
 
 	#define DETECTION_HEIGHT_mm 2.5
 	#define STEADY_FOOT_COUNT 2
+    #define LEAKAGE_RATE 0.00024
 
 	void process_range_reading(void);
 

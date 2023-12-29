@@ -4,26 +4,29 @@
  *                                                                          *
  ****************************************************************************/
 #include "Awesomefaucet_range.h"
-double largest_reading = 0; 		// Extern'ed in timers to create "leakage"
-bool foot_present = false;			// Extern'ed in water to enable water
 
-// #define iir_value 235 // Was 0.88 which is more like 225
+bool foot_present = false;		// Extern'ed in water to enable water
+extern bool range_leakage_timeout;
+extern float iir_value;
+
+// #define iir_value 235 		// Was 0.88 which is more like 225
 
 /****************************************************************************
 *    Process Range Reading                                                  *
 *****************************************************************************/
 void process_range_reading()
 {
+	static float largest_reading = 0;
+	static float IIR_range_reading = 0;
 	static uint8_t steady_foot_counter = 0;
-	static double IIR_range_reading = 0;
     bool foot_present_now = false;
-	uint8_t iir_value = 0;
+	// float iir_value = 0;
 	
-	iir_value = get_IIR_value();
+	// iir_value = (float)get_IIR_value();
 
     if (range_measurement_ready())
     {
-        IIR_range_reading = iir_value * (IIR_range_reading / 256) + (256 - iir_value) * ((double)get_range() / 256);
+        IIR_range_reading = iir_value * IIR_range_reading + (1 - iir_value) * get_range();
         if (IIR_range_reading > largest_reading)
             largest_reading = IIR_range_reading;
 
@@ -43,4 +46,14 @@ void process_range_reading()
     }
     else if (!range_sensor_busy())
         start_range_measurement();
+	
+	/***********************************************************
+	 *    Apply leakage or "downward" bias to largest reading  *
+	 ***********************************************************/
+	if (range_leakage_timeout)
+	{
+		if (largest_reading >= LEAKAGE_RATE && largest_reading > 0)
+			largest_reading -= LEAKAGE_RATE; // Leaky integrator leakage rate
+		range_leakage_timeout = false;
+	}
 }

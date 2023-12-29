@@ -14,7 +14,6 @@
 
     #define round(x) ((x)>=0 ? (long)((x)+0.5):(long)((x)-0.5))
     #define ONE_SECOND round(1 / 0.001024) // Should be 977-ish
-    #define LEAKAGE_RATE 0.00024
 
 	void process_soft_timers(void);
 

@@ -17,7 +17,7 @@ char const error_message2[]	PROGMEM = "-112,Argument too long";
 char const error_message3[] PROGMEM = "-113,Bad path or header: ";
 uint8_t EEMEM FLOOR_DARKNESS[MAX_DARKNESS_CHARS];
 uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
-uint8_t iir_value = 0;
+float iir_value = 0;
 uint8_t darkness_value = 0;
 bool laser_auto = true;
 uint8_t laser_power = 0;
@@ -623,7 +623,7 @@ void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_IIR_value( char *arg, IO_pointers_t IO )
 {
-    fprintf(IO.USB_stream, "%d\r\n", get_IIR_value());
+    fprintf(IO.USB_stream, "%f\r\n", get_IIR_value());
 }
 /**************************************************************************
 *  Update IIR Factor from EEPROM                                          *
@@ -634,11 +634,11 @@ void update_IIR_value()
 	// Only update from EEPROM as needed.
     eeprom_busy_wait();
     eeprom_read_block((void*)&iir_string, (const void *)&IIR_VALUE, MAX_IIR_CHARS);
-    iir_value = (uint8_t)atoi(iir_string);
+    iir_value = (float)atoi(iir_string) / 256;
 }
-/**************************************************************************
-*  Retrieve IIR Factor from EEPROM                                        *
-***************************************************************************/
+// /**************************************************************************
+// *  Retrieve IIR Factor from EEPROM                                        *
+// ***************************************************************************/
 uint8_t get_IIR_value()
 {
     return iir_value;
