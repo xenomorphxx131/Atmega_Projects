@@ -9,7 +9,6 @@ extern bool update_timers;
 bool update_laser_value;
 uint16_t water_on_debounce_timer = 0;
 uint16_t laser_brightness_timer = 0;
-// extern uint16_t largest_reading;
 bool water_debounce_timer_en = false;
 bool range_leakage_timeout = false;
 
@@ -21,27 +20,29 @@ void process_soft_timers()
     if (update_timers) //  Should happen every 1.024ms
     {
         update_timers = false;
-        
+        range_leakage_timeout = true;
         laser_brightness_timer++;
-        if (laser_brightness_timer == ONE_SECOND * 5) // change to ONE_MINUTE after debug??
+		
+        if (water_debounce_timer_en)
+            water_on_debounce_timer++;
+		
+		/*******************************************
+		 *     Laser Brightness Timer              *
+		 *******************************************/
+        if (laser_brightness_timer >= ONE_SECOND * 5)
         {
             start_ALS_measurement();
             update_laser_value = true;
             laser_brightness_timer = 0;
         }
-        
-        if (water_debounce_timer_en)
-            water_on_debounce_timer++;
-        
-        if (water_on_debounce_timer == ONE_SECOND * 2)
+		/*******************************************
+		 *     Water Debounce Timer                *
+		 *******************************************/
+        if (water_on_debounce_timer >= ONE_SECOND * 2)
         {
             water_on(false);
             water_debounce_timer_en = false;
             water_on_debounce_timer = 0;
         }
-        
-		range_leakage_timeout = true;
-        // if (largest_reading >= LEAKAGE_RATE)
-            // largest_reading -= LEAKAGE_RATE; // Leaky integrator leakage rate
     }
 }

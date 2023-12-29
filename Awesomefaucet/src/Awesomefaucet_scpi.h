@@ -65,6 +65,7 @@ typedef struct scpi_node_P {
     void debug (char *arg, IO_pointers_t IO);
     void scpi_get_range (char *arg, IO_pointers_t IO);
     void scpi_get_als(char *arg, IO_pointers_t IO);
+	void scpi_get_laserpower( char *arg, IO_pointers_t IO );
     void scpi_laser_power(char *arg, IO_pointers_t IO);
     void scpi_laser_auto (char *arg, IO_pointers_t IO);
     void scpi_water_on (char *arg, IO_pointers_t IO);

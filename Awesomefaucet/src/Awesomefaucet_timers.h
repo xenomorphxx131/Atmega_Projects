@@ -13,7 +13,7 @@
 	#include "Awesomefaucet_water.h"   	// Needed to control water
 
     #define round(x) ((x)>=0 ? (long)((x)+0.5):(long)((x)-0.5))
-    #define ONE_SECOND round(1 / 0.001024) // Should be 977-ish
+    #define ONE_SECOND round(1 / 0.001024) // Should be about 977
 
 	void process_soft_timers(void);
 

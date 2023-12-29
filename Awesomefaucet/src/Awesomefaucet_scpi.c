@@ -17,7 +17,7 @@ char const error_message2[]	PROGMEM = "-112,Argument too long";
 char const error_message3[] PROGMEM = "-113,Bad path or header: ";
 uint8_t EEMEM FLOOR_DARKNESS[MAX_DARKNESS_CHARS];
 uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
-float iir_value = 0;
+double iir_value = 0;
 uint8_t darkness_value = 0;
 bool laser_auto = true;
 uint8_t laser_power = 0;
@@ -317,6 +317,11 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-4];
         command_array_P[i++].function = &scpi_get_floordarkness;
+		
+        command_array_P[i].name       = PSTR("LASER?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-5];
+        command_array_P[i++].function = &scpi_get_laserpower;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
@@ -500,6 +505,7 @@ void scpi_get_range(char *arg, IO_pointers_t IO)
         while(range_sensor_busy()); // wait it out
     }
                                     // Always
+	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", get_range());
     start_range_measurement();
 }
@@ -508,7 +514,8 @@ void scpi_get_range(char *arg, IO_pointers_t IO)
 ***************************************************************************/
 void scpi_get_als(char *arg, IO_pointers_t IO)
 {
-    fprintf(IO.USB_stream, "%d\r\n", get_als_blocking());
+    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
+	fprintf(IO.USB_stream, "%d\r\n", get_als_blocking());
 }
 /**************************************************************************
 *  Clear Port                                                             *
@@ -583,7 +590,8 @@ void scpi_store_floordarkness( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_floordarkness( char *arg, IO_pointers_t IO )
 {
-    fprintf(IO.USB_stream, "%d\r\n", get_darkness_setting());
+    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
+	fprintf(IO.USB_stream, "%d\r\n", get_darkness_setting());
 }
 /**************************************************************************
 *  Update Floor Darkness Scale Factor from EEPROM                         *
@@ -623,7 +631,8 @@ void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_IIR_value( char *arg, IO_pointers_t IO )
 {
-    fprintf(IO.USB_stream, "%f\r\n", get_IIR_value());
+    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
+	fprintf(IO.USB_stream, "%1.5f\r\n", iir_value);
 }
 /**************************************************************************
 *  Update IIR Factor from EEPROM                                          *
@@ -634,7 +643,7 @@ void update_IIR_value()
 	// Only update from EEPROM as needed.
     eeprom_busy_wait();
     eeprom_read_block((void*)&iir_string, (const void *)&IIR_VALUE, MAX_IIR_CHARS);
-    iir_value = (float)atoi(iir_string) / 256;
+    iir_value = (double)atoi(iir_string) / 256;
 }
 // /**************************************************************************
 // *  Retrieve IIR Factor from EEPROM                                        *
@@ -642,4 +651,12 @@ void update_IIR_value()
 uint8_t get_IIR_value()
 {
     return iir_value;
+}
+/**************************************************************************
+*  SCPI Retrieve Laser Power Setting                                      *
+***************************************************************************/
+void scpi_get_laserpower( char *arg, IO_pointers_t IO )
+{
+    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
+	fprintf(IO.USB_stream, "%d\r\n", OCR4D);
 }

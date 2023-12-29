@@ -5,24 +5,19 @@
  ****************************************************************************/
 #include "Awesomefaucet_range.h"
 
-bool foot_present = false;		// Extern'ed in water to enable water
+bool foot_present = false;				// Extern'ed in water to enable water
 extern bool range_leakage_timeout;
-extern float iir_value;
-
-// #define iir_value 235 		// Was 0.88 which is more like 225
+extern double iir_value;
 
 /****************************************************************************
 *    Process Range Reading                                                  *
 *****************************************************************************/
 void process_range_reading()
 {
-	static float largest_reading = 0;
-	static float IIR_range_reading = 0;
+	static double largest_reading = 0;
+	static double IIR_range_reading = 0;
 	static uint8_t steady_foot_counter = 0;
     bool foot_present_now = false;
-	// float iir_value = 0;
-	
-	// iir_value = (float)get_IIR_value();
 
     if (range_measurement_ready())
     {
@@ -39,9 +34,12 @@ void process_range_reading()
         }
         
         if (foot_present_now && (steady_foot_counter <= STEADY_FOOT_COUNT))
+		{
+			foot_present = false;
             steady_foot_counter++;
+		}
         
-        if (steady_foot_counter > STEADY_FOOT_COUNT)
+        if (steady_foot_counter && (steady_foot_counter > STEADY_FOOT_COUNT))
             foot_present = true;
     }
     else if (!range_sensor_busy())

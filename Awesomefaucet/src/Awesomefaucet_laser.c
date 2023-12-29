@@ -14,19 +14,19 @@ extern uint8_t laser_power;
  ****************************************************************************/
 void update_laser()
 {
-    // Brightness seems to go from about 1 or 2 in low light to 50 in moderate indoor light.
-    // Set darkness setting in the range to 63
-    uint16_t brightness = 0;
-    uint8_t power = 0;
+    // ALS goes from about 1 or 2 in low light to 50 in moderate indoor light to 150 in relatively bright light.
+	// On a bright piece of white paper is goes 1300
+	// The first order tweak to this is floor darkness.
+	// Set darkness to 10 for a dark floor and 1 for a light floor.
+	uint16_t setting = 0;
     if (update_laser_value)
 	{
 		if (laser_auto)
 		{
-			brightness = get_als_blocking();
-			power = (uint8_t)round(brightness / 50 * MAX_LASER_POWER);
-			if (power < 1) power = 1;
-			if (power > MAX_LASER_POWER) power = MAX_LASER_POWER;
-			set_laser_power(power * get_darkness_setting());
+			setting = (get_als_blocking() / 8);// * get_darkness_setting()
+			if (setting > 255) setting = 255;
+			if (setting == 0) setting = 1;
+			set_laser_power((uint8_t)setting);
 		}
 		else
 			set_laser_power(laser_power);
