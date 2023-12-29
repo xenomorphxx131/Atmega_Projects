@@ -16,7 +16,11 @@ char const error_message1[]	PROGMEM = "-112,Program mnemonic too long";
 char const error_message2[]	PROGMEM = "-112,Argument too long";
 char const error_message3[] PROGMEM = "-113,Bad path or header: ";
 uint8_t EEMEM FLOOR_DARKNESS[MAX_DARKNESS_CHARS];
+uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
+uint8_t iir_value = 0;
+uint8_t darkness_value = 0;
 char darkness_string[MAX_DARKNESS_CHARS];
+char iir_string[MAX_DARKNESS_CHARS];
 /**************************************************************************
 *  Build input string from terminal then run SCPI command.                *
 ***************************************************************************/
@@ -282,7 +286,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_IDN_q;
     
-	command_array_P[i].name       = PSTR("DEBUG");
+	command_array_P[i].name       = PSTR("DEBUG?");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &debug;
@@ -292,16 +296,26 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
     
-        command_array_P[i].name       = PSTR("RANGE");
+        command_array_P[i].name       = PSTR("RANGE?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_get_range;
     
-        command_array_P[i].name       = PSTR("ALS");
+        command_array_P[i].name       = PSTR("ALS?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_get_als;
-    
+		
+        command_array_P[i].name       = PSTR("IIR?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i++].function = &scpi_get_IIR_value;
+		
+        command_array_P[i].name       = PSTR("DARK?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-4];
+        command_array_P[i++].function = &scpi_get_floordarkness;
+
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
@@ -341,22 +355,22 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_water_off;
-        
-	command_array_P[i].name       = PSTR("DARK");
+
+	command_array_P[i].name       = PSTR("STORE");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
-    
-        command_array_P[i].name       = PSTR("GET");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-1];
-        command_array_P[i++].function = &scpi_get_floordarkness;
-        
-        command_array_P[i].name       = PSTR("STORE");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_store_floordarkness;
-	
+		
+		command_array_P[i].name       = PSTR("IIR");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-1];
+		command_array_P[i++].function = &scpi_set_IIR_value;
+		
+		command_array_P[i].name       = PSTR("DARK");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-2];
+		command_array_P[i++].function = &scpi_store_floordarkness;
+
 	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
 }
 /**************************************************************************
@@ -371,7 +385,7 @@ void scpi_null_func( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void st_OPC_q ( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "1\n");
+	scpi_prStr_P(PSTR("1\r\n"), IO.USB_stream);
 }
 /**************************************************************************
 *  Empty/placeholder function                                             *
@@ -394,13 +408,13 @@ void sys_rst_btloader( char *arg, IO_pointers_t IO )
 void sys_error_q( char *arg, IO_pointers_t IO )
 {
 	if (error_number == 0)
-		scpi_prStr_P(PSTR("+0,\"No error\"\n"), IO.USB_stream);
+		scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
 	else
 	{
 		scpi_prStr_P(error_messages[error_number], IO.USB_stream);
 		if (bad_command[0] != NUL)
 		{
-			fprintf(IO.USB_stream, "%s\n", bad_command);
+			fprintf(IO.USB_stream, "%s\r\n", bad_command);
 			bad_command[0] = NUL;
 		}	
 		error_number--;
@@ -412,7 +426,7 @@ void sys_error_q( char *arg, IO_pointers_t IO )
 void scpi_ver( char *arg, IO_pointers_t IO )
 {
 	scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO.USB_stream);
-	scpi_prStr_P(PSTR("\n"), IO.USB_stream);
+	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
 /**************************************************************************
 *  *IDN? function                                                         *
@@ -469,6 +483,7 @@ void debug(char *arg, IO_pointers_t IO)
     fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range_measurement_ready());
     fprintf(IO.USB_stream, "Busy bit: %d\r\n", range_sensor_busy());
     fprintf(IO.USB_stream, "Reading: %d\r\n", get_range());
+	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
 /**************************************************************************
 *  SCPI Get Range Reading                                                 *
@@ -488,12 +503,15 @@ void scpi_get_range(char *arg, IO_pointers_t IO)
         while(range_sensor_busy()); // wait it out
     }
                                     // Always
-    fprintf(IO.USB_stream, "Reading is: %d\r\n", get_range());
+	fprintf(IO.USB_stream, "%d\r\n", get_range());
     start_range_measurement();
 }
+/**************************************************************************
+*  SCPI Get Amobient Light Sensor Reading                                 *
+***************************************************************************/
 void scpi_get_als(char *arg, IO_pointers_t IO)
 {
-    fprintf(IO.USB_stream, "Reading is: %d\r\n", get_als_blocking());
+    fprintf(IO.USB_stream, "%d\r\n", get_als_blocking());
 }
 /**************************************************************************
 *  Clear Port                                                             *
@@ -579,6 +597,7 @@ void scpi_store_floordarkness( char *arg, IO_pointers_t IO )
 	{
 		eeprom_busy_wait();
 		eeprom_write_block(arg, &FLOOR_DARKNESS, MAX_DARKNESS_CHARS);
+		update_darkness_setting();
 	}
 	else
 		scpi_add_error_P(error_message2, IO);
@@ -588,14 +607,63 @@ void scpi_store_floordarkness( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_floordarkness( char *arg, IO_pointers_t IO )
 {
-    fprintf(IO.USB_stream, "Darkness is: %d\r\n", get_darkness_setting());
+    fprintf(IO.USB_stream, "%d\r\n", get_darkness_setting());
 }
 /**************************************************************************
-*  Retrieve Floor Darkness Scale Factor from EEPROM                       *
+*  Update Floor Darkness Scale Factor from EEPROM                         *
+***************************************************************************/
+void update_darkness_setting()
+{
+	// Super slow in this architecture.
+	// Only update from EEPROM as needed.
+    eeprom_busy_wait();
+    eeprom_read_block((void*)&darkness_string, (const void *)&FLOOR_DARKNESS, MAX_DARKNESS_CHARS);
+    darkness_value = (uint8_t)atoi(darkness_string);
+}
+/**************************************************************************
+*  Retrieve Floor Darkness Factor from EEPROM                             *
 ***************************************************************************/
 uint8_t get_darkness_setting()
 {
+    return darkness_value;
+}
+/**************************************************************************
+*  Store IIR Factor to EEPROM                                             *
+***************************************************************************/
+void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
+{
+	if (strlen(arg) <= MAX_ARG_LEN) remove_ws(arg);
+    if (strlen(arg) <= 3 && strlen(arg) >= 1)
+	{
+		eeprom_busy_wait();
+		eeprom_write_block(arg, &IIR_VALUE, MAX_IIR_CHARS);
+		update_IIR_value();
+	}
+	else
+		scpi_add_error_P(error_message2, IO);
+}
+/**************************************************************************
+*  SCPI Retreive IIR Factor from EEPROM                                   *
+***************************************************************************/
+void scpi_get_IIR_value( char *arg, IO_pointers_t IO )
+{
+    fprintf(IO.USB_stream, "%d\r\n", get_IIR_value());
+}
+/**************************************************************************
+*  Update IIR Factor from EEPROM                                          *
+***************************************************************************/
+void update_IIR_value()
+{
+	// Super slow in this architecture.
+	// Only update from EEPROM as needed.
     eeprom_busy_wait();
-    eeprom_read_block((void*)&darkness_string, (const void *)&FLOOR_DARKNESS, MAX_DARKNESS_CHARS);
-    return (uint8_t)atoi(darkness_string);
+    eeprom_read_block((void*)&iir_string, (const void *)&IIR_VALUE, MAX_IIR_CHARS);
+    iir_value = (uint8_t)atoi(iir_string);
+}
+/**************************************************************************
+*  Retrieve IIR Factor from EEPROM                                        *
+***************************************************************************/
+uint8_t get_IIR_value()
+{
+    return iir_value;
 }

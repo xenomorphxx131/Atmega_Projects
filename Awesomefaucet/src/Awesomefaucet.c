@@ -71,6 +71,8 @@ int main(void)
     sei();                                          // Enable interrupts
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
     Setup_ScpiCommandsArray_P (commands_P);         // Build the command array (mostly pointers to PROGMEM)
+	update_IIR_value();								// Retreive IIR value from EEPROM
+	update_darkness_setting();						// Retreive floor darkness value from EEPROM
     VL6180X_Setup();                                // Enter the super secret setup commands for the VL6180x
     /****************************************************************************
      *        Main Loop                                                         *
