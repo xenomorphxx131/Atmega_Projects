@@ -19,6 +19,8 @@ uint8_t EEMEM FLOOR_DARKNESS[MAX_DARKNESS_CHARS];
 uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
 uint8_t iir_value = 0;
 uint8_t darkness_value = 0;
+bool laser_auto = true;
+uint8_t laser_power = 0;
 char darkness_string[MAX_DARKNESS_CHARS];
 char iir_string[MAX_DARKNESS_CHARS];
 /**************************************************************************
@@ -326,19 +328,14 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
     
-        command_array_P[i].name       = PSTR("ON");
+        command_array_P[i].name       = PSTR("AUTO");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
-        command_array_P[i++].function = &scpi_laser_on;
-        
-        command_array_P[i].name       = PSTR("OFF");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_laser_off;
+        command_array_P[i++].function = &scpi_laser_auto;
         
         command_array_P[i].name       = PSTR("POWER");
         command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_laser_power;
         
 	command_array_P[i].name       = PSTR("WATER");
@@ -521,41 +518,20 @@ void clr_i2c (char *arg, IO_pointers_t IO)
     reset_i2c();
 }
 /**************************************************************************
-*  SCPI Laser On                                                          *
+*  SCPI Laser Auto\                                                       *
 ***************************************************************************/
-void scpi_laser_on(char *arg, IO_pointers_t IO)
+void scpi_laser_auto(char *arg, IO_pointers_t IO)
 {
-    laser_on(true);
-}
-/**************************************************************************
-*  SCPI Laser Off                                                         *
-***************************************************************************/
-void scpi_laser_off (char *arg, IO_pointers_t IO)
-{
-    laser_on(false);
-}
-/**************************************************************************
-*  Laser On/Off                                                           *
-***************************************************************************/
-void laser_on(bool on)
-{
-    if (on) laser_power(255);
-    else    laser_power(0);
+    laser_auto = true;
 }
 /**************************************************************************
 *  SCPI Laser Power                                                       *
 ***************************************************************************/
 void scpi_laser_power(char *arg, IO_pointers_t IO)
-{ 
-    remove_ws(arg);
-    laser_power((uint8_t)atoi(arg));
-}
-/**************************************************************************
-*  Laser Power                                                            *
-***************************************************************************/
-void laser_power(uint8_t power)
 {
-    OCR4D = power;
+	remove_ws(arg);
+	laser_auto = false;
+    laser_power = (uint8_t)atoi(arg);
 }
 /**************************************************************************
 *  SCPI Water On                                                          *

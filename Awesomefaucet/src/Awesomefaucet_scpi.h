@@ -11,6 +11,7 @@
     #include <process_USB.h>
     #include <bootloader.h>				// 'Jump_To_Bootloader'
     #include "scpi_config.h"
+    // #include "Awesomefaucet_laser.h"
     #include "Awesomefaucet_board.h"
     #include "Awesomefaucet_sensor.h"
 /**************************************************************************
@@ -65,6 +66,7 @@ typedef struct scpi_node_P {
     void scpi_get_range (char *arg, IO_pointers_t IO);
     void scpi_get_als(char *arg, IO_pointers_t IO);
     void scpi_laser_power(char *arg, IO_pointers_t IO);
+    void scpi_laser_auto (char *arg, IO_pointers_t IO);
     void scpi_water_on (char *arg, IO_pointers_t IO);
     void scpi_water_off (char *arg, IO_pointers_t IO);
     void scpi_store_floordarkness( char *arg, IO_pointers_t IO );
@@ -72,10 +74,10 @@ typedef struct scpi_node_P {
 	void scpi_set_IIR_value( char *arg, IO_pointers_t IO );
 	void scpi_get_IIR_value( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
-    void scpi_laser_on (char *arg, IO_pointers_t IO);
-    void scpi_laser_off (char *arg, IO_pointers_t IO);
-    void laser_on(bool on);
-    void laser_power(uint8_t power);
+
+    // void scpi_laser_off (char *arg, IO_pointers_t IO);
+    // void laser_on(bool on);
+    // void laser_power(uint8_t power);
     void water_on(bool on);
     uint8_t get_darkness_setting(void);
 	void update_darkness_setting(void);
