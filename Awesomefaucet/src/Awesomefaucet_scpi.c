@@ -12,9 +12,9 @@
 char bad_command[MAX_TOKEN_LEN + 1] = "";
 PGM_P error_messages[ERROR_QUEUE_LEN + 1];
 int error_number = 0;
-char const error_message1[]	PROGMEM = "-112,Program mnemonic too long";
-char const error_message2[]	PROGMEM = "-112,Argument too long";
-char const error_message3[] PROGMEM = "-113,Bad path or header: ";
+char const error_mnemonic_too_long[]	PROGMEM = "-112,Program mnemonic too long";
+char const error_arg_too_long[]			PROGMEM = "-112,Argument too long";
+char const error_bad_path_or_header[] 	PROGMEM = "-113,Bad path or header: ";
 uint8_t EEMEM FLOOR_DARKNESS[MAX_DARKNESS_CHARS];
 uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
 uint8_t iir_value = 0;
@@ -22,14 +22,14 @@ uint8_t darkness_value = 0;
 bool laser_auto = true;
 uint8_t laser_power = 0;
 char darkness_string[MAX_DARKNESS_CHARS];
-char iir_string[MAX_DARKNESS_CHARS];
+char iir_string[MAX_IIR_CHARS];
 /**************************************************************************
 *  Build input string from terminal then run SCPI command.                *
 ***************************************************************************/
 void process_scpi_input( char * str_in, int *str_len, scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
 {
 	int16_t		ReceivedByte;
-	uint8_t		usb_data;										// Temporary SUB data storage
+	uint8_t		usb_data;										// Temporary USB data storage
 	
 	ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
 	while (ReceivedByte >= 0)
@@ -82,11 +82,11 @@ void scpi_process_cmd_P( char * input_string, scpi_commands_P_t cmd_array_P[], I
 			argument++;													// Move argument pointer past space
 		}
 		if (strlen(token) > MAX_TOKEN_LEN)								// Check for token length error
-		{	scpi_add_error_P(error_message1, IO);						// Document the error
+		{	scpi_add_error_P(error_mnemonic_too_long, IO);				// Document the error
 			break;														// Bail from the token search loop
 		}
 		if (strlen(argument) > MAX_ARG_LEN)								// Check for argument length error
-		{	scpi_add_error_P(error_message2, IO);						// Document the error
+		{	scpi_add_error_P(error_arg_too_long, IO);					// Document the error
 			break;														// Bail from the token search loop
 		}
 		
@@ -112,7 +112,7 @@ void scpi_process_cmd_P( char * input_string, scpi_commands_P_t cmd_array_P[], I
 
 		if (!valid_command) {
 			// if no match or implied match was not? found there was a real error
-			scpi_add_error_P(error_message3, IO);						// Indicate bad token
+			scpi_add_error_P(error_bad_path_or_header, IO);				// Indicate bad token
 			strncpy(bad_command, token, MAX_TOKEN_LEN);					// Send up to MAX_TOKEN_LEN of bad token
 			return;
 		}
@@ -583,7 +583,7 @@ void scpi_store_floordarkness( char *arg, IO_pointers_t IO )
 		update_darkness_setting();
 	}
 	else
-		scpi_add_error_P(error_message2, IO);
+		scpi_add_error_P(error_arg_too_long, IO);
 }
 /**************************************************************************
 *  SCPI Retrieve Floor Darkness Scale Factor from EEPROM                  *
@@ -624,7 +624,7 @@ void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
 		update_IIR_value();
 	}
 	else
-		scpi_add_error_P(error_message2, IO);
+		scpi_add_error_P(error_arg_too_long, IO);
 }
 /**************************************************************************
 *  SCPI Retreive IIR Factor from EEPROM                                   *
