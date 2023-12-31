@@ -7,7 +7,6 @@
 
 bool foot_present = false;				// Extern'ed in water to enable water
 extern bool range_leakage_timeout;
-
 /************************************
  *    IIR Value from EEPROM         *
  ************************************/
@@ -26,31 +25,32 @@ extern uint8_t iir_value;
 *****************************************************************************/
 void process_range_reading()
 {
-	static uint32_t largest_reading = 0;
-	static uint32_t IIR_range_reading = 0;
+	static long long max_reading = 0;
+	static long long IIR_range_reading = 0;
 
     if (range_measurement_ready())
     {
 		/********************
 		 *    IIR Filter    *
-		 ********************/	
-        IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * SCALEFACTOR * get_range()) / 256;
+		 ********************/
+		IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * get_range() * SCALEFACTOR ) / 256;
+		start_range_measurement();
 		
-        if (IIR_range_reading > largest_reading)
-            largest_reading = IIR_range_reading;
+        if (IIR_range_reading > max_reading)
+            max_reading = IIR_range_reading;
 
-        foot_present = (IIR_range_reading < (largest_reading - DETECTION_HEIGHT_SCALED)) ? true : false;
+        foot_present = (IIR_range_reading < (max_reading - DETECTION_HEIGHT_SCALED)) ? true : false;
     }
     else if (!range_sensor_busy())
         start_range_measurement();
-	
+
 	/***********************************************************
 	 *    Apply leakage or "downward" bias to largest reading  *
 	 ***********************************************************/
 	if (range_leakage_timeout)
 	{
-		if (largest_reading > LEAKAGE_RATE)
-			largest_reading -= LEAKAGE_RATE; // Leaky integrator leakage rate
+		if (max_reading - LEAKAGE_RATE >= 0)
+			max_reading -= LEAKAGE_RATE;
 		range_leakage_timeout = false;
 	}
 }
