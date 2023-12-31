@@ -20,6 +20,7 @@ uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
 uint8_t iir_value = 0;
 uint8_t darkness_value = 0;
 bool laser_auto = true;
+bool water_auto = true;
 uint8_t laser_power = 0;
 char darkness_string[MAX_DARKNESS_CHARS];
 char iir_string[MAX_IIR_CHARS];
@@ -270,7 +271,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 		command_array_P[i].name      = PSTR("VERSion?");
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-4]; // 
-		command_array_P[i++].function = &scpi_ver;
+		command_array_P[i++].function = &scpi_get_version_q;
 	// [[:]STATus]
 	// [[:]STATus:]OPERation
 	// [[:]STATus:]OPERation:CONDition?
@@ -301,12 +302,12 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].name       = PSTR("RANGE?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
-        command_array_P[i++].function = &scpi_get_range;
+        command_array_P[i++].function = &scpi_get_range_q;
     
         command_array_P[i].name       = PSTR("ALS?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_get_als;
+        command_array_P[i++].function = &scpi_get_als_q;
 		
         command_array_P[i].name       = PSTR("IIR?");
         command_array_P[i].implied    = false;
@@ -316,12 +317,12 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].name       = PSTR("DARK?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-4];
-        command_array_P[i++].function = &scpi_get_floordarkness;
+        command_array_P[i++].function = &scpi_get_floordarkness_q;
 		
         command_array_P[i].name       = PSTR("LASER?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-5];
-        command_array_P[i++].function = &scpi_get_laserpower;
+        command_array_P[i++].function = &scpi_get_laserpower_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
@@ -357,6 +358,11 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_water_off;
+		
+        command_array_P[i].name       = PSTR("AUTO");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i++].function = &scpi_water_auto;
 
 	command_array_P[i].name       = PSTR("STORE");
 	command_array_P[i].implied    = false;
@@ -399,9 +405,9 @@ void scpi_empty_func( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void sys_rst_btloader( char *arg, IO_pointers_t IO )
 {
-	scpi_prStr_P(PSTR("Bootloader Running..."), IO.USB_stream); // Why?
-	process_USB();                                              // Why?
-	Delay_MS(500);                                              // Why?
+	// scpi_prStr_P(PSTR("Bootloader Running..."), IO.USB_stream); // Why?
+	// process_USB();                                              // Why?
+	// Delay_MS(500);                                              // Why?
 	Jump_To_Bootloader();
 }
 /**************************************************************************
@@ -410,9 +416,10 @@ void sys_rst_btloader( char *arg, IO_pointers_t IO )
 void sys_error_q( char *arg, IO_pointers_t IO )
 {
 	if (error_number == 0)
-		scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
+		scpi_prStr_P(PSTR("\r\n+0,\"No error\"\r\n"), IO.USB_stream);
 	else
 	{
+		scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 		scpi_prStr_P(error_messages[error_number], IO.USB_stream);
 		if (bad_command[0] != NUL)
 		{
@@ -425,8 +432,9 @@ void sys_error_q( char *arg, IO_pointers_t IO )
 /**************************************************************************
 *  VERSION? function                                                      *
 ***************************************************************************/
-void scpi_ver( char *arg, IO_pointers_t IO )
+void scpi_get_version_q( char *arg, IO_pointers_t IO )
 {
+	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO.USB_stream);
 	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
@@ -435,15 +443,13 @@ void scpi_ver( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_IDN_q( char *arg, IO_pointers_t IO )
 {
+	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	scpi_prStr_P(PSTR(COMPANY_NAME), IO.USB_stream);
-    scpi_prStr_P(PSTR("  "), IO.USB_stream);
+    scpi_prStr_P(PSTR(" | "), IO.USB_stream);
 	scpi_prStr_P(PSTR(PROJECT_NAME), IO.USB_stream);
-    scpi_prStr_P(PSTR("  "), IO.USB_stream);
-	scpi_prStr_P(PSTR("Hardware: "), IO.USB_stream);
-    scpi_prStr_P(PSTR(HARDWARE_REV), IO.USB_stream);
-    scpi_prStr_P(PSTR("  "), IO.USB_stream);
-	scpi_prStr_P(PSTR("Firmware: "), IO.USB_stream);
-    scpi_prStr_P(PSTR(FIRMWARE_REV), IO.USB_stream);
+    scpi_prStr_P(PSTR(" | "), IO.USB_stream);
+	scpi_prStr_P(PSTR("Firmware Revision: "), IO.USB_stream);
+    scpi_prStr_P(PSTR(FIRMWARE_VERSION), IO.USB_stream);
     scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
 /**************************************************************************
@@ -490,7 +496,7 @@ void debug(char *arg, IO_pointers_t IO)
 /**************************************************************************
 *  SCPI Get Range Reading                                                 *
 ***************************************************************************/
-void scpi_get_range(char *arg, IO_pointers_t IO)
+void scpi_get_range_q(char *arg, IO_pointers_t IO)
 {
     if (range_measurement_ready())  // There's a reading pending
     {;}                             // For now do nothing
@@ -512,7 +518,7 @@ void scpi_get_range(char *arg, IO_pointers_t IO)
 /**************************************************************************
 *  SCPI Get Amobient Light Sensor Reading                                 *
 ***************************************************************************/
-void scpi_get_als(char *arg, IO_pointers_t IO)
+void scpi_get_als_q(char *arg, IO_pointers_t IO)
 {
     scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", get_als_blocking());
@@ -541,18 +547,28 @@ void scpi_laser_power(char *arg, IO_pointers_t IO)
     laser_power = (uint8_t)atoi(arg);
 }
 /**************************************************************************
+*  SCPI Water Auto                                                        *
+***************************************************************************/
+void scpi_water_auto (char *arg, IO_pointers_t IO)
+{
+    water_auto = true;
+	water_on(false);
+}
+/**************************************************************************
 *  SCPI Water On                                                          *
 ***************************************************************************/
 void scpi_water_on (char *arg, IO_pointers_t IO)
 {
-    water_on(true);
+    water_auto = false;
+	water_on(true);
 }
 /**************************************************************************
 *  SCPI Water Off                                                         *
 ***************************************************************************/
 void scpi_water_off (char *arg, IO_pointers_t IO)
 {
-    water_on(false);
+    water_auto = false;
+	water_on(false);
 }
 /**************************************************************************
 *  Water On                                                               *
@@ -588,7 +604,7 @@ void scpi_store_floordarkness( char *arg, IO_pointers_t IO )
 /**************************************************************************
 *  SCPI Retrieve Floor Darkness Scale Factor from EEPROM                  *
 ***************************************************************************/
-void scpi_get_floordarkness( char *arg, IO_pointers_t IO )
+void scpi_get_floordarkness_q( char *arg, IO_pointers_t IO )
 {
     scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", get_darkness_setting());
@@ -648,7 +664,7 @@ void update_IIR_value()
 /**************************************************************************
 *  SCPI Retrieve Laser Power Setting                                      *
 ***************************************************************************/
-void scpi_get_laserpower( char *arg, IO_pointers_t IO )
+void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 {
     scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", OCR4D);

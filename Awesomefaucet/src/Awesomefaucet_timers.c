@@ -6,6 +6,7 @@
 #include "Awesomefaucet_timers.h"
 
 extern bool update_timers;
+extern bool water_auto;
 bool update_laser_value;
 uint16_t water_on_debounce_timer = 0;
 uint16_t laser_brightness_timer = 0;
@@ -35,12 +36,13 @@ void process_soft_timers()
             update_laser_value = true;
             laser_brightness_timer = 0;
         }
+
 		/*******************************************
 		 *     Water Debounce Timer                *
 		 *******************************************/
         if (water_on_debounce_timer >= ONE_SECOND * 2)
         {
-            water_on(false);
+            if (water_auto) water_on(false);
             water_debounce_timer_en = false;
             water_on_debounce_timer = 0;
         }

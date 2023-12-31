@@ -14,15 +14,6 @@
     #include "Awesomefaucet_board.h"
     #include "Awesomefaucet_sensor.h"
 /**************************************************************************
-* Create a data structure to contain the load box state                   *
-***************************************************************************/
-	#define	COMPANY_NAME		"Hypertronix"
-	#define	PROJECT_NAME		"Awesome Faucet"
-	#define	HARDWARE_REV		"2.0"
-	#define	FIRMWARE_REV		"1.2"
-	#define NUL					'\0'
-	#define DEL_KEY				127
-/**************************************************************************
 *  Create a data structure to contain the various IO pointers             *
 *  that need global scope                                                 *
 ***************************************************************************/
@@ -55,22 +46,23 @@ typedef struct scpi_node_P {
 	void scpi_empty_func ( char *arg, IO_pointers_t IO );
 	void sys_rst_btloader ( char *arg, IO_pointers_t IO );
 	void sys_error_q ( char *arg, IO_pointers_t IO );
-	void scpi_ver(char*, IO_pointers_t IO);
+	void scpi_get_version_q(char*, IO_pointers_t IO);
 	void scpi_IDN_q( char *arg, IO_pointers_t IO );
 	void st_CLS ( char *arg, IO_pointers_t IO );
 	void st_RST ( char *arg, IO_pointers_t IO );
 	void st_TST ( char *arg, IO_pointers_t IO ); // See product specific SCPI file <project_name>_scpi.h
 	void st_WAI ( char *arg, IO_pointers_t IO );
     void debug (char *arg, IO_pointers_t IO);
-    void scpi_get_range (char *arg, IO_pointers_t IO);
-    void scpi_get_als(char *arg, IO_pointers_t IO);
-	void scpi_get_laserpower( char *arg, IO_pointers_t IO );
+    void scpi_get_range_q (char *arg, IO_pointers_t IO);
+    void scpi_get_als_q(char *arg, IO_pointers_t IO);
+	void scpi_get_laserpower_q( char *arg, IO_pointers_t IO );
     void scpi_laser_power(char *arg, IO_pointers_t IO);
     void scpi_laser_auto (char *arg, IO_pointers_t IO);
+	void scpi_water_auto (char *arg, IO_pointers_t IO);
     void scpi_water_on (char *arg, IO_pointers_t IO);
     void scpi_water_off (char *arg, IO_pointers_t IO);
     void scpi_store_floordarkness( char *arg, IO_pointers_t IO );
-    void scpi_get_floordarkness( char *arg, IO_pointers_t IO );
+    void scpi_get_floordarkness_q( char *arg, IO_pointers_t IO );
 	void scpi_set_IIR_value( char *arg, IO_pointers_t IO );
 	void scpi_get_IIR_value( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
