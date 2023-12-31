@@ -30,20 +30,11 @@ void process_range_reading()
 
     if (range_measurement_ready())
     {
-		/********************
-		 *    IIR Filter    *
-		 ********************/
-		IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * get_range() * SCALEFACTOR ) / 256;
-		start_range_measurement();
-		
-        if (IIR_range_reading > max_reading)
-            max_reading = IIR_range_reading;
-
+		IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * get_range() * SCALEFACTOR ) / 256;	
+        if (IIR_range_reading > max_reading) max_reading = IIR_range_reading;
         foot_present = (IIR_range_reading < (max_reading - DETECTION_HEIGHT_SCALED)) ? true : false;
     }
-    else if (!range_sensor_busy())
-        start_range_measurement();
-
+    if (!range_sensor_busy()) start_range_measurement();
 	/***********************************************************
 	 *    Apply leakage or "downward" bias to largest reading  *
 	 ***********************************************************/
