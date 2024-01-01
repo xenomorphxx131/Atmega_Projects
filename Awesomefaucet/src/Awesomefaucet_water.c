@@ -5,28 +5,25 @@
  ****************************************************************************/
 #include "Awesomefaucet_water.h"
 
-extern uint16_t water_on_debounce_timer;
-extern bool water_debounce_timer_en;
+extern bool hold_water_debounce_timer;
 extern bool foot_present;
 extern bool water_auto;
+extern bool water_time_expired;
 
  /****************************************************************************
  *    Water Control                                                          *
  *****************************************************************************/
 void update_water()
 {
-	static bool water_debounce_timer_armed = false;
-	
-    if (foot_present)
-    {
-        if (water_auto) water_on(true);
-        water_debounce_timer_armed = true;
-        water_debounce_timer_en = false;
-        water_on_debounce_timer = 0;
-    }
-    else if (water_debounce_timer_armed)
-    {
-        water_debounce_timer_armed = false;
-        water_debounce_timer_en = true;
-    }
+	if (water_auto)
+	{
+		if (water_time_expired) water_on(false);
+		
+		if (foot_present)
+		{
+			water_on(true);
+			hold_water_debounce_timer = true;
+		}
+		else hold_water_debounce_timer = false;
+	}
 }
