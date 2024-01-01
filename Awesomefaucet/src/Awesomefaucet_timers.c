@@ -17,21 +17,19 @@ bool range_leakage_timeout = false;
 *****************************************************************************/
 void process_soft_timers()
 {
-
 	static uint16_t laser_brightness_timer = 0;
 
     if (update_timers) //  Should happen every 1.024ms
     {
-        update_timers = false;
+		/*******************************************
+		 *     Range Leakage Timer                 *
+		 *******************************************/
         range_leakage_timeout = true;
-        laser_brightness_timer++;
-		
-        if (water_debounce_timer_en)
-            water_on_debounce_timer++;
-		
+
 		/*******************************************
 		 *     Laser Brightness Timer              *
 		 *******************************************/
+        laser_brightness_timer++;
         if (laser_brightness_timer >= ONE_SECOND * 5)
         {
             start_ALS_measurement();
@@ -42,11 +40,15 @@ void process_soft_timers()
 		/*******************************************
 		 *     Water Debounce Timer                *
 		 *******************************************/
+        if (water_debounce_timer_en)
+            water_on_debounce_timer++;
+		
         if (water_on_debounce_timer >= ONE_SECOND * 2)
         {
             if (water_auto) water_on(false);
             water_debounce_timer_en = false;
             water_on_debounce_timer = 0;
         }
+		update_timers = false;
     }
 }
