@@ -52,12 +52,9 @@ time.sleep(5)
 if virginboard:
     comport_number = input("Enter COM Port Number that Appeared: COM")
 port = serial.Serial(f"COM{comport_number}", timeout=4)
-# port.write(b"*IDN?")
-
-# breakpoint()
-
-# port.write(b"SYSTem:VERSion?")
-# response = port.read_until(expected="\n", size=None)
+time.sleep(1)
+port.write(b"SYSTem:VERSion?;")
+response = port.read(port.inWaiting())
 port.close()
 print_banner("Firmware Upgrade Complete!")
-# print_banner(f"Response was: {response}")
+print_banner(f"Response was: {response}")
