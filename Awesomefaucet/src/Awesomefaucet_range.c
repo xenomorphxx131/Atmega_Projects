@@ -6,7 +6,7 @@
 #include "Awesomefaucet_range.h"
 
 bool foot_present = false;				// Extern'ed in water to enable water
-extern bool leakage_update_time;
+extern bool range_leakage_timeout;
 /************************************
  *    IIR Value from EEPROM         *
  ************************************/
@@ -30,18 +30,27 @@ void process_range_reading()
 
     if (range_measurement_ready())
     {
-		IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * get_range() * SCALEFACTOR ) / 256;	
-        if (IIR_range_reading > max_reading) max_reading = IIR_range_reading;
+		/********************
+		 *    IIR Filter    *
+		 ********************/
+		IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * get_range() * SCALEFACTOR ) / 256;
+		start_range_measurement();
+		
+        if (IIR_range_reading > max_reading)
+            max_reading = IIR_range_reading;
+
         foot_present = (IIR_range_reading < (max_reading - DETECTION_HEIGHT_SCALED)) ? true : false;
     }
-    if (!range_sensor_busy()) start_range_measurement();
+    else if (!range_sensor_busy())
+        start_range_measurement();
+
 	/***********************************************************
 	 *    Apply leakage or "downward" bias to largest reading  *
 	 ***********************************************************/
-	if (leakage_update_time)
+	if (range_leakage_timeout)
 	{
 		if (max_reading - LEAKAGE_RATE >= 0)
 			max_reading -= LEAKAGE_RATE;
-		leakage_update_time = false;
+		range_leakage_timeout = false;
 	}
 }
