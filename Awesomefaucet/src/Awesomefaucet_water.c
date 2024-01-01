@@ -24,6 +24,7 @@ void update_water()
 			water_on(true);
 			hold_water_debounce_timer = true;
 		}
-		else hold_water_debounce_timer = false;
+		else
+			hold_water_debounce_timer = false;
 	}
 }

@@ -29,7 +29,8 @@ void process_soft_timers()
 		/*******************************************
 		 *     Laser Brightness Timer              *
 		 *******************************************/
-        if (laser_brightness_timer++ == 5 * ONE_SECOND)
+		laser_brightness_timer++;
+        if (laser_brightness_timer >= 5 * ONE_SECOND)
         {
             update_laser_value = true;
             laser_brightness_timer = 0;
@@ -42,7 +43,10 @@ void process_soft_timers()
 			water_on_debounce_timer = 0;
 			water_time_expired = false;
 		}
-		else if (water_on_debounce_timer++ == 2 * ONE_SECOND)
+		else
+			water_on_debounce_timer++;
+		
+		if (water_on_debounce_timer >= 2 * ONE_SECOND)
 		{
 			water_time_expired = true;
 			hold_water_debounce_timer = true;
