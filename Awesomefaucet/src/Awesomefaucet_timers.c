@@ -34,7 +34,6 @@ void process_soft_timers()
 		 *******************************************/
         if (laser_brightness_timer >= 5 * SECONDS)
         {
-            start_ALS_measurement();
             update_laser_value = true;
             laser_brightness_timer = 0;
         }
