@@ -24,7 +24,7 @@ void update_laser()
 		if (laser_auto)
 		{
 			start_ALS_measurement();
-			setting = (get_als_blocking() / 8);// * get_darkness_setting()
+			setting = get_als_blocking() / 8;// * get_darkness_setting()
 			if (setting > 255) setting = 255;
 			if (setting == 0) setting = 1;
 			set_laser_power((uint8_t)setting);
