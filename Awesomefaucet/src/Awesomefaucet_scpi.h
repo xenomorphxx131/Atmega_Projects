@@ -10,7 +10,7 @@
     #include <stdlib.h>					// atoi used in 'scpi_laser_power'
     #include <process_USB.h>
     #include <bootloader.h>				// 'Jump_To_Bootloader'
-    #include "Awesomfaucet_scpi_config.h"
+    #include "Awesomefaucet_scpiconfig.h"
     #include "Awesomefaucet_board.h"
     #include "Awesomefaucet_sensor.h"
 /**************************************************************************
