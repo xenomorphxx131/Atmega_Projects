@@ -515,7 +515,9 @@ void scpi_get_range_q(char *arg, IO_pointers_t IO)
 ***************************************************************************/
 void scpi_get_als_q(char *arg, IO_pointers_t IO)
 {
-	fprintf(IO.USB_stream, "%d\r\n", get_als_blocking());
+	cli(); // ALS reading is blocking - possible deadlock?
+	fprintf(IO.USB_stream, "%d\r\n", get_ALS_blocking());
+	sei();
 }
 /**************************************************************************
 *  Clear Port                                                             *

@@ -19,11 +19,14 @@ void update_laser()
 	// The first order tweak to this is floor darkness.
 	// Set darkness to 10 for a dark floor and 1 for a light floor.
 	uint16_t setting = 0;
+	
     if (update_laser_value)
 	{
 		if (laser_auto)
 		{
-			setting = (get_als_blocking() / 8);// * get_darkness_setting()
+			cli(); 								// ALS reading is blocking - possible deadlock?
+			setting = (get_ALS_blocking() / 8);	// * get_darkness_setting()
+			sei();
 			if (setting > 255) setting = 255;
 			if (setting == 0) setting = 1;
 			set_laser_power((uint8_t)setting);

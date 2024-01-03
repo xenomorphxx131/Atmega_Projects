@@ -37,17 +37,20 @@ bool range_sensor_busy()
 /**************************************************************************
 *  Blocking Get ALS Reading                                               *
 ***************************************************************************/
-uint16_t get_als_blocking()
-{
-    while(ALS_sensor_busy()) {;}    // Just wait it out, it will finish.
-    start_ALS_measurement();        // Kick off a fresh reading and
-    while(ALS_sensor_busy()) {;}    // Wait it out
-    return read_als();
+uint16_t get_ALS_blocking()
+{	// This is a blocking function
+	// Be sure to call cli() entering and sei() and exiting calls to this.
+	// Possible deadlock if don't?
+
+    while(ALS_sensor_busy()) {;}    		// Just wait it out, it will finish.
+    start_ALS_measurement();        		// Kick off a fresh reading and
+	while(!ALS_measurement_ready()) {;}		// Wait for the new reading
+	return read_ALS();
 }
 /**************************************************************************
 *  ALS Reading                                                            *
 ***************************************************************************/
-uint16_t read_als()
+uint16_t read_ALS()
 {
     I2C16_Write_Byte( VL6180X_ADDR7b, VL6180X_REG_SYSTEM_INTERRUPT_CLEAR, VL6180X_CLEAR_ALS_INT );
     return I2C16_Read_Word( VL6180X_ADDR7b, VL6180X_REG_RESULT_ALS );
@@ -64,7 +67,7 @@ void start_ALS_measurement()
 ***************************************************************************/
 bool ALS_measurement_ready()
 {
-    return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_REG_RESULT_INTERRUPT_STATUS_GPIO ) & 0x38)  == 4 << 3;
+    return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_REG_RESULT_INTERRUPT_STATUS_GPIO ) & 0x38)  == (4 << 3);
 }
 /**************************************************************************
 *  Measurement Running                                                    *
