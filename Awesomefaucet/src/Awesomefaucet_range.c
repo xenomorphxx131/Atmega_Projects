@@ -19,7 +19,7 @@ extern uint8_t iir_value;
 #define SCALEFACTOR 65536
 #define LEAKAGE_RATE 16 				// When was floats was 0.00024 or 1 part in 4167, now 16/65536
 #define DETECTION_HEIGHT_mm 2.5
-#define DETECTION_HEIGHT_SCALED (long)(DETECTION_HEIGHT_mm * SCALEFACTOR + 0.5)
+#define DETECTION_HEIGHT_SCALED round(DETECTION_HEIGHT_mm * SCALEFACTOR)
 /****************************************************************************
 *    Process Range Reading                                                  *
 *****************************************************************************/
