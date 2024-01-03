@@ -54,7 +54,7 @@ void process_scpi_input( char * str_in, int *str_len, scpi_commands_P_t cmd_arra
 				str_in[++(*str_len)] = NUL;						// and terminate the string with the NUL character
 			}
 			else
-				scpi_prStr_P(PSTR("ERROR command too long\n"),IO.USB_stream);
+				scpi_prStr_P(PSTR("ERROR command too long\r\n"),IO.USB_stream);
 		}
 		}
 	ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
@@ -386,7 +386,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 ***************************************************************************/
 void scpi_null_func( char *arg, IO_pointers_t IO )
 {
-	// scpi_prStr_P(PSTR("Null func runs\n"), IO.USB_stream);
+	// scpi_prStr_P(PSTR("Null func runs\r\n"), IO.USB_stream);
 }
 /**************************************************************************
 *  *OPC (Operation Complete Query) function                               *
@@ -416,10 +416,9 @@ void sys_rst_btloader( char *arg, IO_pointers_t IO )
 void sys_error_q( char *arg, IO_pointers_t IO )
 {
 	if (error_number == 0)
-		scpi_prStr_P(PSTR("\r\n+0,\"No error\"\r\n"), IO.USB_stream);
+		scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
 	else
 	{
-		scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 		scpi_prStr_P(error_messages[error_number], IO.USB_stream);
 		if (bad_command[0] != NUL)
 		{
@@ -434,7 +433,6 @@ void sys_error_q( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_version_q( char *arg, IO_pointers_t IO )
 {
-	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO.USB_stream);
 	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
@@ -443,7 +441,6 @@ void scpi_get_version_q( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_IDN_q( char *arg, IO_pointers_t IO )
 {
-	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	scpi_prStr_P(PSTR(COMPANY_NAME), IO.USB_stream);
     scpi_prStr_P(PSTR(" | "), IO.USB_stream);
 	scpi_prStr_P(PSTR(PROJECT_NAME), IO.USB_stream);
@@ -491,7 +488,6 @@ void debug(char *arg, IO_pointers_t IO)
     fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range_measurement_ready());
     fprintf(IO.USB_stream, "Busy bit: %d\r\n", range_sensor_busy());
     fprintf(IO.USB_stream, "Reading: %d\r\n", get_range());
-	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
 /**************************************************************************
 *  SCPI Get Range Reading                                                 *
@@ -511,7 +507,6 @@ void scpi_get_range_q(char *arg, IO_pointers_t IO)
         while(range_sensor_busy()); // wait it out
     }
                                     // Always
-	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", get_range());
     start_range_measurement();
 }
@@ -520,7 +515,6 @@ void scpi_get_range_q(char *arg, IO_pointers_t IO)
 ***************************************************************************/
 void scpi_get_als_q(char *arg, IO_pointers_t IO)
 {
-    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", get_als_blocking());
 }
 /**************************************************************************
@@ -606,7 +600,6 @@ void scpi_store_floordarkness( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_floordarkness_q( char *arg, IO_pointers_t IO )
 {
-    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", get_darkness_setting());
 }
 /**************************************************************************
@@ -647,7 +640,6 @@ void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_IIR_value( char *arg, IO_pointers_t IO )
 {
-    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", iir_value);
 }
 /**************************************************************************
@@ -666,6 +658,5 @@ void update_IIR_value()
 ***************************************************************************/
 void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 {
-    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 	fprintf(IO.USB_stream, "%d\r\n", OCR4D);
 }

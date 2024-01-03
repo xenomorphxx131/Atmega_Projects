@@ -13,6 +13,8 @@ uint16_t laser_brightness_timer = 0;
 bool water_debounce_timer_en = false;
 bool range_leakage_timeout = false;
 
+#define ONE_SECOND (long)(1 / 0.001024) // Should be about 977
+
 /****************************************************************************
 *     Process Soft Timers                                                   *
 *****************************************************************************/
