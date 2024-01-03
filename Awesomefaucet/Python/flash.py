@@ -45,9 +45,9 @@ while reset.poll() == None:
     time.sleep(0.01)
     
 print_banner("Restarting Device....")
-time.sleep(5)
+time.sleep(2)
 os.system('cls')        #Windows only
-time.sleep(5)
+time.sleep(2)
 
 if virginboard:
     comport_number = input("Enter COM Port Number that Appeared: COM")
