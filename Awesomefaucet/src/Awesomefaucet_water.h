@@ -9,8 +9,9 @@
 
 #include <stdbool.h>                // Needed for booleans
 #include <stdint.h>                 // Needed for integers
-#include "Awesomefaucet_scpi.h"     // Needed for water control
+#include "Awesomefaucet_board.h"	// Needed for water IO setting
 
 void update_water(void);
+void water_on(bool);
 
 #endif

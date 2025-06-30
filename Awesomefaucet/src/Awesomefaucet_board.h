@@ -1,21 +1,12 @@
-/*
-     Copyright (C) Steve Martin, 2019.
-*/
-
-/*! \file Awesomefaucet_board.h \brief Define each of the pins for the Awesomefaucet project. */
-//*****************************************************************************
-//
-// File Name            : 'Awesomefaucet_board.h'
-// Author               : Steve Martin - Copyright (C) 2019
-// Created              : 4/6/2019
-// Revised              : ??/??/??
-// Version              : 1
-// Target MCU           : Atmel AVR series
-// Editor Tabs          : 4
-//
-//*****************************************************************************
+/****************************************************************************
+ *                                                                          *
+ *  Awesomefaucet Board                                                     *
+ *                                                                          *
+ ****************************************************************************/
 #ifndef AWESOMEFAUCET_BOARD_H
 #define AWESOMEFAUCET_BOARD_H
+
+#include <avr/io.h>
 /****************************************************************************
 *               I²C Pins SDA and SCL                                        *
 *****************************************************************************/
@@ -43,27 +34,4 @@
 #define LASERDDR                        DDRD
 #define LASERPIN                        PIND
 
-#endif  // AWESOMEFAUCET_BOARD_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif

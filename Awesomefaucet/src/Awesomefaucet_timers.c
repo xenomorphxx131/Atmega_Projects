@@ -7,9 +7,7 @@
 
 extern bool update_timers;
 extern bool water_auto;
-bool update_laser_value;
 uint16_t water_on_debounce_timer = 0;
-uint16_t laser_brightness_timer = 0;
 bool water_debounce_timer_en = false;
 bool range_leakage_timeout = false;
 
@@ -24,19 +22,9 @@ void process_soft_timers()
     {
         update_timers = false;
         range_leakage_timeout = true;
-        laser_brightness_timer++;
 		
         if (water_debounce_timer_en)
             water_on_debounce_timer++;
-		
-		/*******************************************
-		 *     Laser Brightness Timer              *
-		 *******************************************/
-        if (laser_brightness_timer >= ONE_SECOND * 5)
-        {
-            update_laser_value = true;
-            laser_brightness_timer = 0;
-        }
 
 		/*******************************************
 		 *     Water Debounce Timer                *

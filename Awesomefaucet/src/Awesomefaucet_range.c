@@ -7,6 +7,8 @@
 
 bool foot_present = false;				// Extern'ed in water to enable water
 extern bool range_leakage_timeout;
+// long long max_reading = 0;
+// long long IIR_range_reading = 0;
 /************************************
  *    IIR Value from EEPROM         *
  ************************************/
@@ -28,21 +30,16 @@ void process_range_reading()
 	static long long max_reading = 0;
 	static long long IIR_range_reading = 0;
 
-    if (range_measurement_ready())
-    {
-		/********************
-		 *    IIR Filter    *
-		 ********************/
-		IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * get_range() * SCALEFACTOR ) / 256;
-		start_range_measurement();
-		
-        if (IIR_range_reading > max_reading)
-            max_reading = IIR_range_reading;
-
-        foot_present = (IIR_range_reading < (max_reading - DETECTION_HEIGHT_SCALED)) ? true : false;
-    }
-    else if (!range_sensor_busy())
-        start_range_measurement();
+    // if (range__measurement_ready())
+    // {
+    /********************
+     *    IIR Filter    *
+     ********************/
+    IIR_range_reading = (iir_value * IIR_range_reading + (256 - iir_value) * read_range_blocking() * SCALEFACTOR ) / 256;
+    if (IIR_range_reading > max_reading) max_reading = IIR_range_reading;
+    foot_present = (IIR_range_reading < (max_reading - DETECTION_HEIGHT_SCALED)) ? true : false;
+    // }
+    // if (range__range_device_ready()) start_range_measurement();
 
 	/***********************************************************
 	 *    Apply leakage or "downward" bias to largest reading  *

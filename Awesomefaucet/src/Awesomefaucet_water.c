@@ -9,7 +9,6 @@ extern uint16_t water_on_debounce_timer;
 extern bool water_debounce_timer_en;
 extern bool foot_present;
 extern bool water_auto;
-
  /****************************************************************************
  *    Water Control                                                          *
  *****************************************************************************/
@@ -29,4 +28,11 @@ void update_water()
         water_debounce_timer_armed = false;
         water_debounce_timer_en = true;
     }
+}
+/**************************************************************************
+*  Water On                                                               *
+***************************************************************************/
+void water_on(bool on)
+{   
+    WATERPORT = on ? WATERPORT | WATER : WATERPORT & ~WATER;
 }

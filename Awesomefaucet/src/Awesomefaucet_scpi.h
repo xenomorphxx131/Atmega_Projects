@@ -7,13 +7,16 @@
 #ifndef AWESOMEFAUCET_SCPI_H_
 #define AWESOMEFAUCET_SCPI_H_
 
-    #include <stdlib.h>					// atoi used in 'scpi_laser_power'
+    #include <stdlib.h>						// atoi used in 'scpi_laser_power'
     #include <process_USB.h>
-    #include <bootloader.h>				// 'Jump_To_Bootloader'
-	#include <avr/interrupt.h>          // Needed for cli() and sei()
+    #include <bootloader.h>					// 'Jump_To_Bootloader'
+	#include <avr/interrupt.h>          	// Needed for cli() and sei()
     #include "Awesomefaucet_scpiconfig.h"
-    #include "Awesomefaucet_board.h"
     #include "Awesomefaucet_sensor.h"
+    #include "Awesomefaucet_board.h"
+    #include "Awesomefaucet_laser.h"
+    #include "Awesomefaucet_water.h"
+    #include "Awesomefaucet_range.h"
 /**************************************************************************
 *  Create a data structure to contain the various IO pointers             *
 *  that need global scope                                                 *
@@ -57,32 +60,20 @@ typedef struct scpi_node_P {
     void scpi_get_range_q (char *arg, IO_pointers_t IO);
     void scpi_get_als_q(char *arg, IO_pointers_t IO);
 	void scpi_get_laserpower_q( char *arg, IO_pointers_t IO );
-    void scpi_laser_power(char *arg, IO_pointers_t IO);
-    void scpi_laser_auto (char *arg, IO_pointers_t IO);
 	void scpi_water_auto (char *arg, IO_pointers_t IO);
     void scpi_water_on (char *arg, IO_pointers_t IO);
     void scpi_water_off (char *arg, IO_pointers_t IO);
-    void scpi_store_floordarkness( char *arg, IO_pointers_t IO );
-    void scpi_get_floordarkness_q( char *arg, IO_pointers_t IO );
+    void scpi_set_laserpower( char *arg, IO_pointers_t IO );
 	void scpi_set_IIR_value( char *arg, IO_pointers_t IO );
 	void scpi_get_IIR_value( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
-    void water_on(bool on);
-    uint8_t get_darkness_setting(void);
-	void update_darkness_setting(void);
-	void update_IIR_value(void);
+	uint8_t retrieve_laserpower_setting(void);
+	uint8_t retrieve_IIR_value(void);
 	void remove_ws ( char *arg );
 /**************************************************************************
 *  Compulsory SCPI commands                                               *
 *  see: http://www.ivifoundation.org/docs/scpi-99.pdf                     *
 ***************************************************************************/
-	// void st_ESE		( char *arg, IO_pointers_t IO );
-	// void st_ESE_q	( char *arg, IO_pointers_t IO );
-	// void st_ESR_q	( char *arg, IO_pointers_t IO );
-//	void st_IDN_q	( char *arg, IO_pointers_t IO ); // See product specific SCPI file <project_name>_scpi.h
-	// void st_SRE		( char *arg, IO_pointers_t IO );
-	// void st_SRE_q	( char *arg, IO_pointers_t IO );
-	// void st_STB		( char *arg, IO_pointers_t IO );
  #endif
 
  

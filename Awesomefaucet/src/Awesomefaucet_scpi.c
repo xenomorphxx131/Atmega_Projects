@@ -15,15 +15,15 @@ int error_number = 0;
 char const error_mnemonic_too_long[]	PROGMEM = "-112,Program mnemonic too long";
 char const error_arg_too_long[]			PROGMEM = "-112,Argument too long";
 char const error_bad_path_or_header[] 	PROGMEM = "-113,Bad path or header: ";
-uint8_t EEMEM FLOOR_DARKNESS[MAX_DARKNESS_CHARS];
+uint8_t EEMEM LASER_POWER[MAX_LASER_CHARS];
 uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
-uint8_t iir_value = 0;
-uint8_t darkness_value = 0;
-bool laser_auto = true;
+extern uint8_t iir_value;
 bool water_auto = true;
-uint8_t laser_power = 0;
-char darkness_string[MAX_DARKNESS_CHARS];
-char iir_string[MAX_IIR_CHARS];
+
+extern long long max_reading;
+extern long long IIR_range_reading;
+
+
 /**************************************************************************
 *  Build input string from terminal then run SCPI command.                *
 ***************************************************************************/
@@ -314,35 +314,15 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].parent     = &command_array_P[i-3];
         command_array_P[i++].function = &scpi_get_IIR_value;
 		
-        command_array_P[i].name       = PSTR("DARK?");
+        command_array_P[i].name       = PSTR("LASERPOWER?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-4];
-        command_array_P[i++].function = &scpi_get_floordarkness_q;
-		
-        command_array_P[i].name       = PSTR("LASER?");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-5];
         command_array_P[i++].function = &scpi_get_laserpower_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &clr_i2c;
-    
-	command_array_P[i].name       = PSTR("LASER");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_null_func;
-    
-        command_array_P[i].name       = PSTR("AUTO");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-1];
-        command_array_P[i++].function = &scpi_laser_auto;
-        
-        command_array_P[i].name       = PSTR("POWER");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_laser_power;
         
 	command_array_P[i].name       = PSTR("WATER");
 	command_array_P[i].implied    = false;
@@ -374,10 +354,10 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 		command_array_P[i].parent     = &command_array_P[i-1];
 		command_array_P[i++].function = &scpi_set_IIR_value;
 		
-		command_array_P[i].name       = PSTR("DARK");
+		command_array_P[i].name       = PSTR("LASERPOWER");
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-2];
-		command_array_P[i++].function = &scpi_store_floordarkness;
+		command_array_P[i++].function = &scpi_set_laserpower;
 
 	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
 }
@@ -398,8 +378,7 @@ void st_OPC_q ( char *arg, IO_pointers_t IO )
 /**************************************************************************
 *  Empty/placeholder function                                             *
 ***************************************************************************/
-void scpi_empty_func( char *arg, IO_pointers_t IO )
-{}
+void scpi_empty_func( char *arg, IO_pointers_t IO ) {}
 /**************************************************************************
 *  Write to the bootloader start address                                  *
 ***************************************************************************/
@@ -478,46 +457,66 @@ void debug(char *arg, IO_pointers_t IO)
     // scpi_prStr_P(PSTR("Exiting Function!\r\n"), IO.USB_stream);
     // fprintf(IO.USB_stream, "TCCR0B: %d\r\n", TCCR0B);
     // fprintf(IO.USB_stream, "CLKPR: %d\r\n", CLKPR);
-    fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range_measurement_ready());
+    fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range__measurement_ready());
     scpi_prStr_P(PSTR("Starting measurement\r\n"), IO.USB_stream);
     start_range_measurement();
-    fprintf(IO.USB_stream, "Measurement ready now: %d\r\n", range_measurement_ready());
-    fprintf(IO.USB_stream, "Busy bit: %d\r\n", range_sensor_busy());
+    fprintf(IO.USB_stream, "Measurement ready now: %d\r\n", range__measurement_ready());
+    fprintf(IO.USB_stream, "Ready bit: %d\r\n", range__range_device_ready());
     scpi_prStr_P(PSTR("Waiting 50ms\r\n"), IO.USB_stream);
     Delay_MS(50);
-    fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range_measurement_ready());
-    fprintf(IO.USB_stream, "Busy bit: %d\r\n", range_sensor_busy());
+    fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range__measurement_ready());
+    fprintf(IO.USB_stream, "Ready bit: %d\r\n", range__range_device_ready());
     fprintf(IO.USB_stream, "Reading: %d\r\n", get_range());
+	
+	
+
+    fprintf(IO.USB_stream, "Max Reading: %d\r\n", (int)(max_reading/8192));
+    fprintf(IO.USB_stream, "IIR Reading: %d\r\n", (int)(IIR_range_reading/8192));
 }
 /**************************************************************************
 *  SCPI Get Range Reading                                                 *
 ***************************************************************************/
 void scpi_get_range_q(char *arg, IO_pointers_t IO)
 {
-    if (range_measurement_ready())  // There's a reading pending
-    {;}                             // For now do nothing
-    else if (range_sensor_busy())   // There's none pending and it's busy
-    {
-        do{;}
-        while(range_sensor_busy()); // just wait it out
-    }
-    else                            // There's none pending and it's not busy
-    {   start_range_measurement();  // Kick off a new reading and
-        do{;}                       // just
-        while(range_sensor_busy()); // wait it out
-    }
+    // if (range_measurement_ready())  // There's a reading pending
+    // {;}                             // For now do nothing
+    // else if (range_sensor_busy())   // There's none pending and it's busy
+    // {
+        // do{;}
+        // while(range_sensor_busy()); // just wait it out
+    // }
+    // else                            // There's none pending and it's not busy
+    // {   start_range_measurement();  // Kick off a new reading and
+        // do{;}                       // just
+        // while(range_sensor_busy()); // wait it out
+    // }
                                     // Always
+	// fprintf(IO.USB_stream, "%d\r\n", get_range());
+    // start_range_measurement();
+	
+	// if (range_measurement_ready())
+		// fprintf(IO.USB_stream, "%d\r\n", get_range());
+	// else
+	// {
+		// while(range_sensor_busy()) {}
+		// fprintf(IO.USB_stream, "%d\r\n", get_range());
+	// }
+	
 	fprintf(IO.USB_stream, "%d\r\n", get_range());
-    start_range_measurement();
+	
+	
+	
+	
+	
 }
 /**************************************************************************
-*  SCPI Get Amobient Light Sensor Reading                                 *
+*  SCPI Get Ambient Light Sensor Reading                                  *
 ***************************************************************************/
 void scpi_get_als_q(char *arg, IO_pointers_t IO)
 {
-	cli(); // ALS reading is blocking - possible deadlock?
-	fprintf(IO.USB_stream, "%d\r\n", get_ALS_blocking());
-	sei();
+	// cli(); // ALS reading is blocking - possible deadlock?
+	// fprintf(IO.USB_stream, "%d\r\n", get_ALS_blocking());
+	// sei();
 }
 /**************************************************************************
 *  Clear Port                                                             *
@@ -525,22 +524,6 @@ void scpi_get_als_q(char *arg, IO_pointers_t IO)
 void clr_i2c (char *arg, IO_pointers_t IO)
 {
     reset_i2c();
-}
-/**************************************************************************
-*  SCPI Laser Auto\                                                       *
-***************************************************************************/
-void scpi_laser_auto(char *arg, IO_pointers_t IO)
-{
-    laser_auto = true;
-}
-/**************************************************************************
-*  SCPI Laser Power                                                       *
-***************************************************************************/
-void scpi_laser_power(char *arg, IO_pointers_t IO)
-{
-	remove_ws(arg);
-	laser_auto = false;
-    laser_power = (uint8_t)atoi(arg);
 }
 /**************************************************************************
 *  SCPI Water Auto                                                        *
@@ -567,13 +550,6 @@ void scpi_water_off (char *arg, IO_pointers_t IO)
 	water_on(false);
 }
 /**************************************************************************
-*  Water On                                                               *
-***************************************************************************/
-void water_on(bool on)
-{   
-    WATERPORT = on ? WATERPORT | WATER : WATERPORT & ~WATER;
-}
-/**************************************************************************
 *  my_remove_ws                                                           *
 ***************************************************************************/
 void remove_ws( char *arg )
@@ -583,44 +559,36 @@ void remove_ws( char *arg )
 		if ( !isspace(arg[ri]) ) arg[wi++] = arg[ri];   // Strip off leading and any additional whitespaces
 }
 /**************************************************************************
-*  Store Floor Darkness Scale Factor to EEPROM                            *
+*  Store Laser Power to EEPROM                                            *
 ***************************************************************************/
-void scpi_store_floordarkness( char *arg, IO_pointers_t IO )
+void scpi_set_laserpower( char *arg, IO_pointers_t IO )
 {
 	if (strlen(arg) <= MAX_ARG_LEN) remove_ws(arg);
-    if (strlen(arg) <= MAX_DARKNESS_CHARS)
+    if (strlen(arg) <= MAX_LASER_CHARS)
 	{
 		eeprom_busy_wait();
-		eeprom_write_block(arg, &FLOOR_DARKNESS, MAX_DARKNESS_CHARS);
-		update_darkness_setting();
+		eeprom_write_block(arg, &LASER_POWER, MAX_LASER_CHARS);
+		set_laserpower(retrieve_laserpower_setting());
 	}
 	else
 		scpi_add_error_P(error_arg_too_long, IO);
 }
 /**************************************************************************
-*  SCPI Retrieve Floor Darkness Scale Factor from EEPROM                  *
+*  Update Laser Power from EEPROM                                         *
 ***************************************************************************/
-void scpi_get_floordarkness_q( char *arg, IO_pointers_t IO )
+uint8_t retrieve_laserpower_setting()
 {
-	fprintf(IO.USB_stream, "%d\r\n", get_darkness_setting());
-}
-/**************************************************************************
-*  Update Floor Darkness Scale Factor from EEPROM                         *
-***************************************************************************/
-void update_darkness_setting()
-{
-	// Super slow in this architecture.
-	// Only update from EEPROM as needed.
+	char laserpower_string[MAX_LASER_CHARS];
     eeprom_busy_wait();
-    eeprom_read_block((void*)&darkness_string, (const void *)&FLOOR_DARKNESS, MAX_DARKNESS_CHARS);
-    darkness_value = (uint8_t)atoi(darkness_string);
+    eeprom_read_block((void*)&laserpower_string, (const void *)&LASER_POWER, MAX_LASER_CHARS);
+	return (uint8_t)atoi(laserpower_string);
 }
 /**************************************************************************
-*  Retrieve Floor Darkness Factor from EEPROM                             *
+*  SCPI Get Laser Power Setting                                           *
 ***************************************************************************/
-uint8_t get_darkness_setting()
+void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 {
-    return darkness_value;
+	fprintf(IO.USB_stream, "%d\r\n", get_laserpower());
 }
 /**************************************************************************
 *  Store IIR Factor to EEPROM                                             *
@@ -628,11 +596,11 @@ uint8_t get_darkness_setting()
 void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
 {
 	if (strlen(arg) <= MAX_ARG_LEN) remove_ws(arg);
-    if (strlen(arg) <= 3 && strlen(arg) >= 1)
+    if (strlen(arg) <= MAX_IIR_CHARS && strlen(arg) >= 1)
 	{
 		eeprom_busy_wait();
 		eeprom_write_block(arg, &IIR_VALUE, MAX_IIR_CHARS);
-		update_IIR_value();
+		iir_value = retrieve_IIR_value();
 	}
 	else
 		scpi_add_error_P(error_arg_too_long, IO);
@@ -642,23 +610,15 @@ void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_get_IIR_value( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%d\r\n", iir_value);
+	fprintf(IO.USB_stream, "%d\r\n", retrieve_IIR_value());
 }
 /**************************************************************************
 *  Update IIR Factor from EEPROM                                          *
 ***************************************************************************/
-void update_IIR_value()
+uint8_t retrieve_IIR_value()
 {
-	// Super slow in this architecture.
-	// Only update from EEPROM as needed.
+	char iir_string[MAX_IIR_CHARS];
     eeprom_busy_wait();
     eeprom_read_block((void*)&iir_string, (const void *)&IIR_VALUE, MAX_IIR_CHARS);
-    iir_value = (uint8_t)atoi(iir_string);
-}
-/**************************************************************************
-*  SCPI Retrieve Laser Power Setting                                      *
-***************************************************************************/
-void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
-{
-	fprintf(IO.USB_stream, "%d\r\n", OCR4D);
+    return (uint8_t)atoi(iir_string);
 }

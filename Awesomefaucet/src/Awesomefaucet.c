@@ -9,6 +9,7 @@
 *  Create the timer update control global                                 *
 ***************************************************************************/
 bool update_timers = false;
+uint8_t iir_value = 0;
 /**************************************************************************
 *                            Main                                         *
 ***************************************************************************/
@@ -70,21 +71,21 @@ int main(void)
     CDC_init();                                     // LUFA stuff
     sei();                                          // Enable interrupts
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
-    Setup_ScpiCommandsArray_P (commands_P);         // Build the command array (mostly pointers to PROGMEM)
-	update_IIR_value();								// Retreive IIR value from EEPROM
-	update_darkness_setting();						// Retreive floor darkness value from EEPROM
+    Setup_ScpiCommandsArray_P(commands_P);          // Build the command array (mostly pointers to PROGMEM)
+	iir_value = retrieve_IIR_value();				// Retrieve IIR value from EEPROM
+	set_laserpower(retrieve_laserpower_setting());	// Retrieve laser power value from EEPROM
     VL6180X_Setup();                                // Enter the super secret setup commands for the VL6180x
+    // sei();                                       // Enable interrupts
     /****************************************************************************
      *        Main Loop                                                         *
      ****************************************************************************/
     while(true)
     {
-        process_USB();                              // Seems to block if I stop a Putty session.
+        process_USB();
         process_scpi_input(str_in, &str_len, commands_P, IO);
         process_soft_timers();
         process_range_reading();
         update_water();
-        update_laser();
     }
 }
 /****************************************************************************
