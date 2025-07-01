@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- *  Awesomefaucet SCPI                                                      *
+ *  Awesomerfaucet SCPI                                                     *
  *                                                                          *
  ****************************************************************************/
 
@@ -10,14 +10,12 @@
     #include <stdlib.h>						// atoi used in 'scpi_laser_power'
     #include <process_USB.h>
     #include <bootloader.h>					// 'Jump_To_Bootloader'
-	#include <avr/interrupt.h>          	// Needed for cli() and sei()
 	#include <i2c_twi.h>					// For the struct i2c_twi_port_t type
     #include "Awesomerfaucet_scpiconfig.h"
     // #include "Awesomerfaucet_sensor.h"
     #include "Awesomerfaucet_board.h"
     #include "Awesomerfaucet_laser.h"
     #include "Awesomerfaucet_water.h"
-    // #include "Awesomerfaucet_range.h"
 /**************************************************************************
 *  Create a data structure to contain the various IO pointers             *
 *  that need global scope                                                 *
@@ -76,9 +74,3 @@ typedef struct scpi_node_P {
 *  see: http://www.ivifoundation.org/docs/scpi-99.pdf                     *
 ***************************************************************************/
  #endif
-
- 
- 
- 
- 
- 

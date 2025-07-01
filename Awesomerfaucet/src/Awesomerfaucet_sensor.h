@@ -1,16 +1,15 @@
 /****************************************************************************
  *                                                                          *
- *  Awesomerfaucet Timers                                                   *
+ *  Awesomerfaucet Sensor                                                   *
  *                                                                          *
  ****************************************************************************/
 
-#ifndef AWESOMERFAUCET_TIMERS_H_
-#define AWESOMERFAUCET_TIMERS_H_
-
-	#include <stdbool.h>                // Needed for booleans
+#ifndef AWESOMERFAUCET_SENSOR_H_
+#define AWESOMERFAUCET_SENSOR_H_
+	   
+    #include "vl53l4cd_api.h"
 	#include <stdint.h>                 // Needed for integers
-	#include "Awesomerfaucet_water.h"   	// Needed to control water
-
-	void process_soft_timers(void);
+    
+    void process_sensor(void);
 
 #endif

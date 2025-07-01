@@ -12,7 +12,7 @@ def print_banner(title):
     
 MCU = 'atmega32u4'
 
-TARGET = '../src/Awesomefaucet'
+TARGET = '../src/Awesomerfaucet'
 TARGET_FILE =  pathlib.Path(__file__).parent.resolve().__str__() + "\\" + TARGET
 
 print_banner("Flashing Board with Latest Firmware....")

@@ -135,6 +135,7 @@ include $(LUFA_PATH)/LUFA/makefile
 SRC = $(TARGET).c \
 	  Awesomerfaucet_scpi.c \
 	  Awesomerfaucet_laser.c \
+	  Awesomerfaucet_sensor.c \
 	  Awesomerfaucet_water.c \
 	  Awesomerfaucet_timers.c \
 	  Descriptors.c \
@@ -145,8 +146,6 @@ SRC = $(TARGET).c \
 	  $(BOOTLOADER_PATH)/bootloader.c\
 	  $(VL53L4CD_API_PATH)/VL53L4CD_api.c\
 	  $(VL53L4CD_PLATFORM_PATH)/platform.c
-	  # Awesomerfaucet_range.c \
-	  # Awesomerfaucet_sensor.c \
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC =

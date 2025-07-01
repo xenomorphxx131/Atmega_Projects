@@ -59,23 +59,22 @@ int main(void)
     WATERPORT           &= ~WATER;                  // Set the WATER to off by setting the port pin low
     LASERDDR            |=  LASER;                  // Set the LASER port pin direction to OUTPUT
     LASERPORT           &= ~LASER;                  // Set the LASER to off by setting the port pin low
-    
     TCCR4B              |= _BV(CS43) |              // Clock / 512 (Not sure what the prescaler is)
-                           _BV(CS41);          
-    
+                           _BV(CS41);               //
     TCCR4C              |= _BV(COM4D1) |            // Cleared on Compare Match. Set when TCNT4 = 0x000. This should also have the effect of modulating the OC4D pins automatically.
                            _BV(PWM4D);              // Enables the PWM mode of 4D
-    
     _delay_ms(512);                                 // Help USB get recognized on reset
     USB_Init();                                     // LUFA stuff
     CDC_init();                                     // LUFA stuff
     sei();                                          // Enable interrupts
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
     Setup_ScpiCommandsArray_P(commands_P);          // Build the command array (mostly pointers to PROGMEM)
-	iir_value = retrieve_IIR_value();				// Retrieve IIR value from EEPROM
-	set_laserpower(retrieve_laserpower_setting());	// Retrieve laser power value from EEPROM
-	// VL53L4CD_SensorInit();
-    // VL6180X_Setup();                                // Enter the super secret setup commands for the VL6180x
+	iir_value = retrieve_IIR_value();               // Retrieve IIR value from EEPROM
+	set_laserpower(retrieve_laserpower_setting());  // Retrieve laser power value from EEPROM
+	VL53L4CD_SensorInit(0x52);                      // Initialize the seonsor
+    _delay_ms(2);                                   // Startup time is supposed to be 1.2ms max. Does that mean here?
+    VL53L4CD_SetRangeTiming(0x52, 50, 0);           // Address, timing budget (ms), inter-measurement (0 means no shutdown)
+    VL53L4CD_StartRanging(0x52);                    // Kick off the first reading
     /****************************************************************************
      *        Main Loop                                                         *
      ****************************************************************************/
@@ -83,9 +82,9 @@ int main(void)
     {
         process_USB();
         process_scpi_input(str_in, &str_len, commands_P, IO);
-        process_soft_timers();
-        // process_range_reading();
-        update_water();
+        // process_soft_timers();
+        // process_sensor();
+        // update_water();
     }
 }
 /****************************************************************************
