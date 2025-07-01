@@ -342,7 +342,7 @@ VL53L4CD_Error VL53L4CD_SetRangeTiming(
 	/* Sensor runs in continuous mode */
 	else if(inter_measurement_ms == (uint32_t)0)
 	{
-		status |= VL53L4CD_WrDWord(dev,VL53L4CD_INTERMEASUREMENT_MS, 0);
+		status |= VL53L4CD_WrDWord(dev, VL53L4CD_INTERMEASUREMENT_MS, 0);
 		timing_budget_us -= (uint32_t)2500;
 	}
 	/* Sensor runs in autonomous low power mode */
