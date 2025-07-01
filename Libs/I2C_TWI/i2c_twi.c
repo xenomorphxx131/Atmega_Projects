@@ -206,355 +206,370 @@ uint8_t i2cGetbyte ( uint8_t last_byte )
 // SMBUS Receive BYTE
 uint8_t SMBUS_Receive_Byte ( uint8_t address )
 {
-  uint8_t success = 1;
-  uint8_t results = 0xFF;
-  success = (START() == 'S');  // START
-  if (success)
-    success = (i2cPutbyte(address|READ) == 'K'); // READ ADDRESS
-  if (success)
-    results = i2cGetbyte(LAST); // PULL THE BYTE W/NACK
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
+    uint8_t success = 1;
+    uint8_t results = 0xFF;
 
-  return results;
+    success = START() == 'S';                               // START
+    if (success) success = i2cPutbyte(address|READ) == 'K'; // READ ADDRESS
+    if (success) results = i2cGetbyte(LAST);                // PULL THE BYTE W/NACK
+    if (success) STOP();                                    // STOP
+    else clear_bus_err();                                   // clear error, reset bus
+    return results;
 }
 
 // SMBUS Send BYTE
 void SMBUS_Send_Byte ( uint8_t address, uint8_t data )
 {
-  uint8_t success = 1;
-  success = (START() == 'S'); // START
-  if (success)  // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success)
-    i2cPutbyte(data);// PUSH THE BYTE
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
+    uint8_t success = 1;
+
+    success = START() == 'S';                           // START
+    if (success) success = i2cPutbyte(address) == 'K';  // WRITE ADDRESS
+    if (success) i2cPutbyte(data);                      // PUSH THE BYTE
+    if (success) STOP();                                // STOP
+    else clear_bus_err();                               // clear error, reset bus
 }
 
 // SMBUS ARA
 uint8_t SMBUS_Alert_Responce ( )
 {
-  uint8_t success = 1;
-  uint8_t results = 0xFF;
-  uint8_t ara_addr7b = 0x0C;
+    uint8_t success = 1;
+    uint8_t results = 0xFF;
+    uint8_t ara_addr7b = 0x0C;
 
-  success = (START() == 'S'); // START
-  if (success)    // wRITE ADDRESS
-    success = (i2cPutbyte(ara_addr7b << 1 | READ) == 'K');
-  if (success)
-    results = i2cGetbyte(LAST); // PULL THE BYTE W/NACK
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
-  return results;
+    success = START() == 'S';                                           // START
+    if (success) success = i2cPutbyte(ara_addr7b << 1 | READ) == 'K';   // wRITE ADDRESS
+    if (success) results = i2cGetbyte(LAST);                            // PULL THE BYTE W/NACK
+    if (success) STOP();                                                // STOP
+    else clear_bus_err();                                               // clear error, reset bus
+    return results;
 }
 
 
 // SMBUS ARA with PEC
 uint16_t SMBUS_Alert_Responce_PEC ( )
 {
-  uint8_t success = 1;
-  uint8_t results = 0xFF;
-  uint8_t pec_byte = 0xFF;
-  uint8_t ara_addr7b = 0x0C;
+    uint8_t success = 1;
+    uint8_t results = 0xFF;
+    uint8_t pec_byte = 0xFF;
+    uint8_t ara_addr7b = 0x0C;
 
-  success = (START() == 'S'); // START
-  if (success)    // wRITE ADDRESS
-    success = (i2cPutbyte(ara_addr7b << 1 | READ) == 'K');
-  if (success)
-    results = i2cGetbyte(!LAST); // PULL THE BYTE
-  if (success)
-    pec_byte = i2cGetbyte(LAST); // PULL THE PEC BYTE W/NACK
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
-  return ((uint16_t)pec_byte << 8 | (uint16_t)results);
+    success = START() == 'S';                                           // START
+    if (success) success = i2cPutbyte(ara_addr7b << 1 | READ) == 'K';   // wRITE ADDRESS
+    if (success) results = i2cGetbyte(!LAST);                           // PULL THE BYTE
+    if (success) pec_byte = i2cGetbyte(LAST);                           // PULL THE PEC BYTE W/NACK
+    if (success) STOP();                                                // STOP
+    else clear_bus_err();                                               // clear error, reset bus
+    return (uint16_t)pec_byte << 8 | (uint16_t)results;
 }
 
 // SMBUS Read BYTE
 uint8_t SMBUS_Read_Byte ( uint8_t address, uint8_t subaddress )
 {
-  uint8_t success = 1;
-  uint8_t results = 0xFF;
-  success = (START() == 'S');                               // START
-  if (success)
-    success = (i2cPutbyte(address) == 'K');                 // WRITE ADDRESS
-  if (success)
-    success = (i2cPutbyte(subaddress) == 'K');              // SUB ADDRESS
-  if (success)    // RESTART
-    success = (START() == 'S');
-  if (success)    // READ ADDRESS
-    success = (i2cPutbyte(address|READ) == 'K');
-  if (success)
-    results = i2cGetbyte(LAST); // PULL THE BYTE W/NACK
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
-  return results;
+    uint8_t success = 1;
+    uint8_t results = 0xFF;
+
+    success = START() == 'S';                                   // START
+    if (success) success = i2cPutbyte(address) == 'K';          // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress) == 'K';       // SUB ADDRESS
+    if (success) success = START() == 'S';                      // RESTART
+    if (success) success = i2cPutbyte(address|READ) == 'K';     // READ ADDRESS
+    if (success) results = i2cGetbyte(LAST);                    // PULL THE BYTE W/NACK
+    if (success) STOP();                                        // STOP
+    else clear_bus_err();                                       // clear error, reset bus
+    return results;
 }
 
 // I2C16_Read_Byte foe use with the VL6180 TOF sensor
 uint8_t I2C16_Read_Byte( uint8_t addr7b, uint16_t subaddress )
 {
-  uint8_t success = 1;
-  uint8_t results = 0xFF;
-  success = (START() == 'S');                               // START
-  if (success)
-    success = (i2cPutbyte(addr7b * 2) == 'K');              // WRITE ADDRESS
-  if (success)
-    success = (i2cPutbyte(subaddress >> 8) == 'K');         // SUB ADDRESS HIGH BYTE
-  if (success)
-    success = (i2cPutbyte(subaddress & 0xFF) == 'K');       // SUB ADDRESS LOW BYTE
-  if (success)
-    STOP();                                                 // STOP
-  if (success)
-    success = (START() == 'S');                             // START
-  if (success)
-    success = (i2cPutbyte((addr7b * 2)|READ) == 'K');       // READ ADDRESS
-  if (success)
-    results = i2cGetbyte(LAST);                             // PULL THE BYTE W/NACK
-  if (success)
-    STOP();                                                 // STOP
-  _delay_us(5);                                             // Give it a few us
-  if ((TWCR & _BV(TWSTO)) || !success) {reset_i2c();}       // Not sure why on some registers
-                                                            // this bit doesn't clear
-                                                            // and SDA hangs low
-  return results;
+    uint8_t success = 1;
+    uint8_t results = 0xFF;
+
+    success = START() == 'S';                                       // START
+    if (success) success = i2cPutbyte(addr7b * 2) == 'K';           // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress >> 8) == 'K';      // SUB ADDRESS HIGH BYTE
+    if (success) success = i2cPutbyte(subaddress & 0xFF) == 'K';    // SUB ADDRESS LOW BYTE
+    if (success) STOP();                                            // STOP
+    if (success) success = START() == 'S';                          // START
+    if (success) success = i2cPutbyte((addr7b * 2)|READ) == 'K';    // READ ADDRESS
+    if (success) results = i2cGetbyte(LAST);                        // PULL THE BYTE W/NACK
+    if (success) STOP();                                            // STOP
+    _delay_us(5);                                                   // Give it a few us
+    if ((TWCR & _BV(TWSTO)) || !success) reset_i2c();               // Not sure why on some registers
+                                                                    // this bit doesn't clear
+                                                                    // and SDA hangs low
+    return results;
 }
 
 // I2C16_Write_Byte foe use with the VL6180 TOF sensor
 uint8_t I2C16_Write_Byte( uint8_t addr7b, uint16_t subaddress, uint8_t data )
 {
-  uint8_t success = 1;
-  uint8_t results = 0xFF;
-  success = (START() == 'S');                               // START
-  if (success)
-    success = (i2cPutbyte(addr7b * 2) == 'K');              // READ ADDRESS
-  if (success)
-    success = (i2cPutbyte(subaddress >> 8) == 'K');         // SUB ADDRESS HIGH
-  if (success)
-    success = (i2cPutbyte(subaddress & 0xFF) == 'K');       // SUB ADDRESS LOW
-  if (success)
-    success = (i2cPutbyte(data) == 'K');                    // READ ADDRESS
-  if (success)
-    STOP();                                                 // STOP
+    uint8_t success = 1;
+    uint8_t results = 0xFF;
+
+    success = START() == 'S';                                       // START
+    if (success) success = i2cPutbyte(addr7b * 2) == 'K';           // READ ADDRESS
+    if (success) success = i2cPutbyte(subaddress >> 8) == 'K';      // SUB ADDRESS HIGH
+    if (success) success = i2cPutbyte(subaddress & 0xFF) == 'K';    // SUB ADDRESS LOW
+    if (success) success = i2cPutbyte(data) == 'K';                 // READ ADDRESS
+    if (success) STOP();                                            // STOP
     _delay_us(5);
-  if ((TWCR & _BV(TWSTO)) || !success) {reset_i2c();}       // Not sure why on some registers
-                                                            // this bit doesn't clear
-                                                            // and SDA hangs low
-  return results;
+    if ((TWCR & _BV(TWSTO)) || !success) reset_i2c();               // Not sure why on some registers
+                                                                    // this bit doesn't clear
+                                                                    // and SDA hangs low
+    return results;
 }
 
 uint16_t I2C16_Read_Word( uint8_t addr7b, uint16_t subaddress )
 {
-  uint8_t success = 1;
-  uint8_t hibyte = 0xFF;
-  uint8_t lobyte = 0xFF;
-  success = (START() == 'S');                               // START
-  if (success)
-    success = (i2cPutbyte(addr7b * 2) == 'K');              // WRITE ADDRESS
-  if (success)
-    success = (i2cPutbyte(subaddress >> 8) == 'K');         // SUB ADDRESS HIGH BYTE
-  if (success)
-    success = (i2cPutbyte(subaddress & 0xFF) == 'K');       // SUB ADDRESS LOW BYTE
-  if (success)
-    STOP();                                                 // STOP
-  if (success)
-    success = (START() == 'S');                             // START
-  if (success)
-    success = (i2cPutbyte((addr7b * 2)|READ) == 'K');       // READ ADDRESS
-  if (success)
-    hibyte = i2cGetbyte(!LAST);                             // PULL THE BYTE W/ACK
-  if (success)
-    lobyte = i2cGetbyte(LAST);                              // PULL THE BYTE W/NACK
-  if (success)
-    STOP();                                                 // STOP
-  _delay_us(5);                                             // Give it a few us
-  if ((TWCR & _BV(TWSTO)) || !success) {reset_i2c();}       // Not sure why on some registers
-                                                            // this bit doesn't clear
-                                                            // and SDA hangs low
-  return (hibyte << 8) | lobyte;
+    uint8_t success = 1;
+    uint8_t hibyte = 0xFF;
+    uint8_t lobyte = 0xFF;
+
+    success = START() == 'S';                                       // START
+    if (success) success = i2cPutbyte(addr7b * 2) == 'K';           // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress >> 8) == 'K';      // SUB ADDRESS HIGH BYTE
+    if (success) success = i2cPutbyte(subaddress & 0xFF) == 'K';     // SUB ADDRESS LOW BYTE
+    if (success) STOP();                                            // STOP
+    if (success) success = START() == 'S';                          // START
+    if (success) success = i2cPutbyte((addr7b * 2)|READ) == 'K';    // READ ADDRESS
+    if (success) hibyte = i2cGetbyte(!LAST);                        // PULL THE BYTE W/ACK
+    if (success) lobyte = i2cGetbyte(LAST);                         // PULL THE BYTE W/NACK
+    if (success) STOP();                                            // STOP
+    _delay_us(5);                                                   // Give it a few us
+    if ((TWCR & _BV(TWSTO)) || !success) reset_i2c();               // Not sure why on some registers
+                                                                    // this bit doesn't clear
+                                                                    // and SDA hangs low
+    return (hibyte << 8) | lobyte;
 }
 
 // SMBUS Read BYTE with PEC
 uint16_t SMBUS_Read_Byte_PEC ( uint8_t address, uint8_t subaddress )
 {
-  uint8_t success = 1;
-  uint8_t results = 0xFF;
-  uint8_t pec_byte = 0xFF;
-  success = (START() == 'S'); // START
-  if (success)    // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success)    // SUB ADDRESS
-    success = (i2cPutbyte(subaddress) == 'K');
-  if (success)    // RESTART
-    success = (START() == 'S');
-  if (success)    // READ ADDRESS
-    success = (i2cPutbyte(address|READ) == 'K');
-  if (success)
-    results = i2cGetbyte(!LAST); // PULL THE BYTE
-  if (success)
-    pec_byte = i2cGetbyte(LAST); // PULL THE PEC BYTE W/NACK
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
+    uint8_t success = 1;
+    uint8_t results = 0xFF;
+    uint8_t pec_byte = 0xFF;
 
-  // return 16 bit ASSEMBLED RESULTS = { PEC_BYTE, RESULTS }
-  return (((uint16_t)pec_byte << 8) | (uint16_t)results);
+    success = START() == 'S';                               // START
+    if (success) success = i2cPutbyte(address) == 'K';
+    if (success) success = i2cPutbyte(subaddress) == 'K';
+    if (success) success = START() == 'S';                  // RESTART
+    if (success) success = i2cPutbyte(address|READ) == 'K'; // READ ADDRESS
+    if (success) results = i2cGetbyte(!LAST);               // PULL THE BYTE
+    if (success) pec_byte = i2cGetbyte(LAST);               // PULL THE PEC BYTE W/NACK
+    if (success) STOP();                                    // STOP
+    else clear_bus_err();                                   // clear error, reset bus
+    return (((uint16_t)pec_byte << 8) | (uint16_t)results); // return 16 bit ASSEMBLED RESULTS = { PEC_BYTE, RESULTS }
 }
 
 // SMBUS Write BYTE
 uint8_t SMBUS_Write_Byte ( uint8_t address, uint8_t subaddress, uint8_t data )
 {
-  uint8_t success = 1;
-  success = (START() == 'S'); // START
-  if (success) // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success) // SUB ADDRESS
-    success = (i2cPutbyte(subaddress) == 'K');
-  if (success) // PUSH THE BYTE
-    success = (i2cPutbyte(data) == 'K');
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
-  return success;
+    uint8_t success = 1;
+
+    success = START() == 'S';                               // START
+    if (success) success = i2cPutbyte(address) == 'K';      // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress) == 'K';   // SUB ADDRESS
+    if (success) success = i2cPutbyte(data) == 'K';         // PUSH THE BYTE
+    if (success) STOP();                                    // STOP
+    else clear_bus_err();                                   // clear error, reset bus
+    return success;
 }
 
 // SMBUS Write BYTE with PEC
 uint8_t SMBUS_Write_Byte_PEC ( uint8_t address, uint8_t subaddress, uint8_t data, uint8_t pec_byte )
 {
-  uint8_t success = 1;
-  success = (START() == 'S'); // START
-  if (success) // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success) // SUB ADDRESS
-    success = (i2cPutbyte(subaddress) == 'K');
-  if (success) // PUSH THE BYTE
-    success = (i2cPutbyte(data) == 'K');
-  if (success) // PUSH THE PEC BYTE
-    success = (i2cPutbyte(pec_byte) == 'K');
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
-  return success;
+    uint8_t success = 1;
+
+    success = START() == 'S';                               // START
+    if (success) success = i2cPutbyte(address) == 'K';      // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress) == 'K';   // SUB ADDRESS
+    if (success) success = i2cPutbyte(data) == 'K';         // PUSH THE BYTE
+    if (success) success = i2cPutbyte(pec_byte) == 'K';     // PUSH THE PEC BYTE
+    if (success) STOP();                                    // STOP
+    else clear_bus_err();                                   // clear error, reset bus
+    return success;
 }
 
 // SMBUS Read WORD
 uint16_t SMBUS_Read_Word ( uint8_t address, uint8_t subaddress )
 {
-  uint8_t success = 1;
-  uint8_t hi_byte = 0xFF;
-  uint8_t lo_byte = 0xFF;
-  success = (START() == 'S'); // START
-  if (success)    // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success)    // SUB ADDRESS
-    success = (i2cPutbyte(subaddress) == 'K');
-  if (success)    // RESTART
-    success = (START() == 'S');
-  if (success)    // READ ADDRESS
-    success = (i2cPutbyte(address|READ) == 'K');
-  if (success) {
-    // PULL THE LOW BYTE
-    lo_byte = i2cGetbyte(!LAST);
-    // PULL THE HIGH BYTE W/NACK
-    hi_byte = i2cGetbyte(LAST);
-  }
+    uint8_t success = 1;
+    uint8_t hi_byte = 0xFF;
+    uint8_t lo_byte = 0xFF;
 
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
-
-  // return ASSEMBLED WORD
-  return ((uint16_t)hi_byte << 8 | (uint16_t)lo_byte);
+    success = START() == 'S';                                   // START
+    if (success) success = (i2cPutbyte(address) == 'K');        // WRITE ADDRESS
+    if (success) success = (i2cPutbyte(subaddress) == 'K');     // SUB ADDRESS
+    if (success) success = START() == 'S';                      // RESTART
+    if (success) success = (i2cPutbyte(address|READ) == 'K');   // READ ADDRESS
+    if (success) {
+        lo_byte = i2cGetbyte(!LAST);                            // PULL THE LOW BYTE
+        hi_byte = i2cGetbyte(LAST);                             // PULL THE HIGH BYTE W/NACK
+    }
+    if (success) STOP();                                        // STOP
+    else clear_bus_err();                                       // clear error, reset bus
+    return (uint16_t)hi_byte << 8 | (uint16_t)lo_byte;          // return ASSEMBLED WORD
 }
 
 // SMBUS Read WORD with PEC
 uint32_t SMBUS_Read_Word_PEC ( uint8_t address, uint8_t subaddress )
 {
-  uint8_t success = 1;
-  uint8_t hi_byte = 0xFF;
-  uint8_t lo_byte = 0xFF;
-  uint8_t pec_byte = 0xFF;
+    uint8_t success = 1;
+    uint8_t hi_byte = 0xFF;
+    uint8_t lo_byte = 0xFF;
+    uint8_t pec_byte = 0xFF;
 
-  success = (START() == 'S'); // START
-  if (success)    // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success)    // SUB ADDRESS
-    success = (i2cPutbyte(subaddress) == 'K');
-  if (success)    // RESTART
-    success = (START() == 'S');
-  if (success)    // READ ADDRESS
-    success = (i2cPutbyte(address|READ) == 'K');
-  if (success) {
-    // PULL THE LOW BYTE
-    lo_byte = i2cGetbyte(!LAST);
-    // PULL THE HIGH BYTE
-    hi_byte = i2cGetbyte(!LAST);
-    // PULL THE PEC BYTE W/NACK
-    pec_byte = i2cGetbyte(LAST);
-  }
-
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
-
-  return ((uint32_t)pec_byte << 16 | (uint32_t)hi_byte << 8 | (uint32_t)lo_byte);
+    success = START() == 'S';                               // START
+    if (success) success = i2cPutbyte(address) == 'K';      // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress) == 'K';   // SUB ADDRESS
+    if (success) success = START() == 'S';                  // RESTART
+    if (success) success = i2cPutbyte(address|READ) == 'K'; // READ ADDRESS
+    if (success) {
+        lo_byte = i2cGetbyte(!LAST);                        // PULL THE LOW BYTE
+        hi_byte = i2cGetbyte(!LAST);                        // PULL THE HIGH BYTE
+        pec_byte = i2cGetbyte(LAST);                        // PULL THE PEC BYTE W/NACK
+    }
+    if (success) STOP();                                    // STOP
+    else clear_bus_err();                                   // clear error, reset bus
+    return (uint32_t)pec_byte << 16 | (uint32_t)hi_byte << 8 | (uint32_t)lo_byte;
 }
 
 // SMBUS Write WORD
 uint8_t SMBUS_Write_Word ( uint8_t address, uint8_t subaddress, uint8_t hi_byte, uint8_t lo_byte )
 {
-  uint8_t success = 1;
-  success = (START() == 'S'); // START
-  if (success)  // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success)  // SUB ADDRESS
-    success = (i2cPutbyte(subaddress) == 'K');
-  if (success)  // PUSH THE LOW BYTE
-    success = (i2cPutbyte(lo_byte) == 'K');
-  if (success)  // PUSH THE HIGH BYTE
-    success = (i2cPutbyte(hi_byte) == 'K');
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
+    uint8_t success = 1;
 
-  return success;
+    success = START() == 'S';                               // START
+    if (success) success = i2cPutbyte(address) == 'K';      // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress) == 'K';   // SUB ADDRESS
+    if (success) success = i2cPutbyte(lo_byte) == 'K';      // PUSH THE LOW BYTE
+    if (success) success = i2cPutbyte(hi_byte) == 'K';      // PUSH THE HIGH BYTE
+    if (success) STOP();                                    // STOP
+    else clear_bus_err();                                   // clear error, reset bus
+    return success;
 }
 
 // SMBUS Write WORD with PEC
 uint8_t SMBUS_Write_Word_PEC ( uint8_t address, uint8_t subaddress, uint8_t hi_byte, uint8_t lo_byte, uint8_t pec_byte )
 {
-  uint8_t success = 1;
-  success = (START() == 'S'); // START
-  if (success)  // WRITE ADDRESS
-    success = (i2cPutbyte(address) == 'K');
-  if (success)  // SUB ADDRESS
-    success = (i2cPutbyte(subaddress) == 'K');
-  if (success)  // PUSH THE LOW BYTE
-    success = (i2cPutbyte(lo_byte) == 'K');
-  if (success)  // PUSH THE HIGH BYTE
-    success = (i2cPutbyte(hi_byte) == 'K');
-  if (success)  // PUSH THE PEC BYTE
-    success = (i2cPutbyte(pec_byte) == 'K');
-  if (success)
-    STOP(); // STOP
-  else
-    clear_bus_err(); // clear error, reset bus
+    uint8_t success = 1;
 
-  return success;
+    success = START() == 'S';                               // START
+    if (success) success = i2cPutbyte(address) == 'K';      // WRITE ADDRESS
+    if (success) success = i2cPutbyte(subaddress) == 'K';   // SUB ADDRESS
+    if (success) success = i2cPutbyte(lo_byte) == 'K';      // PUSH THE LOW BYTE
+    if (success) success = i2cPutbyte(hi_byte) == 'K';      // PUSH THE HIGH BYTE
+    if (success) success = i2cPutbyte(pec_byte) == 'K';     // PUSH THE PEC BYTE
+    if (success) STOP();                                    // STOP
+    else clear_bus_err();                                   // clear error, reset bus
+    return success;
+}
+
+// I2C 16 Bit Subaddressed Read Byte
+uint8_t I2C_16BITSUB_Read_Byte( uint8_t address, uint16_t subaddress, uint8_t *byte)
+{
+    uint8_t success = 1;
+
+    success = START() == 'S';                                               // START
+    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
+    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
+    if (success) success = START() == 'S';                                  // RESTART
+    if (success) success = i2cPutbyte(address|READ) == 'K';                 // READ ADDRESS
+    if (success) *byte = i2cGetbyte(LAST);                                  // PULL THE BYTE
+    if (success) STOP();                                                    // STOP
+    else clear_bus_err();                                                   // clear error, reset bus
+    return success;
+}
+
+// I2C 16 Bit Subaddressed Read Word
+uint8_t I2C_16BITSUB_Read_Word( uint8_t address, uint16_t subaddress, uint16_t *word)
+{
+    uint8_t success = 1;
+    uint8_t hbyte=0, lbyte=0;
+
+    success = START() == 'S';                                               // START
+    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
+    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
+    if (success) success = START() == 'S';                                  // RESTART
+    if (success) success = i2cPutbyte(address|READ) == 'K';                 // READ ADDRESS
+    if (success) hbyte = i2cGetbyte(!LAST);                                 // PULL THE HIGH BYTE
+    if (success) lbyte = i2cGetbyte(LAST);                                  // PULL THE LOW BYTE
+    if (success) STOP();                                                    // STOP
+    else clear_bus_err();                                                   // clear error, reset bus
+    *word = (uint16_t)hbyte << 8 | (uint16_t)lbyte;
+    return success;
+}
+
+// I2C 16 Bit Subaddressed Read Double Word
+uint8_t I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dword)
+{
+    uint8_t success = 1;
+    uint8_t hbyte=0, hbyte2=0, lbyte2=0, lbyte=0;
+
+    success = START() == 'S';                                               // START
+    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
+    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
+    if (success) success = START() == 'S';                                  // RESTART
+    if (success) success = i2cPutbyte(address|READ) == 'K';                 // READ ADDRESS
+    if (success) hbyte = i2cGetbyte(!LAST);                                 // PULL THE HIGHEST BYTE
+    if (success) hbyte2 = i2cGetbyte(!LAST);                                // PULL THE SECOND BYTE
+    if (success) lbyte2 = i2cGetbyte(!LAST);                                // PULL THE THIRD BYTE
+    if (success) lbyte = i2cGetbyte(LAST);                                  // PULL THE LOWEST BYTE
+    if (success) STOP();                                                    // STOP
+    else clear_bus_err();                                                   // clear error, reset bus
+    *dword = (uint32_t)hbyte << 24 | (uint32_t)hbyte2 << 16 | (uint32_t)lbyte2 << 8 | (uint32_t)lbyte;
+    return success;
+}
+
+// I2C 16 Bit Subaddressed Write Byte
+uint8_t I2C_16BITSUB_Write_Byte( uint8_t address, uint16_t subaddress, uint8_t byte )
+{
+    uint8_t success = 1;
+
+    success = START() == 'S';                                               // START
+    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
+    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
+    if (success) success = i2cPutbyte(byte) == 'K';                         // PUSH THE BYTE
+    if (success) STOP();                                                    // STOP
+    else clear_bus_err();                                                   // Clear error, reset bus
+    return success;
+}
+
+// I2C 16 Bit Subaddressed Write Word
+uint8_t I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t word )
+{
+    uint8_t success = 1;
+
+    success = START() == 'S';                                               // START
+    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
+    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(word >> 8)) == 'K';         // PUSH THE MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(word & 0xff)) == 'K';       // PUSH THE LSBYTE
+    if (success) STOP();                                                    // STOP
+    else clear_bus_err();                                                   // Clear error, reset bus
+    return success;
+}
+
+// I2C 16 Bit Subaddressed Write Double Word
+uint8_t I2C_16BITSUB_Write_DWord( uint8_t address, uint16_t subaddress, uint32_t dword )
+{
+    uint8_t success = 1;
+
+    success = START() == 'S';                                                   // START
+    if (success) success = i2cPutbyte(address) == 'K';                          // WRITE ADDRESS
+    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';       // SUB ADDRESS MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K';     // SUB ADDRESS LSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(dword >> 24)) == 'K';           // PUSH THE MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)((dword >> 16)&0xff)) == 'K';    // PUSH THE 2MSBYTE
+    if (success) success = i2cPutbyte((uint8_t)((dword >> 8)&0xff)) == 'K';     // PUSH THE 2LSBYTE
+    if (success) success = i2cPutbyte((uint8_t)(dword & 0xff)) == 'K';          // PUSH THE LSBYTE
+    if (success) STOP();                                                        // STOP
+    else clear_bus_err();                                                       // Clear error, reset bus
+    return success;
 }

@@ -5,11 +5,11 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <avr/io.h>
-#include <util/delay.h>
+#include <util/delay.h>	// Uses delay_us()
 #include <util/twi.h>
-#define WRITE 0x00 // I²C WRITE bit
-#define READ  0x01 // I²C READ bit
-#define LAST  0x01 // A flag for the last byte to NACK
+#define WRITE 0x00 		// I²C WRITE bit
+#define READ  0x01 		// I²C READ bit
+#define LAST  0x01 		// A flag for the last byte to NACK
 #define MAX_ITER 200
 
 //                     CPU Freq 
@@ -46,7 +46,6 @@ typedef struct i2c_twi_node
 char START2(void);
 char STOP2(void);
 
-
 void i2cTwiInit ( i2c_twi_port_t* );
 void i2cSetBusSpeed ( i2c_twi_port_t* );
 void disableTwi ( void );
@@ -74,4 +73,12 @@ uint16_t SMBUS_Alert_Responce_PEC ( void );
 int twcr ( void );
 int twsr ( void );
 void clear_bus_err ( void );
+
+uint8_t I2C_16BITSUB_Read_Byte( uint8_t address, uint16_t subaddress, uint8_t *byte);
+uint8_t I2C_16BITSUB_Read_Word( uint8_t address, uint16_t subaddress, uint16_t *word);
+uint8_t I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dword);
+uint8_t I2C_16BITSUB_Write_Byte( uint8_t address, uint16_t subaddress, uint8_t byte );
+uint8_t I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t word );
+uint8_t I2C_16BITSUB_Write_DWord( uint8_t address, uint16_t subaddress, uint32_t dword );
+
 #endif
