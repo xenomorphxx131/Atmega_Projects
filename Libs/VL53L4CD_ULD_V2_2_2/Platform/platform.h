@@ -15,14 +15,15 @@
 #define _PLATFORM_H_
 #pragma once
 
+#include <util/delay.h>		// Needed for _delay_ms()
+#include <i2c_twi.h>
 #include <stdint.h>
-#include <string.h>
 
 /**
 * VL53L4CD device instance.
 */
 
-typedef uint16_t Dev_t;
+typedef uint8_t Dev_t;
 
 /**
  * @brief Error instance.
