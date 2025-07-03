@@ -78,16 +78,12 @@ void clear_bus_err () {
 // Start
 char START()
 {
-  // char results = 0;
-  int timout=0;
-  // for(int n=0; n < MAX_ITER; n++) {
-    // Check for Error condition TWSR==0
-    // if (TWSR == 0) clear_bus_err();
-    TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);         // Send Start
-    while ((timout < MAX_ITER) && !(TWCR & _BV(TWINT))) // wait for Status Bits
+  uint8_t timout=0;
+    TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);     // Send Start
+    while ((timout <= 40) && !(TWCR & _BV(TWINT)))  // wait for Status Bits
     {
-      _delay_us(50);
-      timout++;
+        _delay_us(5);
+        timout++;
     }
   return 'S';
 }
@@ -107,15 +103,15 @@ char STOP()
 // Put out a BYTE with Acknowledge
 char i2cPutbyte ( uint8_t the_byte)
 {
-  int timout = 0;
+  uint8_t timout = 0;
   char results = 0;
   TWDR = the_byte;
   TWCR = _BV(TWINT) | _BV(TWEN);    //Clear interrupt to start transmission
-  while ((timout < MAX_ITER) && !(TWCR & _BV(TWINT))) {
-    _delay_us(50);                  // Wait for status bits
+  while ((timout < 40) && !(TWCR & _BV(TWINT))) {
+    _delay_us(5);                  // Wait for status bits
     timout++;
   }
-  if (timout==MAX_ITER)
+  if (timout==40)
     results = 'N'; // Timout Error
   else
     switch (TW_STATUS)
@@ -136,9 +132,9 @@ uint8_t i2cGetbyte ( uint8_t last_byte )
 {
   int timout = 0; 
     TWCR = last_byte ? _BV(TWINT) | _BV(TWEN) : _BV(TWINT) | _BV(TWEN) | _BV(TWEA); //  ACK if _not_ last byte
-    while ((timout < MAX_ITER) && !(TWCR & _BV(TWINT)))
+    while ((timout < 40) && !(TWCR & _BV(TWINT)))
     {
-        _delay_us(50);
+        _delay_us(5);
         timout++;
     }
     return TWDR;
