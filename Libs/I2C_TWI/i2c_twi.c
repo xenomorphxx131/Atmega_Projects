@@ -38,19 +38,17 @@ void i2cSetBusSpeed ( i2c_twi_port_t* i2c_p )
   TWCR |= _BV(TWEN); //enable TWI
 }
 
-void i2cTwiInit( i2c_twi_port_t* i2c_p )
+void i2cTwiInit( i2c_twi_port_t *i2c_port )
 {
-  *i2c_p->sdaddr  &= ~i2c_p->sda; // Initialze the pin direction to input for HIGH by resistor pull up
-  *i2c_p->sclddr  &= ~i2c_p->scl; // Initialze the pin direction to input for HIGH by resistor pull up
-  *i2c_p->sdaport &= ~i2c_p->sda; // Permanently set the pin state to low. Use the direction bit
-  *i2c_p->sclport &= ~i2c_p->scl; // to set high Z. Requires a pull up resistor to make a "HIGH"
-
-  i2cSetBusSpeed ( i2c_p );
-
+    *i2c_port->sdaddr  &= ~i2c_port->sda;   // Initialze the pin direction to input
+    *i2c_port->sclddr  &= ~i2c_port->scl;   // Initialze the pin direction to input
+    *i2c_port->sdaport |= i2c_port->sda;    // Pin value to High with direction low enables pull up
+    *i2c_port->sclport |= i2c_port->scl;    // Pin value to High with direction low enables pull up
+    i2cSetBusSpeed ( i2c_port );
 }
 
-void disableTwi() { TWCR &= ~_BV(TWEN); } //disable TWI
-void enableTwi() { STOP(); } //enable TWI
+void disableTwi() { TWCR &= ~_BV(TWEN); }   //disable TWI
+void enableTwi() { STOP(); }                //enable TWI
 
 void reset_i2c()
 {
@@ -80,73 +78,41 @@ void clear_bus_err () {
 // Start
 char START()
 {
-  char results = 0;
+  // char results = 0;
   int timout=0;
-  for(int n=0;n < MAX_ITER; n++) {
+  // for(int n=0; n < MAX_ITER; n++) {
     // Check for Error condition TWSR==0
-    if (TWSR == 0) clear_bus_err();
-
-    // Send Start
-    TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
-
-    // wait for Status Bits
-    while ((timout < MAX_ITER) && (!(TWCR & _BV(TWINT)))) {
-      //Delay_MS(1);
+    // if (TWSR == 0) clear_bus_err();
+    TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);         // Send Start
+    while ((timout < MAX_ITER) && !(TWCR & _BV(TWINT))) // wait for Status Bits
+    {
       _delay_us(50);
       timout++;
     }
-    if (timout == MAX_ITER){
-      results = '?'; // Timout Error
-      n = MAX_ITER;
-    } else {
-      switch (TW_STATUS)
-        {
-        case TW_REP_START:
-        case TW_START:
-          results = 'S';  // good
-          n = MAX_ITER;
-          break;
-        case TW_MT_ARB_LOST:
-          results = '?';  // Huh?
-          break;
-        default:
-          results = '?';  // Huh?
-          n = MAX_ITER;
-        }
-    }
-  }
-  return results;
+  return 'S';
 }
 
 char START2()
 {
-    // TWCR = _BV(TWINT);
     TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
     return 'S';
 }
 
-// Stop
 char STOP()
 {
-  // TWCR = _BV(TWINT);
-  TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN); // send stop condition
+  TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
   return 'P';
 }
 
 // Put out a BYTE with Acknowledge
 char i2cPutbyte ( uint8_t the_byte)
 {
-  int timout=0;
+  int timout = 0;
   char results = 0;
-
   TWDR = the_byte;
-
-  //Clear interrupt to start transmission
-  TWCR = _BV(TWINT) | _BV(TWEN);
-
-  // Wait for status bits
-  while ((timout < MAX_ITER) && (!(TWCR & _BV(TWINT)))) {
-    _delay_us(50);
+  TWCR = _BV(TWINT) | _BV(TWEN);    //Clear interrupt to start transmission
+  while ((timout < MAX_ITER) && !(TWCR & _BV(TWINT))) {
+    _delay_us(50);                  // Wait for status bits
     timout++;
   }
   if (timout==MAX_ITER)
@@ -154,16 +120,13 @@ char i2cPutbyte ( uint8_t the_byte)
   else
     switch (TW_STATUS)
       {
-      case TW_MR_SLA_ACK:  // MASTER RECIEVE MODE ACK
-      case TW_MT_SLA_ACK:  // MASTER TRANSMIT MODE ACK
-      case TW_MT_DATA_ACK: // MASTER TRANSMIT DATA MODE ACK
-      case TW_MR_DATA_ACK: // MASTER RECIEVE DATA MODE ACK
-        results = 'K';
-        break;
-      case TW_MT_SLA_NACK: // NACK during select: device busy writing
-      case TW_MT_ARB_LOST: // Arbitration lost
-      default:             // and anything else
-        results = 'N';
+      case TW_MR_SLA_ACK:   results = 'K'; break;  // MASTER RECIEVE MODE ACK
+      case TW_MT_SLA_ACK:   results = 'K'; break;  // MASTER TRANSMIT MODE ACK
+      case TW_MT_DATA_ACK:  results = 'K'; break;  // MASTER TRANSMIT DATA MODE ACK
+      case TW_MR_DATA_ACK:  results = 'K'; break;  // MASTER RECIEVE DATA MODE ACK
+      case TW_MT_SLA_NACK:  results = 'K'; break;  // NACK during select: device busy writing
+      case TW_MT_ARB_LOST:  results = 'K'; break;  // Arbitration lost
+      default:              results = 'N';         // and anything else
       }
   return results;
 }
@@ -171,32 +134,14 @@ char i2cPutbyte ( uint8_t the_byte)
 // Get a BYTE with Acknowledge or NACK if last
 uint8_t i2cGetbyte ( uint8_t last_byte )
 {
-  int timout = 0;
-  uint8_t results = 0;
-
-  if (last_byte)
-    TWCR = _BV(TWINT) | _BV(TWEN);              //Set NAK
-  else
-    TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA); // Set ACK
-
-  // Wait for transmission
-  while ((timout < MAX_ITER) && (!(TWCR & _BV(TWINT)))) {
-    _delay_us(50);
-    timout++;
-  }
-  if (timout == MAX_ITER)
-    results = 0xFF; // Timout return 0xFF
-  else
-    switch (TW_STATUS)
-      {
-      case TW_MR_DATA_NACK:
-      case TW_MR_DATA_ACK:
-        results = TWDR;
-        break;
-      default:
-        results = 0xFF;
-      }
-  return results;
+  int timout = 0; 
+    TWCR = last_byte ? _BV(TWINT) | _BV(TWEN) : _BV(TWINT) | _BV(TWEN) | _BV(TWEA); //  ACK if _not_ last byte
+    while ((timout < MAX_ITER) && !(TWCR & _BV(TWINT)))
+    {
+        _delay_us(50);
+        timout++;
+    }
+    return TWDR;
 }
 
 /**************************************************************************
@@ -244,7 +189,6 @@ uint8_t SMBUS_Alert_Responce ( )
     return results;
 }
 
-
 // SMBUS ARA with PEC
 uint16_t SMBUS_Alert_Responce_PEC ( )
 {
@@ -279,7 +223,7 @@ uint8_t SMBUS_Read_Byte ( uint8_t address, uint8_t subaddress )
     return results;
 }
 
-// I2C16_Read_Byte foe use with the VL6180 TOF sensor
+// I2C16_Read_Byte for use with the VL6180 TOF sensor
 uint8_t I2C16_Read_Byte( uint8_t addr7b, uint16_t subaddress )
 {
     uint8_t success = 1;
@@ -301,7 +245,7 @@ uint8_t I2C16_Read_Byte( uint8_t addr7b, uint16_t subaddress )
     return results;
 }
 
-// I2C16_Write_Byte foe use with the VL6180 TOF sensor
+// I2C16_Write_Byte for use with the VL6180 TOF sensor
 uint8_t I2C16_Write_Byte( uint8_t addr7b, uint16_t subaddress, uint8_t data )
 {
     uint8_t success = 1;
@@ -466,110 +410,82 @@ uint8_t SMBUS_Write_Word_PEC ( uint8_t address, uint8_t subaddress, uint8_t hi_b
     return success;
 }
 
-// I2C 16 Bit Subaddressed Read Byte
-uint8_t I2C_16BITSUB_Read_Byte( uint8_t address, uint16_t subaddress, uint8_t *byte)
+void I2C_16BITSUB_Read_Byte( uint8_t address, uint16_t subaddress, uint8_t *byte)
 {
-    uint8_t success = 1;
-
-    success = START() == 'S';                                               // START
-    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
-    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
-    if (success) success = START() == 'S';                                  // RESTART
-    if (success) success = i2cPutbyte(address|READ) == 'K';                 // READ ADDRESS
-    if (success) *byte = i2cGetbyte(LAST);                                  // PULL THE BYTE
-    if (success) STOP();                                                    // STOP
-    else clear_bus_err();                                                   // clear error, reset bus
-    return success;
+    START();                                        // START
+        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
+        i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
+    START();                                        // RESTART
+        i2cPutbyte(address|READ);                   // READ ADDRESS
+        *byte = i2cGetbyte(LAST);                   // PULL THE BYTE
+    STOP();                                         // STOP
 }
 
-// I2C 16 Bit Subaddressed Read Word
-uint8_t I2C_16BITSUB_Read_Word( uint8_t address, uint16_t subaddress, uint16_t *word)
+void I2C_16BITSUB_Read_Word( uint8_t address, uint16_t subaddress, uint16_t *word)
 {
-    uint8_t success = 1;
     uint8_t hbyte=0, lbyte=0;
 
-    success = START() == 'S';                                               // START
-    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
-    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
-    if (success) success = START() == 'S';                                  // RESTART
-    if (success) success = i2cPutbyte(address|READ) == 'K';                 // READ ADDRESS
-    if (success) hbyte = i2cGetbyte(!LAST);                                 // PULL THE HIGH BYTE
-    if (success) lbyte = i2cGetbyte(LAST);                                  // PULL THE LOW BYTE
-    if (success) STOP();                                                    // STOP
-    else clear_bus_err();                                                   // clear error, reset bus
+    START();                                        // START
+        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
+        i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
+    START();                                        // RESTART
+        i2cPutbyte(address|READ);                   // READ ADDRESS
+        hbyte = i2cGetbyte(!LAST);                  // PULL THE HIGH BYTE
+        lbyte = i2cGetbyte(LAST);                   // PULL THE LOW BYTE
+    STOP();                                         // STOP
     *word = (uint16_t)hbyte << 8 | (uint16_t)lbyte;
-    return success;
 }
 
-// I2C 16 Bit Subaddressed Read Double Word
-uint8_t I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dword)
+void I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dword)
 {
-    uint8_t success = 1;
     uint8_t hbyte=0, hbyte2=0, lbyte2=0, lbyte=0;
 
-    success = START() == 'S';                                               // START
-    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
-    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
-    if (success) success = START() == 'S';                                  // RESTART
-    if (success) success = i2cPutbyte(address|READ) == 'K';                 // READ ADDRESS
-    if (success) hbyte = i2cGetbyte(!LAST);                                 // PULL THE HIGHEST BYTE
-    if (success) hbyte2 = i2cGetbyte(!LAST);                                // PULL THE SECOND BYTE
-    if (success) lbyte2 = i2cGetbyte(!LAST);                                // PULL THE THIRD BYTE
-    if (success) lbyte = i2cGetbyte(LAST);                                  // PULL THE LOWEST BYTE
-    if (success) STOP();                                                    // STOP
-    else clear_bus_err();                                                   // clear error, reset bus
+    START();                                        // START
+        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
+        i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
+    START();                                        // RESTART
+        i2cPutbyte(address|READ);                   // READ ADDRESS
+        hbyte = i2cGetbyte(!LAST);                  // PULL THE HIGHEST BYTE
+        hbyte2 = i2cGetbyte(!LAST);                 // PULL THE SECOND BYTE
+        lbyte2 = i2cGetbyte(!LAST);                 // PULL THE THIRD BYTE
+        lbyte = i2cGetbyte(LAST);                   // PULL THE LOWEST BYTE
+    STOP();                                         // STOP
     *dword = (uint32_t)hbyte << 24 | (uint32_t)hbyte2 << 16 | (uint32_t)lbyte2 << 8 | (uint32_t)lbyte;
-    return success;
 }
 
-// I2C 16 Bit Subaddressed Write Byte
-uint8_t I2C_16BITSUB_Write_Byte( uint8_t address, uint16_t subaddress, uint8_t byte )
+void I2C_16BITSUB_Write_Byte( uint8_t address, uint16_t subaddress, uint8_t byte )
 {
-    uint8_t success = 1;
-
-    success = START() == 'S';                                               // START
-    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
-    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
-    if (success) success = i2cPutbyte(byte) == 'K';                         // PUSH THE BYTE
-    if (success) STOP();                                                    // STOP
-    else clear_bus_err();                                                   // Clear error, reset bus
-    return success;
+    START();                                        // START
+        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
+        i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
+        i2cPutbyte(byte);                           // PUSH THE BYTE
+    STOP();                                         // STOP
 }
 
-// I2C 16 Bit Subaddressed Write Word
-uint8_t I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t word )
+void I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t word )
 {
-    uint8_t success = 1;
-
-    success = START() == 'S';                                               // START
-    if (success) success = i2cPutbyte(address) == 'K';                      // WRITE ADDRESS
-    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';   // SUB ADDRESS MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K'; // SUB ADDRESS LSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(word >> 8)) == 'K';         // PUSH THE MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(word & 0xff)) == 'K';       // PUSH THE LSBYTE
-    if (success) STOP();                                                    // STOP
-    else clear_bus_err();                                                   // Clear error, reset bus
-    return success;
+    START();                                        // START
+        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
+        i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
+        i2cPutbyte((uint8_t)(word >> 8));           // PUSH THE MSBYTE
+        i2cPutbyte((uint8_t)(word & 0xff));         // PUSH THE LSBYTE
+    STOP();                                         // STOP
 }
 
-// I2C 16 Bit Subaddressed Write Double Word
-uint8_t I2C_16BITSUB_Write_DWord( uint8_t address, uint16_t subaddress, uint32_t dword )
+void I2C_16BITSUB_Write_DWord( uint8_t address, uint16_t subaddress, uint32_t dword )
 {
-    uint8_t success = 1;
-
-    success = START() == 'S';                                                   // START
-    if (success) success = i2cPutbyte(address) == 'K';                          // WRITE ADDRESS
-    if (success) success = i2cPutbyte((uint8_t)(subaddress >> 8)) == 'K';       // SUB ADDRESS MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(subaddress & 0xff)) == 'K';     // SUB ADDRESS LSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(dword >> 24)) == 'K';           // PUSH THE MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)((dword >> 16)&0xff)) == 'K';    // PUSH THE 2MSBYTE
-    if (success) success = i2cPutbyte((uint8_t)((dword >> 8)&0xff)) == 'K';     // PUSH THE 2LSBYTE
-    if (success) success = i2cPutbyte((uint8_t)(dword & 0xff)) == 'K';          // PUSH THE LSBYTE
-    if (success) STOP();                                                        // STOP
-    else clear_bus_err();                                                       // Clear error, reset bus
-    return success;
+    START();                                        // START
+        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
+        i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
+        i2cPutbyte((uint8_t)(dword >> 24));         // PUSH THE MSBYTE
+        i2cPutbyte((uint8_t)((dword >> 16)&0xff));  // PUSH THE 2MSBYTE
+        i2cPutbyte((uint8_t)((dword >> 8)&0xff));   // PUSH THE 2LSBYTE
+        i2cPutbyte((uint8_t)(dword & 0xff));        // PUSH THE LSBYTE
+    STOP();                                         // STOP
 }

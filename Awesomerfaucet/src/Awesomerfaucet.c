@@ -48,7 +48,7 @@ int main(void)
     CLKPR =_BV(CLKPCE);                             // Enable CLK prescaler change (CLKPCE). The CLKPCE bit is only updated when the other bits in CLKPR are simultaneously written to zero
     CLKPR = 0;                                      // Change CLK prescaler to divide by 1 (CLKPS[3..0])
     MCUSR &= ~_BV(WDRF);                            // Clear watchdog bit
-    MCUCR |= _BV(JTD);                              // Used port F for the touch pad so need to disable JTAG.
+    MCUCR |= _BV(JTD);                              // Disable JTAG.
     MCUCR |= _BV(JTD);                              // Manual Pg 323. "The application software must write this bit to the desired value twice within four cycles to change its value."
                                                     // These lines needed to restart after USB flashing for some reason.
     wdt_disable();                                  // Disable watchdog if enabled by bootloader/fuses
@@ -72,7 +72,6 @@ int main(void)
 	iir_value = retrieve_IIR_value();               // Retrieve IIR value from EEPROM
 	set_laserpower(retrieve_laserpower_setting());  // Retrieve laser power value from EEPROM
 	VL53L4CD_SensorInit(0x52);                      // Initialize the seonsor
-    _delay_ms(2);                                   // Startup time is supposed to be 1.2ms max. Does that mean here?
     VL53L4CD_SetRangeTiming(0x52, 50, 0);           // Address, timing budget (ms), inter-measurement (0 means no shutdown)
     VL53L4CD_StartRanging(0x52);                    // Kick off the first reading
     /****************************************************************************

@@ -10,7 +10,7 @@
 #define WRITE 0x00 		// I²C WRITE bit
 #define READ  0x01 		// I²C READ bit
 #define LAST  0x01 		// A flag for the last byte to NACK
-#define MAX_ITER 200
+#define MAX_ITER 10
 
 //                     CPU Freq 
 // SCL Freq  =  ------------------------
@@ -74,11 +74,11 @@ int twcr ( void );
 int twsr ( void );
 void clear_bus_err ( void );
 
-uint8_t I2C_16BITSUB_Read_Byte( uint8_t address, uint16_t subaddress, uint8_t *byte);
-uint8_t I2C_16BITSUB_Read_Word( uint8_t address, uint16_t subaddress, uint16_t *word);
-uint8_t I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dword);
-uint8_t I2C_16BITSUB_Write_Byte( uint8_t address, uint16_t subaddress, uint8_t byte );
-uint8_t I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t word );
-uint8_t I2C_16BITSUB_Write_DWord( uint8_t address, uint16_t subaddress, uint32_t dword );
+void I2C_16BITSUB_Read_Byte( uint8_t address, uint16_t subaddress, uint8_t *byte);
+void I2C_16BITSUB_Read_Word( uint8_t address, uint16_t subaddress, uint16_t *word);
+void I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dword);
+void I2C_16BITSUB_Write_Byte( uint8_t address, uint16_t subaddress, uint8_t byte );
+void I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t word );
+void I2C_16BITSUB_Write_DWord( uint8_t address, uint16_t subaddress, uint32_t dword );
 
 #endif

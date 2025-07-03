@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- *  Awesomerfaucet SCPI                                                     *
+ *  Awesomefaucet SCPI                                                      *
  *                                                                          *
  ****************************************************************************/
 
@@ -22,6 +22,7 @@ bool water_auto = true;
 
 extern long long max_reading;
 extern long long IIR_range_reading;
+
 
 /**************************************************************************
 *  Build input string from terminal then run SCPI command.                *
@@ -220,11 +221,22 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	command_array_P[i].implied    = true;
 	command_array_P[i].parent     = NULL;
 	command_array_P[i++].function   = &scpi_null_func;
-
+	//   [:]*CLS
+	//   [:]*ESE
+	//   [:]*ESE?
+	//   [:]*ESR?
+	//   [:]*OPC
+	// 2 [:]*OPC?
 	command_array_P[i].name      = PSTR("*OPC?");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &st_OPC_q;
+	//   [:]*RST
+	//   [:]*SRE
+	//   [:]*SRE?
+	//   [:]*STB?
+	//   [:]*TST?
+	//   [:]*WAI
 /**************************************************************************
 *  Non-Compulsory SCPI commands                                           *
 ***************************************************************************/
@@ -286,15 +298,25 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
+    
+        command_array_P[i].name       = PSTR("RANGE?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-1];
+        command_array_P[i++].function = &scpi_get_range_q;
+    
+        command_array_P[i].name       = PSTR("ALS?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-2];
+        command_array_P[i++].function = &scpi_get_als_q;
 		
         command_array_P[i].name       = PSTR("IIR?");
         command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-1];
+        command_array_P[i].parent     = &command_array_P[i-3];
         command_array_P[i++].function = &scpi_get_IIR_value;
 		
         command_array_P[i].name       = PSTR("LASERPOWER?");
         command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
+        command_array_P[i].parent     = &command_array_P[i-4];
         command_array_P[i++].function = &scpi_get_laserpower_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
@@ -362,6 +384,9 @@ void scpi_empty_func( char *arg, IO_pointers_t IO ) {}
 ***************************************************************************/
 void sys_rst_btloader( char *arg, IO_pointers_t IO )
 {
+	// scpi_prStr_P(PSTR("Bootloader Running..."), IO.USB_stream); // Why?
+	// process_USB();                                              // Why?
+	// Delay_MS(500);                                              // Why?
 	Jump_To_Bootloader();
 }
 /**************************************************************************
@@ -442,6 +467,8 @@ void debug(char *arg, IO_pointers_t IO)
     // fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range__measurement_ready());
     // fprintf(IO.USB_stream, "Ready bit: %d\r\n", range__range_device_ready());
     // fprintf(IO.USB_stream, "Reading: %d\r\n", get_range());
+	
+	
 
     // fprintf(IO.USB_stream, "Max Reading: %d\r\n", (int)(max_reading/8192));
     // fprintf(IO.USB_stream, "IIR Reading: %d\r\n", (int)(IIR_range_reading/8192));
@@ -449,8 +476,8 @@ void debug(char *arg, IO_pointers_t IO)
 /**************************************************************************
 *  SCPI Get Range Reading                                                 *
 ***************************************************************************/
-// void scpi_get_range_q(char *arg, IO_pointers_t IO)
-// {
+void scpi_get_range_q(char *arg, IO_pointers_t IO)
+{
     // if (range_measurement_ready())  // There's a reading pending
     // {;}                             // For now do nothing
     // else if (range_sensor_busy())   // There's none pending and it's busy
@@ -476,7 +503,21 @@ void debug(char *arg, IO_pointers_t IO)
 	// }
 	
 	// fprintf(IO.USB_stream, "%d\r\n", get_range());
-// }
+	
+	
+	
+	
+	
+}
+/**************************************************************************
+*  SCPI Get Ambient Light Sensor Reading                                  *
+***************************************************************************/
+void scpi_get_als_q(char *arg, IO_pointers_t IO)
+{
+	// cli(); // ALS reading is blocking - possible deadlock?
+	// fprintf(IO.USB_stream, "%d\r\n", get_ALS_blocking());
+	// sei();
+}
 /**************************************************************************
 *  Clear Port                                                             *
 ***************************************************************************/

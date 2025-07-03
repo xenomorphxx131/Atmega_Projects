@@ -1,10 +1,10 @@
-#ifndef AWESOMERFAUCET_SCPI_CONFIG_H_
-#define AWESOMERFAUCET_SCPI_CONFIG_H_
+#ifndef SCPI_CONFIG_H_
+#define SCPI_CONFIG_H_
 
 /**************************************************************************
 *  Define size of commands array                                          *
 ***************************************************************************/
-	#define COMMAND_ARRAY_SIZE 20
+	#define COMMAND_ARRAY_SIZE 22
 /**************************************************************************
 *  Define max input string length                                         *
 ***************************************************************************/
@@ -37,10 +37,10 @@
 /**************************************************************************
 *  VERSIONS and other Meta Data                                           *
 ***************************************************************************/
-	#define FIRMWARE_VERSION	"0.0"
+	#define FIRMWARE_VERSION	"2.3"
 	#define	COMPANY_NAME		"Hypertronix"
-	#define	PROJECT_NAME		"Awesomer Faucet"
+	#define	PROJECT_NAME		"Awesome Faucet"
 	#define NUL					'\0'
 	#define DEL_KEY				127
 	
-#endif
+#endif // SCPI_CONFIG_H_

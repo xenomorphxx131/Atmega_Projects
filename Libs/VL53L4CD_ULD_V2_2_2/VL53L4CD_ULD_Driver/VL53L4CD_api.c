@@ -165,8 +165,7 @@ VL53L4CD_Error VL53L4CD_GetSensorId(
 	return status;
 }
 
-VL53L4CD_Error VL53L4CD_SensorInit(
-		Dev_t dev)
+VL53L4CD_Error VL53L4CD_SensorInit( Dev_t dev)
 {
 	VL53L4CD_Error status = VL53L4CD_ERROR_NONE;
 	uint8_t Addr, tmp;
@@ -174,8 +173,7 @@ VL53L4CD_Error VL53L4CD_SensorInit(
 	uint16_t i = 0;
 
 	do{
-		status |= VL53L4CD_RdByte(dev,
-				VL53L4CD_FIRMWARE__SYSTEM_STATUS, &tmp);
+		status |= VL53L4CD_RdByte(dev, VL53L4CD_FIRMWARE__SYSTEM_STATUS, &tmp);
 
 		if(tmp == (uint8_t)0x3) /* Sensor booted */
 		{
@@ -196,9 +194,7 @@ VL53L4CD_Error VL53L4CD_SensorInit(
 	/* Load default configuration */
 	for (Addr = (uint8_t)0x2D; Addr <= (uint8_t)0x87; Addr++)
 	{
-		status |= VL53L4CD_WrByte(dev, Addr,
-				VL53L4CD_DEFAULT_CONFIGURATION[
-                                  Addr - (uint8_t)0x2D]);
+		status |= VL53L4CD_WrByte(dev, Addr, VL53L4CD_DEFAULT_CONFIGURATION[Addr - (uint8_t)0x2D]);
 	}
 
 	/* Start VHV */
