@@ -32,14 +32,14 @@
 /**************************************************************************
 *  Define max argument length                                             *
 ***************************************************************************/
-    #define MAX_LASER_CHARS 3
-    #define MAX_IIR_CHARS 3
+    #define MAX_LASER_CHARS 3   // 0 - 255
+    #define MAX_IIR_CHARS 5     // 0 - 65535
 /**************************************************************************
 *  VERSIONS and other Meta Data                                           *
 ***************************************************************************/
-	#define FIRMWARE_VERSION	"2.3"
+	#define FIRMWARE_VERSION	"0.0"
 	#define	COMPANY_NAME		"Hypertronix"
-	#define	PROJECT_NAME		"Awesome Faucet"
+	#define	PROJECT_NAME		"Awesomer Faucet"
 	#define NUL					'\0'
 	#define DEL_KEY				127
 	

@@ -8,8 +8,7 @@
 /**************************************************************************
 *  Create the timer update control global                                 *
 ***************************************************************************/
-bool update_timers = false;
-uint8_t iir_value = 0;
+uint16_t time = 0;
 /**************************************************************************
 *                            Main                                         *
 ***************************************************************************/
@@ -69,10 +68,15 @@ int main(void)
     sei();                                          // Enable interrupts
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
     Setup_ScpiCommandsArray_P(commands_P);          // Build the command array (mostly pointers to PROGMEM)
-	iir_value = retrieve_IIR_value();               // Retrieve IIR value from EEPROM
+	retrieve_IIR_alpha(IO);                         // Retrieve IIR value from EEPROM
+    
+    
+    // TODO RETREIVE THRESHOLD VALUE (LIKE 2mm etc).
+    
+    
 	set_laserpower(retrieve_laserpower_setting());  // Retrieve laser power value from EEPROM
-	VL53L4CD_SensorInit(0x52);                      // Initialize the seonsor
-    VL53L4CD_SetRangeTiming(0x52, 50, 0);           // Address, timing budget (ms), inter-measurement (0 means no shutdown)
+	VL53L4CD_SensorInit(0x52);                      // Initialize the sensor
+    VL53L4CD_SetRangeTiming(0x52, 50, 0);           // Address, timing budget (ms), inter-measurement (0 means no shutdown, take next reading)
     VL53L4CD_StartRanging(0x52);                    // Kick off the first reading
     /****************************************************************************
      *        Main Loop                                                         *
@@ -81,8 +85,7 @@ int main(void)
     {
         process_USB();
         process_scpi_input(str_in, &str_len, commands_P, IO);
-        // process_soft_timers();
-        // process_sensor();
+        process_sensor();
         // update_water();
     }
 }
@@ -91,5 +94,7 @@ int main(void)
 *****************************************************************************/
 ISR(TIMER0_OVF_vect)
 {
-    update_timers = true;
+    cli();
+    process_soft_timers();
+    sei();
 }

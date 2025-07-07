@@ -15,14 +15,14 @@ int error_number = 0;
 char const error_mnemonic_too_long[]	PROGMEM = "-112,Program mnemonic too long";
 char const error_arg_too_long[]			PROGMEM = "-112,Argument too long";
 char const error_bad_path_or_header[] 	PROGMEM = "-113,Bad path or header: ";
-uint8_t EEMEM LASER_POWER[MAX_LASER_CHARS];
-uint8_t EEMEM IIR_VALUE[MAX_IIR_CHARS];
-extern uint8_t iir_value;
+uint8_t EEMEM LASER_POWER[MAX_LASER_CHARS + 1];
+uint16_t EEMEM IIR_ALPHA[MAX_IIR_CHARS + 1];
 bool water_auto = true;
 
+uint16_t iir_alpha;
 extern long long max_reading;
-extern long long IIR_range_reading;
-
+extern uint16_t time;
+extern float distance_mm;
 
 /**************************************************************************
 *  Build input string from terminal then run SCPI command.                *
@@ -244,7 +244,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 	command_array_P[i].name      = PSTR("SYSTem");
 	command_array_P[i].implied    = true;
 	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_empty_func; // ****** Careful here, Loadbox_scpi.c refers to this directly as "&command_array_P[2]"
+	command_array_P[i++].function = &scpi_empty_func;
 
 	// [[:]SYSTem:]PRESet
 
@@ -312,7 +312,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].name       = PSTR("IIR?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-3];
-        command_array_P[i++].function = &scpi_get_IIR_value;
+        command_array_P[i++].function = &scpi_get_IIR_alpha;
 		
         command_array_P[i].name       = PSTR("LASERPOWER?");
         command_array_P[i].implied    = false;
@@ -352,7 +352,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 		command_array_P[i].name       = PSTR("IIR");
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-1];
-		command_array_P[i++].function = &scpi_set_IIR_value;
+		command_array_P[i++].function = &scpi_set_IIR_alpha;
 		
 		command_array_P[i].name       = PSTR("LASERPOWER");
 		command_array_P[i].implied    = false;
@@ -366,7 +366,6 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 ***************************************************************************/
 void scpi_null_func( char *arg, IO_pointers_t IO )
 {
-	// scpi_prStr_P(PSTR("Null func runs\r\n"), IO.USB_stream);
 }
 /**************************************************************************
 *  *OPC (Operation Complete Query) function                               *
@@ -384,9 +383,6 @@ void scpi_empty_func( char *arg, IO_pointers_t IO ) {}
 ***************************************************************************/
 void sys_rst_btloader( char *arg, IO_pointers_t IO )
 {
-	// scpi_prStr_P(PSTR("Bootloader Running..."), IO.USB_stream); // Why?
-	// process_USB();                                              // Why?
-	// Delay_MS(500);                                              // Why?
 	Jump_To_Bootloader();
 }
 /**************************************************************************
@@ -449,6 +445,28 @@ void st_WAI( char *arg, IO_pointers_t IO ) {}
 ***************************************************************************/
 void debug(char *arg, IO_pointers_t IO)
 {
+    uint8_t data_is_ready;
+    VL53L4CD_ResultsData_t p_results;
+
+    VL53L4CD_StopRanging(0x52);
+    VL53L4CD_ClearInterrupt(0x52);
+    VL53L4CD_StartRanging(0x52);
+    
+    for (int i=0; i<=30; i++)
+    {
+        fprintf(IO.USB_stream, "index: %d ", i);
+        fprintf(IO.USB_stream, "time: %ums ", time);
+        data_is_ready = 0;
+        while (!data_is_ready)
+            VL53L4CD_CheckForDataReady(0x52, &data_is_ready);
+        VL53L4CD_GetResult(0x52, &p_results);
+        VL53L4CD_ClearInterrupt(0x52);
+        fprintf(IO.USB_stream, "%dmm\r\n", p_results.distance_mm);
+    }
+    fprintf(IO.USB_stream, "END OF RECORD\r\n\n");
+    
+
+    
     // scpi_prStr_P(PSTR("Entering Function!\r\n"), IO.USB_stream);
     // {
         // fprintf(IO.USB_stream, "VAL: %d\r\n", I2C16_Read_Byte ( VL6180X_ADDR7b, 0 ));
@@ -467,9 +485,6 @@ void debug(char *arg, IO_pointers_t IO)
     // fprintf(IO.USB_stream, "Measurement ready: %d\r\n", range__measurement_ready());
     // fprintf(IO.USB_stream, "Ready bit: %d\r\n", range__range_device_ready());
     // fprintf(IO.USB_stream, "Reading: %d\r\n", get_range());
-	
-	
-
     // fprintf(IO.USB_stream, "Max Reading: %d\r\n", (int)(max_reading/8192));
     // fprintf(IO.USB_stream, "IIR Reading: %d\r\n", (int)(IIR_range_reading/8192));
 }
@@ -478,45 +493,28 @@ void debug(char *arg, IO_pointers_t IO)
 ***************************************************************************/
 void scpi_get_range_q(char *arg, IO_pointers_t IO)
 {
-    // if (range_measurement_ready())  // There's a reading pending
-    // {;}                             // For now do nothing
-    // else if (range_sensor_busy())   // There's none pending and it's busy
-    // {
-        // do{;}
-        // while(range_sensor_busy()); // just wait it out
-    // }
-    // else                            // There's none pending and it's not busy
-    // {   start_range_measurement();  // Kick off a new reading and
-        // do{;}                       // just
-        // while(range_sensor_busy()); // wait it out
-    // }
-                                    // Always
-	// fprintf(IO.USB_stream, "%d\r\n", get_range());
-    // start_range_measurement();
-	
-	// if (range_measurement_ready())
-		// fprintf(IO.USB_stream, "%d\r\n", get_range());
-	// else
-	// {
-		// while(range_sensor_busy()) {}
-		// fprintf(IO.USB_stream, "%d\r\n", get_range());
-	// }
-	
-	// fprintf(IO.USB_stream, "%d\r\n", get_range());
-	
-	
-	
-	
-	
+    // uint8_t data_is_ready = 0;
+    // VL53L4CD_ResultsData_t p_results;
+
+    // VL53L4CD_StopRanging(0x52);
+    // VL53L4CD_ClearInterrupt(0x52);
+    // VL53L4CD_StartRanging(0x52);
+    // while (!data_is_ready) VL53L4CD_CheckForDataReady(0x52, &data_is_ready);
+    // VL53L4CD_GetResult(0x52, &p_results);
+    // VL53L4CD_ClearInterrupt(0x52);
+	// fprintf(IO.USB_stream, "%dmm\r\n", p_results.distance_mm);
+    
+    
+    
+    
+    // fprintf(IO.USB_stream, "%dmm ", raw_mm_reading);
+    fprintf(IO.USB_stream, "%fmm\r\n", (double)distance_mm);
 }
 /**************************************************************************
 *  SCPI Get Ambient Light Sensor Reading                                  *
 ***************************************************************************/
 void scpi_get_als_q(char *arg, IO_pointers_t IO)
 {
-	// cli(); // ALS reading is blocking - possible deadlock?
-	// fprintf(IO.USB_stream, "%d\r\n", get_ALS_blocking());
-	// sei();
 }
 /**************************************************************************
 *  Clear Port                                                             *
@@ -588,37 +586,43 @@ uint8_t retrieve_laserpower_setting()
 ***************************************************************************/
 void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%d\r\n", get_laserpower());
+	fprintf(IO.USB_stream, "%u\r\n", get_laserpower());
 }
 /**************************************************************************
 *  Store IIR Factor to EEPROM                                             *
 ***************************************************************************/
-void scpi_set_IIR_value( char *arg, IO_pointers_t IO )
+void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
 {
-	if (strlen(arg) <= MAX_ARG_LEN) remove_ws(arg);
-    if (strlen(arg) <= MAX_IIR_CHARS && strlen(arg) >= 1)
-	{
-		eeprom_busy_wait();
-		eeprom_write_block(arg, &IIR_VALUE, MAX_IIR_CHARS);
-		iir_value = retrieve_IIR_value();
-	}
+	if (strlen(arg) <= MAX_ARG_LEN)
+    {
+        remove_ws(arg);
+        if (strlen(arg) <= MAX_IIR_CHARS && strlen(arg) >= 1)
+        {
+            eeprom_busy_wait();
+            eeprom_write_block(arg, &IIR_ALPHA, MAX_IIR_CHARS);
+            retrieve_IIR_alpha(IO);
+        }
+        else
+            scpi_add_error_P(error_arg_too_long, IO);
+    }
 	else
 		scpi_add_error_P(error_arg_too_long, IO);
 }
 /**************************************************************************
-*  SCPI Retreive IIR Factor from EEPROM                                   *
+*  SCPI Print IIR Factor                                                  *
 ***************************************************************************/
-void scpi_get_IIR_value( char *arg, IO_pointers_t IO )
+void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%d\r\n", retrieve_IIR_value());
+	fprintf(IO.USB_stream, "%u\r\n", iir_alpha);
 }
 /**************************************************************************
 *  Update IIR Factor from EEPROM                                          *
 ***************************************************************************/
-uint8_t retrieve_IIR_value()
+void retrieve_IIR_alpha(IO_pointers_t IO)
 {
 	char iir_string[MAX_IIR_CHARS];
     eeprom_busy_wait();
-    eeprom_read_block((void*)&iir_string, (const void *)&IIR_VALUE, MAX_IIR_CHARS);
-    return (uint8_t)atoi(iir_string);
+    eeprom_read_block((void*)&iir_string, (const void *)&IIR_ALPHA, MAX_IIR_CHARS);
+    char *endptr;
+    iir_alpha = (uint16_t)strtol(iir_string, &endptr, 10);
 }

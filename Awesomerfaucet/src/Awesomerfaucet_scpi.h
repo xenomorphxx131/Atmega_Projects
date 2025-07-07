@@ -16,7 +16,7 @@
     #include "Awesomerfaucet_board.h"
     #include "Awesomerfaucet_laser.h"
     #include "Awesomerfaucet_water.h"
-    // #include "Awesomerfaucet_range.h"
+    #include "VL53L4CD_api.h"               // To get direct access to sensor data types and methods
 /**************************************************************************
 *  Create a data structure to contain the various IO pointers             *
 *  that need global scope                                                 *
@@ -64,20 +64,14 @@ typedef struct scpi_node_P {
     void scpi_water_on (char *arg, IO_pointers_t IO);
     void scpi_water_off (char *arg, IO_pointers_t IO);
     void scpi_set_laserpower( char *arg, IO_pointers_t IO );
-	void scpi_set_IIR_value( char *arg, IO_pointers_t IO );
-	void scpi_get_IIR_value( char *arg, IO_pointers_t IO );
+	void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO );
+	void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
 	uint8_t retrieve_laserpower_setting(void);
-	uint8_t retrieve_IIR_value(void);
+	void retrieve_IIR_alpha(IO_pointers_t IO);
 	void remove_ws ( char *arg );
 /**************************************************************************
 *  Compulsory SCPI commands                                               *
 *  see: http://www.ivifoundation.org/docs/scpi-99.pdf                     *
 ***************************************************************************/
  #endif
-
- 
- 
- 
- 
- 
