@@ -13,8 +13,8 @@ extern uint16_t iir_alpha;
 *****************************************************************************/
 void process_sensor()
 {
-	uint8_t                 isReady;
-	VL53L4CD_ResultsData_t  results;
+	uint8_t isReady;
+	VL53L4CD_ResultsData_t results;
 
     VL53L4CD_CheckForDataReady(0x52, &isReady);
     if(isReady)
