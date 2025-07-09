@@ -216,74 +216,44 @@ void PGM_P_to_string( PGM_P arg, char * name, FILE *fstream )
 int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 {
 	int i = 0;
-	// 1 Top NULL node
 	command_array_P[i].name      = PSTR("NULL");
 	command_array_P[i].implied    = true;
 	command_array_P[i].parent     = NULL;
 	command_array_P[i++].function   = &scpi_null_func;
-	//   [:]*CLS
-	//   [:]*ESE
-	//   [:]*ESE?
-	//   [:]*ESR?
-	//   [:]*OPC
-	// 2 [:]*OPC?
+
 	command_array_P[i].name      = PSTR("*OPC?");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &st_OPC_q;
-	//   [:]*RST
-	//   [:]*SRE
-	//   [:]*SRE?
-	//   [:]*STB?
-	//   [:]*TST?
-	//   [:]*WAI
+
 /**************************************************************************
 *  Non-Compulsory SCPI commands                                           *
 ***************************************************************************/
-	// 3 [[:]SYSTem]
 	command_array_P[i].name      = PSTR("SYSTem");
 	command_array_P[i].implied    = true;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_empty_func;
 
-	// [[:]SYSTem:]PRESet
-
-		// 4 [[:]SYSTem:]:RST
 		command_array_P[i].name      = PSTR("RST");
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-1];
 		command_array_P[i++].function = &scpi_empty_func;
 
-			// 5 [[:]SYSTem:]:RST:BTLOader
 			command_array_P[i].name      = PSTR("BTLOader");
 			command_array_P[i].implied    = false;
 			command_array_P[i].parent     = &command_array_P[i-1];
 			command_array_P[i++].function = &sys_rst_btloader;
 
-		// 6 [[:]SYSTem:]ERRor?
 		command_array_P[i].name      = PSTR("ERRor?");
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-3];
 		command_array_P[i++].function = &sys_error_q;
-	// [[:]SYSTem:]ERRor
-	// [[:]SYSTem:]ERRor:NEXT?
-	// 7 [[:]SYSTem:][:]VERSion?
+
 		command_array_P[i].name      = PSTR("VERSion?");
 		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-4]; // 
+		command_array_P[i].parent     = &command_array_P[i-4];
 		command_array_P[i++].function = &scpi_get_version_q;
-	// [[:]STATus]
-	// [[:]STATus:]OPERation
-	// [[:]STATus:]OPERation:CONDition?
-	// [[:]STATus:]OPERation:ENABle
-	// [[:]STATus:]OPERation:ENABle?
-	// [[:]STATus:]QUEStionable
-	// [[:]STATus:]QUEStionable:CONDition?
-	// [[:]STATus:]QUEStionable:ENABle
-	// [[:]STATus:]QUEStionable:ENABle?
-	// [:]PRESet
     
-	// 8 [:]*IDN?
 	command_array_P[i].name       = PSTR("*IDN?");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
@@ -303,20 +273,15 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_get_range_q;
-    
-        command_array_P[i].name       = PSTR("ALS?");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_get_als_q;
 		
         command_array_P[i].name       = PSTR("IIR?");
         command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i].parent     = &command_array_P[i-2];
         command_array_P[i++].function = &scpi_get_IIR_alpha;
 		
         command_array_P[i].name       = PSTR("LASERPOWER?");
         command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-4];
+        command_array_P[i].parent     = &command_array_P[i-3];
         command_array_P[i++].function = &scpi_get_laserpower_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
@@ -495,7 +460,6 @@ void scpi_get_range_q(char *arg, IO_pointers_t IO)
 {
     // uint8_t data_is_ready = 0;
     // VL53L4CD_ResultsData_t p_results;
-
     // VL53L4CD_StopRanging(0x52);
     // VL53L4CD_ClearInterrupt(0x52);
     // VL53L4CD_StartRanging(0x52);
@@ -503,18 +467,8 @@ void scpi_get_range_q(char *arg, IO_pointers_t IO)
     // VL53L4CD_GetResult(0x52, &p_results);
     // VL53L4CD_ClearInterrupt(0x52);
 	// fprintf(IO.USB_stream, "%dmm\r\n", p_results.distance_mm);
-    
-    
-    
-    
     // fprintf(IO.USB_stream, "%dmm ", raw_mm_reading);
     fprintf(IO.USB_stream, "%fmm\r\n", (double)distance_mm);
-}
-/**************************************************************************
-*  SCPI Get Ambient Light Sensor Reading                                  *
-***************************************************************************/
-void scpi_get_als_q(char *arg, IO_pointers_t IO)
-{
 }
 /**************************************************************************
 *  Clear Port                                                             *
