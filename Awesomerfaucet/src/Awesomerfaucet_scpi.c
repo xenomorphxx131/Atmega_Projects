@@ -23,6 +23,7 @@ uint16_t iir_alpha;
 extern long long max_reading;
 extern uint16_t time;
 extern float distance_mm;
+extern uint8_t laser_power;
 
 /**************************************************************************
 *  Build input string from terminal then run SCPI command.                *
@@ -430,8 +431,6 @@ void debug(char *arg, IO_pointers_t IO)
     }
     fprintf(IO.USB_stream, "END OF RECORD\r\n\n");
     
-
-    
     // scpi_prStr_P(PSTR("Entering Function!\r\n"), IO.USB_stream);
     // {
         // fprintf(IO.USB_stream, "VAL: %d\r\n", I2C16_Read_Byte ( VL6180X_ADDR7b, 0 ));
@@ -520,7 +519,7 @@ void scpi_set_laserpower( char *arg, IO_pointers_t IO )
 	{
 		eeprom_busy_wait();
 		eeprom_write_block(arg, &LASER_POWER, MAX_LASER_CHARS);
-		set_laserpower(retrieve_laserpower_setting());
+		set_laserpower();
 	}
 	else
 		scpi_add_error_P(error_arg_too_long, IO);
@@ -528,19 +527,19 @@ void scpi_set_laserpower( char *arg, IO_pointers_t IO )
 /**************************************************************************
 *  Update Laser Power from EEPROM                                         *
 ***************************************************************************/
-uint8_t retrieve_laserpower_setting()
+void retrieve_laserpower_setting()
 {
 	char laserpower_string[MAX_LASER_CHARS];
     eeprom_busy_wait();
     eeprom_read_block((void*)&laserpower_string, (const void *)&LASER_POWER, MAX_LASER_CHARS);
-	return (uint8_t)atoi(laserpower_string);
+	laser_power = (uint8_t)atoi(laserpower_string);
 }
 /**************************************************************************
 *  SCPI Get Laser Power Setting                                           *
 ***************************************************************************/
 void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%u\r\n", get_laserpower());
+	fprintf(IO.USB_stream, "%u\r\n", laser_power);
 }
 /**************************************************************************
 *  Store IIR Factor to EEPROM                                             *

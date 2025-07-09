@@ -66,7 +66,7 @@ typedef struct scpi_node_P {
 	void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO );
 	void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
-	uint8_t retrieve_laserpower_setting(void);
+	void retrieve_laserpower_setting(void);
 	void retrieve_IIR_alpha(IO_pointers_t IO);
 	void remove_ws ( char *arg );
 /**************************************************************************

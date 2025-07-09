@@ -73,8 +73,8 @@ int main(void)
     
     // TODO RETREIVE THRESHOLD VALUE (LIKE 2mm etc).
     
-    
-	set_laserpower(retrieve_laserpower_setting());  // Retrieve laser power value from EEPROM
+    retrieve_laserpower_setting();                  // Retrieve laser power value from EEPROM
+	set_laserpower();                               // Set the laser power
 	VL53L4CD_SensorInit(0x52);                      // Initialize the sensor
     VL53L4CD_SetRangeTiming(0x52, 50, 0);           // Address, timing budget (ms), inter-measurement (0 means no shutdown, take next reading)
     VL53L4CD_StartRanging(0x52);                    // Kick off the first reading
