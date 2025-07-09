@@ -68,12 +68,9 @@ int main(void)
     sei();                                          // Enable interrupts
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
     Setup_ScpiCommandsArray_P(commands_P);          // Build the command array (mostly pointers to PROGMEM)
-	retrieve_IIR_alpha(IO);                         // Retrieve IIR value from EEPROM
-    
-    
-    // TODO RETREIVE THRESHOLD VALUE (LIKE 2mm etc).
-    
-    retrieve_laserpower_setting();                  // Retrieve laser power value from EEPROM
+	retrieve_IIR_alpha();                           // Retrieve the IIR value from EEPROM
+    retrieve_detection_threshold_mm();              // Retrieve the detection threshold from EEPROM
+    retrieve_laserpower_setting();                  // Retrieve the laser power value from EEPROM
 	set_laserpower();                               // Set the laser power
 	VL53L4CD_SensorInit(0x52);                      // Initialize the sensor
     VL53L4CD_SetRangeTiming(0x52, 50, 0);           // Address, timing budget (ms), inter-measurement (0 means no shutdown, take next reading)

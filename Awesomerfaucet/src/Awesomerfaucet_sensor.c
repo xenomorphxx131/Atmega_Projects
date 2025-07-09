@@ -6,7 +6,7 @@
 #include "Awesomerfaucet_sensor.h"
 
 extern uint16_t iir_alpha;
-uint8_t threshold_mm = 2.0f;            // TODO extern and make an EEPROM value 
+float threshold_mm;
 float distance_mm;
 float max_distance_mm = 0;
 float max_distance_leakage = 0.00167f; // max_distance_leakage = 1mm / 30 seconds. 30 seconds ≈ 600 cycles at 50ms/cycle ------- TODO make an EEPROM value

@@ -9,6 +9,12 @@
 /**************************************************************************
 *  Error Message Buffers have scope within this file                      *
 ***************************************************************************/
+extern long long max_reading;
+extern uint16_t time;
+extern float distance_mm;
+extern float threshold_mm;
+extern uint8_t laser_power;
+
 char bad_command[MAX_TOKEN_LEN + 1] = "";
 PGM_P error_messages[ERROR_QUEUE_LEN + 1];
 int error_number = 0;
@@ -17,14 +23,132 @@ char const error_arg_too_long[]			PROGMEM = "-112,Argument too long";
 char const error_bad_path_or_header[] 	PROGMEM = "-113,Bad path or header: ";
 uint8_t EEMEM LASER_POWER[MAX_LASER_CHARS + 1];
 uint16_t EEMEM IIR_ALPHA[MAX_IIR_CHARS + 1];
+float EEMEM THRESHOLD_MM[sizeof(float)];
 bool water_auto = true;
-
 uint16_t iir_alpha;
-extern long long max_reading;
-extern uint16_t time;
-extern float distance_mm;
-extern uint8_t laser_power;
+/**************************************************************************
+*  Setup Awesomfaucet Specific SCPI commands and functions                *
+***************************************************************************/
+int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
+{
+	int i = 0;
+	command_array_P[i].name      = PSTR("NULL");
+	command_array_P[i].implied    = true;
+	command_array_P[i].parent     = NULL;
+	command_array_P[i++].function   = &scpi_null_func;
 
+	command_array_P[i].name      = PSTR("*OPC?");
+	command_array_P[i].implied    = false;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &st_OPC_q;
+
+	command_array_P[i].name      = PSTR("SYSTem");
+	command_array_P[i].implied    = true;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &scpi_empty_func;
+
+		command_array_P[i].name      = PSTR("RST");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-1];
+		command_array_P[i++].function = &scpi_empty_func;
+
+			command_array_P[i].name      = PSTR("BTLOader");
+			command_array_P[i].implied    = false;
+			command_array_P[i].parent     = &command_array_P[i-1];
+			command_array_P[i++].function = &sys_rst_btloader;
+
+		command_array_P[i].name      = PSTR("ERRor?");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-3];
+		command_array_P[i++].function = &sys_error_q;
+
+		command_array_P[i].name      = PSTR("VERSion?");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-4];
+		command_array_P[i++].function = &scpi_get_version_q;
+    
+	command_array_P[i].name       = PSTR("*IDN?");
+	command_array_P[i].implied    = false;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &scpi_IDN_q;
+    
+	command_array_P[i].name       = PSTR("DEBUG?");
+	command_array_P[i].implied    = false;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &debug;
+    
+	command_array_P[i].name       = PSTR("GET");
+	command_array_P[i].implied    = false;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &scpi_null_func;
+    
+        command_array_P[i].name       = PSTR("RANGE?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-1];
+        command_array_P[i++].function = &scpi_get_range_q;
+		
+        command_array_P[i].name       = PSTR("IIR?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-2];
+        command_array_P[i++].function = &scpi_get_IIR_alpha;
+		
+        command_array_P[i].name       = PSTR("LASERPOWER?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i++].function = &scpi_get_laserpower_q;
+        
+        command_array_P[i].name       = PSTR("DETECTION_THRESHOLD_MM?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-4];
+        command_array_P[i++].function = &scpi_get_detection_threshold_mm_q;
+
+	command_array_P[i].name       = PSTR("CLRI2C");
+	command_array_P[i].implied    = false;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &clr_i2c;
+        
+	command_array_P[i].name       = PSTR("WATER");
+	command_array_P[i].implied    = false;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &scpi_null_func;
+    
+        command_array_P[i].name       = PSTR("ON");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-1];
+        command_array_P[i++].function = &scpi_water_on;
+        
+        command_array_P[i].name       = PSTR("OFF");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-2];
+        command_array_P[i++].function = &scpi_water_off;
+		
+        command_array_P[i].name       = PSTR("AUTO");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i++].function = &scpi_water_auto;
+
+	command_array_P[i].name       = PSTR("STORE");
+	command_array_P[i].implied    = false;
+	command_array_P[i].parent     = &command_array_P[0];
+	command_array_P[i++].function = &scpi_null_func;
+		
+		command_array_P[i].name       = PSTR("IIR");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-1];
+		command_array_P[i++].function = &scpi_set_IIR_alpha;
+		
+		command_array_P[i].name       = PSTR("LASERPOWER");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-2];
+		command_array_P[i++].function = &scpi_set_laserpower;
+        
+		command_array_P[i].name       = PSTR("DETECTION_THRESHOLD_MM");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-3];
+		command_array_P[i++].function = &scpi_set_detection_threshold_mm;
+
+	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
+}
 /**************************************************************************
 *  Build input string from terminal then run SCPI command.                *
 ***************************************************************************/
@@ -210,122 +334,6 @@ void PGM_P_to_string( PGM_P arg, char * name, FILE *fstream )
 	}
 	i++;
 	name[i] = NUL;
-}
-/**************************************************************************
-*  Setup Awesomfaucet Specific SCPI commands and functions                *
-***************************************************************************/
-int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
-{
-	int i = 0;
-	command_array_P[i].name      = PSTR("NULL");
-	command_array_P[i].implied    = true;
-	command_array_P[i].parent     = NULL;
-	command_array_P[i++].function   = &scpi_null_func;
-
-	command_array_P[i].name      = PSTR("*OPC?");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &st_OPC_q;
-
-/**************************************************************************
-*  Non-Compulsory SCPI commands                                           *
-***************************************************************************/
-	command_array_P[i].name      = PSTR("SYSTem");
-	command_array_P[i].implied    = true;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_empty_func;
-
-		command_array_P[i].name      = PSTR("RST");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-1];
-		command_array_P[i++].function = &scpi_empty_func;
-
-			command_array_P[i].name      = PSTR("BTLOader");
-			command_array_P[i].implied    = false;
-			command_array_P[i].parent     = &command_array_P[i-1];
-			command_array_P[i++].function = &sys_rst_btloader;
-
-		command_array_P[i].name      = PSTR("ERRor?");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-3];
-		command_array_P[i++].function = &sys_error_q;
-
-		command_array_P[i].name      = PSTR("VERSion?");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-4];
-		command_array_P[i++].function = &scpi_get_version_q;
-    
-	command_array_P[i].name       = PSTR("*IDN?");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_IDN_q;
-    
-	command_array_P[i].name       = PSTR("DEBUG?");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &debug;
-    
-	command_array_P[i].name       = PSTR("GET");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_null_func;
-    
-        command_array_P[i].name       = PSTR("RANGE?");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-1];
-        command_array_P[i++].function = &scpi_get_range_q;
-		
-        command_array_P[i].name       = PSTR("IIR?");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_get_IIR_alpha;
-		
-        command_array_P[i].name       = PSTR("LASERPOWER?");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-3];
-        command_array_P[i++].function = &scpi_get_laserpower_q;
-
-	command_array_P[i].name       = PSTR("CLRI2C");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &clr_i2c;
-        
-	command_array_P[i].name       = PSTR("WATER");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_null_func;
-    
-        command_array_P[i].name       = PSTR("ON");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-1];
-        command_array_P[i++].function = &scpi_water_on;
-        
-        command_array_P[i].name       = PSTR("OFF");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_water_off;
-		
-        command_array_P[i].name       = PSTR("AUTO");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-3];
-        command_array_P[i++].function = &scpi_water_auto;
-
-	command_array_P[i].name       = PSTR("STORE");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_null_func;
-		
-		command_array_P[i].name       = PSTR("IIR");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-1];
-		command_array_P[i++].function = &scpi_set_IIR_alpha;
-		
-		command_array_P[i].name       = PSTR("LASERPOWER");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-2];
-		command_array_P[i++].function = &scpi_set_laserpower;
-
-	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
 }
 /**************************************************************************
 *   NULL Function called when command is not recognized.                  *
@@ -553,13 +561,51 @@ void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
         {
             eeprom_busy_wait();
             eeprom_write_block(arg, &IIR_ALPHA, MAX_IIR_CHARS);
-            retrieve_IIR_alpha(IO);
+            retrieve_IIR_alpha();
         }
         else
             scpi_add_error_P(error_arg_too_long, IO);
     }
 	else
 		scpi_add_error_P(error_arg_too_long, IO);
+}
+/**************************************************************************
+*  Store Detection Threshold to EEPROM                                    *
+***************************************************************************/
+void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO )
+{
+    char *endptr;
+    float value;
+	if (strlen(arg) <= MAX_ARG_LEN)
+    {
+        remove_ws(arg);
+        value = strtod(arg, &endptr);
+        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
+        {
+            eeprom_busy_wait();
+            eeprom_write_block((const void *)&value, &THRESHOLD_MM, sizeof(float));
+            retrieve_detection_threshold_mm();
+        }
+        else
+            scpi_add_error_P(error_arg_too_long, IO);
+    }
+	else
+		scpi_add_error_P(error_arg_too_long, IO);
+}
+/**************************************************************************
+*  Update Detection Threshold from EEPROM                                 *
+***************************************************************************/
+void retrieve_detection_threshold_mm()
+{
+    eeprom_busy_wait();
+    eeprom_read_block((void*)&threshold_mm, (const void*)THRESHOLD_MM, sizeof(float));
+}
+/**************************************************************************
+*  SCPI Detection Threshold                                               *
+***************************************************************************/
+void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO )
+{
+	fprintf(IO.USB_stream, "%f\r\n", (double)threshold_mm);
 }
 /**************************************************************************
 *  SCPI Print IIR Factor                                                  *
@@ -571,11 +617,11 @@ void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO )
 /**************************************************************************
 *  Update IIR Factor from EEPROM                                          *
 ***************************************************************************/
-void retrieve_IIR_alpha(IO_pointers_t IO)
+void retrieve_IIR_alpha()
 {
 	char iir_string[MAX_IIR_CHARS];
+    char *endptr;
     eeprom_busy_wait();
     eeprom_read_block((void*)&iir_string, (const void *)&IIR_ALPHA, MAX_IIR_CHARS);
-    char *endptr;
     iir_alpha = (uint16_t)strtol(iir_string, &endptr, 10);
 }

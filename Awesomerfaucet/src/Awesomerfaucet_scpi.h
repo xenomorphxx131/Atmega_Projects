@@ -7,7 +7,7 @@
 #ifndef AWESOMEFAUCET_SCPI_H_
 #define AWESOMEFAUCET_SCPI_H_
 
-    #include <stdlib.h>						// atoi used in 'scpi_laser_power'
+    #include <stdlib.h>						// atoi, strtof etc.
     #include <process_USB.h>
     #include <bootloader.h>					// 'Jump_To_Bootloader'
 	#include <avr/interrupt.h>          	// Needed for cli() and sei()
@@ -67,7 +67,10 @@ typedef struct scpi_node_P {
 	void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
 	void retrieve_laserpower_setting(void);
-	void retrieve_IIR_alpha(IO_pointers_t IO);
+	void retrieve_IIR_alpha(void);
+    void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO );
+    void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO );
+    void retrieve_detection_threshold_mm(void);
 	void remove_ws ( char *arg );
 /**************************************************************************
 *  Compulsory SCPI commands                                               *
