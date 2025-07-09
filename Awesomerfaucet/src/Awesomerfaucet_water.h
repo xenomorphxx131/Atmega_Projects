@@ -10,6 +10,7 @@
 #include <stdbool.h>                // Needed for booleans
 #include <stdint.h>                 // Needed for integers
 #include "Awesomerfaucet_board.h"	// Needed for water IO setting
+#include "Awesomerfaucet_sensor.h"	// Needed for foor_present
 
 void update_water(void);
 void water_on(bool);

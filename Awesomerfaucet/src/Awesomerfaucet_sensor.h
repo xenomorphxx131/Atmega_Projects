@@ -8,7 +8,8 @@
 #define AWESOMERFAUCET_SENSOR_H_
 	   
     #include "vl53l4cd_api.h"
-	#include <stdint.h>                 // Needed for integers
+	#include <stdint.h>         // Needed for integers
+	#include <stdbool.h>        // Needed for booleans
     
     void process_sensor(void);
 

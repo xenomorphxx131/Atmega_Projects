@@ -86,7 +86,7 @@ int main(void)
         process_USB();
         process_scpi_input(str_in, &str_len, commands_P, IO);
         process_sensor();
-        // update_water();
+        update_water();
     }
 }
 /****************************************************************************
