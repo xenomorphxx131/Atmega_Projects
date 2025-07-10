@@ -25,7 +25,7 @@ uint8_t EEMEM LASER_POWER[MAX_LASER_CHARS + 1];
 uint16_t EEMEM IIR_ALPHA[MAX_IIR_CHARS + 1];
 float EEMEM THRESHOLD_MM[sizeof(float)];
 bool water_auto = true;
-uint16_t iir_alpha;
+float iir_alpha;
 /**************************************************************************
 *  Setup Awesomfaucet Specific SCPI commands and functions                *
 ***************************************************************************/
@@ -554,13 +554,16 @@ void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 ***************************************************************************/
 void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
 {
+    char *endptr;
+    float value;
 	if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
-        if (strlen(arg) <= MAX_IIR_CHARS && strlen(arg) >= 1)
+        value = strtod(arg, &endptr);
+        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
         {
             eeprom_busy_wait();
-            eeprom_write_block(arg, &IIR_ALPHA, MAX_IIR_CHARS);
+            eeprom_write_block((const void *)&value, &IIR_ALPHA, sizeof(float));
             retrieve_IIR_alpha();
         }
         else
@@ -568,6 +571,21 @@ void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
     }
 	else
 		scpi_add_error_P(error_arg_too_long, IO);
+}
+/**************************************************************************
+*  Update IIR Factor from EEPROM                                          *
+***************************************************************************/
+void retrieve_IIR_alpha()
+{
+    eeprom_busy_wait();
+    eeprom_read_block((void*)&iir_alpha, (const void*)IIR_ALPHA, sizeof(float));
+}
+/**************************************************************************
+*  SCPI Print IIR Factor                                                  *
+***************************************************************************/
+void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO )
+{
+	fprintf(IO.USB_stream, "%f\r\n", (double)iir_alpha);
 }
 /**************************************************************************
 *  Store Detection Threshold to EEPROM                                    *
@@ -606,22 +624,4 @@ void retrieve_detection_threshold_mm()
 void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO )
 {
 	fprintf(IO.USB_stream, "%f\r\n", (double)threshold_mm);
-}
-/**************************************************************************
-*  SCPI Print IIR Factor                                                  *
-***************************************************************************/
-void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO )
-{
-	fprintf(IO.USB_stream, "%u\r\n", iir_alpha);
-}
-/**************************************************************************
-*  Update IIR Factor from EEPROM                                          *
-***************************************************************************/
-void retrieve_IIR_alpha()
-{
-	char iir_string[MAX_IIR_CHARS];
-    char *endptr;
-    eeprom_busy_wait();
-    eeprom_read_block((void*)&iir_string, (const void *)&IIR_ALPHA, MAX_IIR_CHARS);
-    iir_alpha = (uint16_t)strtol(iir_string, &endptr, 10);
 }
