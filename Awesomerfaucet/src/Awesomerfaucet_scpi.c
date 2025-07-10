@@ -18,14 +18,17 @@ extern uint8_t laser_power;
 char bad_command[MAX_TOKEN_LEN + 1] = "";
 PGM_P error_messages[ERROR_QUEUE_LEN + 1];
 int error_number = 0;
-char const error_mnemonic_too_long[]	PROGMEM = "-112,Program mnemonic too long";
-char const error_arg_too_long[]			PROGMEM = "-112,Argument too long";
-char const error_bad_path_or_header[] 	PROGMEM = "-113,Bad path or header: ";
+char const error_mnemonic_too_long[]    PROGMEM = "-112,Program mnemonic too long";
+char const error_arg_too_long[]         PROGMEM = "-112,Argument too long";
+char const error_bad_path_or_header[]   PROGMEM = "-113,Bad path or header: ";
 uint8_t EEMEM LASER_POWER[MAX_LASER_CHARS + 1];
-uint16_t EEMEM IIR_ALPHA[MAX_IIR_CHARS + 1];
+float EEMEM IIR_ALPHA[sizeof(float)];
+float EEMEM IIR_BETA[sizeof(float)];
 float EEMEM THRESHOLD_MM[sizeof(float)];
 bool water_auto = true;
 float iir_alpha;
+float iir_beta;
+float iir_gain;
 /**************************************************************************
 *  Setup Awesomfaucet Specific SCPI commands and functions                *
 ***************************************************************************/
@@ -87,19 +90,29 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_get_range_q;
 		
-        command_array_P[i].name       = PSTR("IIR?");
+        command_array_P[i].name       = PSTR("IIR_ALPHA?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_get_IIR_alpha;
+        command_array_P[i++].function = &scpi_get_IIR_alpha_q;
+        
+        command_array_P[i].name       = PSTR("IIR_BETA?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i++].function = &scpi_get_IIR_beta_q;
+        
+        command_array_P[i].name       = PSTR("IIR_GAIN?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-4];
+        command_array_P[i++].function = &scpi_get_IIR_gain_q;
 		
         command_array_P[i].name       = PSTR("LASERPOWER?");
         command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i].parent     = &command_array_P[i-5];
         command_array_P[i++].function = &scpi_get_laserpower_q;
         
         command_array_P[i].name       = PSTR("DETECTION_THRESHOLD_MM?");
         command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-4];
+        command_array_P[i].parent     = &command_array_P[i-6];
         command_array_P[i++].function = &scpi_get_detection_threshold_mm_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
@@ -126,25 +139,35 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-3];
         command_array_P[i++].function = &scpi_water_auto;
+        
+        command_array_P[i].name       = PSTR("STATE?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-4];
+        command_array_P[i++].function = &scpi_water_state_q;
 
 	command_array_P[i].name       = PSTR("STORE");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
 		
-		command_array_P[i].name       = PSTR("IIR");
+		command_array_P[i].name       = PSTR("IIR_ALPHA");
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-1];
 		command_array_P[i++].function = &scpi_set_IIR_alpha;
+        
+		command_array_P[i].name       = PSTR("IIR_BETA");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-2];
+		command_array_P[i++].function = &scpi_set_IIR_beta;
 		
 		command_array_P[i].name       = PSTR("LASERPOWER");
 		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-2];
+		command_array_P[i].parent     = &command_array_P[i-3];
 		command_array_P[i++].function = &scpi_set_laserpower;
         
 		command_array_P[i].name       = PSTR("DETECTION_THRESHOLD_MM");
 		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-3];
+		command_array_P[i].parent     = &command_array_P[i-4];
 		command_array_P[i++].function = &scpi_set_detection_threshold_mm;
 
 	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
@@ -509,6 +532,13 @@ void scpi_water_off (char *arg, IO_pointers_t IO)
 	water_on(false);
 }
 /**************************************************************************
+*  SCPI Water State Query                                                 *
+***************************************************************************/
+void scpi_water_state_q (char *arg, IO_pointers_t IO)
+{
+    fprintf(IO.USB_stream, "%u\r\n", WATERPORT & WATER ? 1 : 0);
+}
+/**************************************************************************
 *  my_remove_ws                                                           *
 ***************************************************************************/
 void remove_ws( char *arg )
@@ -550,7 +580,7 @@ void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 	fprintf(IO.USB_stream, "%u\r\n", laser_power);
 }
 /**************************************************************************
-*  Store IIR Factor to EEPROM                                             *
+*  Store IIR Factor Alpha to EEPROM                                       *
 ***************************************************************************/
 void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
 {
@@ -573,19 +603,59 @@ void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
 		scpi_add_error_P(error_arg_too_long, IO);
 }
 /**************************************************************************
-*  Update IIR Factor from EEPROM                                          *
+*  Update IIR Factor Alpha from EEPROM                                    *
 ***************************************************************************/
 void retrieve_IIR_alpha()
 {
     eeprom_busy_wait();
     eeprom_read_block((void*)&iir_alpha, (const void*)IIR_ALPHA, sizeof(float));
+    compute_iir_gain();
 }
 /**************************************************************************
-*  SCPI Print IIR Factor                                                  *
+*  SCPI Print IIR Factor Alpha                                            *
 ***************************************************************************/
-void scpi_get_IIR_alpha( char *arg, IO_pointers_t IO )
+void scpi_get_IIR_alpha_q( char *arg, IO_pointers_t IO )
 {
 	fprintf(IO.USB_stream, "%f\r\n", (double)iir_alpha);
+}
+/**************************************************************************
+*  Store IIR Factor Beta to EEPROM                                        *
+***************************************************************************/
+void scpi_set_IIR_beta( char *arg, IO_pointers_t IO )
+{
+    char *endptr;
+    float value;
+	if (strlen(arg) <= MAX_ARG_LEN)
+    {
+        remove_ws(arg);
+        value = strtod(arg, &endptr);
+        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
+        {
+            eeprom_busy_wait();
+            eeprom_write_block((const void *)&value, &IIR_BETA, sizeof(float));
+            retrieve_IIR_beta();
+        }
+        else
+            scpi_add_error_P(error_arg_too_long, IO);
+    }
+	else
+		scpi_add_error_P(error_arg_too_long, IO);
+}
+/**************************************************************************
+*  Update IIR Factor Beta from EEPROM                                     *
+***************************************************************************/
+void retrieve_IIR_beta()
+{
+    eeprom_busy_wait();
+    eeprom_read_block((void*)&iir_beta, (const void*)IIR_BETA, sizeof(float));
+    compute_iir_gain();
+}
+/**************************************************************************
+*  SCPI Print IIR Factor Beta                                             *
+***************************************************************************/
+void scpi_get_IIR_beta_q( char *arg, IO_pointers_t IO )
+{
+	fprintf(IO.USB_stream, "%f\r\n", (double)iir_beta);
 }
 /**************************************************************************
 *  Store Detection Threshold to EEPROM                                    *
@@ -624,4 +694,18 @@ void retrieve_detection_threshold_mm()
 void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO )
 {
 	fprintf(IO.USB_stream, "%f\r\n", (double)threshold_mm);
+}
+/**************************************************************************
+*  Compute IIR Gain                                                       *
+***************************************************************************/
+void compute_iir_gain()
+{
+	iir_gain = 1.0f / (1.0f + iir_alpha + iir_beta);
+}
+/**************************************************************************
+*  SCPI Get IIR Gain                                                      *
+***************************************************************************/
+void scpi_get_IIR_gain_q( char *arg, IO_pointers_t IO )
+{
+	fprintf(IO.USB_stream, "%f\r\n", (double)iir_gain);
 }

@@ -68,7 +68,9 @@ int main(void)
     sei();                                          // Enable interrupts
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
     Setup_ScpiCommandsArray_P(commands_P);          // Build the command array (mostly pointers to PROGMEM)
-	retrieve_IIR_alpha();                           // Retrieve the IIR value from EEPROM
+	retrieve_IIR_alpha();                           // Retrieve the IIR value ALPHA from EEPROM
+	retrieve_IIR_beta();                            // Retrieve the IIR value BETA from EEPROM
+    compute_iir_gain();                             // Computer the IIR normalization term
     retrieve_detection_threshold_mm();              // Retrieve the detection threshold from EEPROM
     retrieve_laserpower_setting();                  // Retrieve the laser power value from EEPROM
 	set_laserpower();                               // Set the laser power
