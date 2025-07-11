@@ -21,7 +21,7 @@ int error_number = 0;
 char const error_mnemonic_too_long[]    PROGMEM = "-112,Program mnemonic too long";
 char const error_arg_too_long[]         PROGMEM = "-112,Argument too long";
 char const error_bad_path_or_header[]   PROGMEM = "-113,Bad path or header: ";
-uint8_t EEMEM LASER_POWER[MAX_LASER_CHARS + 1];
+uint8_t EEMEM LASER_POWER[sizeof(uint8_t)];
 float EEMEM IIR_ALPHA[sizeof(float)];
 float EEMEM IIR_BETA[sizeof(float)];
 float EEMEM THRESHOLD_MM[sizeof(float)];
@@ -564,13 +564,21 @@ void remove_ws( char *arg )
 *****************************************************************************/
 void scpi_set_laserpower( char *arg, IO_pointers_t IO )
 {
-	if (strlen(arg) <= MAX_ARG_LEN) remove_ws(arg);
-    if (strlen(arg) <= MAX_LASER_CHARS)
-	{
-		eeprom_busy_wait();
-		eeprom_write_block(arg, &LASER_POWER, MAX_LASER_CHARS);
-		set_laserpower();
-	}
+    char *endptr;
+    uint8_t value;
+	if (strlen(arg) <= MAX_ARG_LEN)
+    {
+        remove_ws(arg);
+        value = (uint8_t)strtol(arg, &endptr, 10);
+        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
+        {
+            eeprom_busy_wait();
+            eeprom_write_block((const void *)&value, &LASER_POWER, sizeof(uint8_t));
+            set_laserpower();
+        }
+        else
+            scpi_add_error_P(error_arg_too_long, IO);
+    }
 	else
 		scpi_add_error_P(error_arg_too_long, IO);
 }
@@ -579,10 +587,9 @@ void scpi_set_laserpower( char *arg, IO_pointers_t IO )
 *****************************************************************************/
 void retrieve_laserpower_setting()
 {
-	char laserpower_string[MAX_LASER_CHARS];
     eeprom_busy_wait();
-    eeprom_read_block((void*)&laserpower_string, (const void *)&LASER_POWER, MAX_LASER_CHARS);
-	laser_power = (uint8_t)atoi(laserpower_string);
+    eeprom_read_block((void*)&laser_power, (const void *)&LASER_POWER, sizeof(uint8_t));
+    set_laserpower();
 }
 /****************************************************************************
 *  SCPI Get Laser Power Setting                                             *
