@@ -16,6 +16,7 @@
     #include "Awesomerfaucet_board.h"
     #include "Awesomerfaucet_laser.h"
     #include "Awesomerfaucet_water.h"
+    #include "Awesomerfaucet_timers.h"
     #include "VL53L4CD_api.h"               // To get direct access to sensor data types and methods
 /**************************************************************************
 *  Create a data structure to contain the various IO pointers             *
@@ -80,6 +81,14 @@ typedef struct scpi_node_P {
     void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO );
     void retrieve_max_distance_leakage(void);
     void scpi_get_max_distance_leakage_q( char *arg, IO_pointers_t IO );
+    
+    
+    void scpi_set_water_debounce_timeout( char *arg, IO_pointers_t IO );
+    void retrieve_water_debounce_timeout(void);
+    void scpi_get_water_debounce_timeout_q( char *arg, IO_pointers_t IO );
+    
+    
+    
 	void remove_ws ( char *arg );
 /**************************************************************************
 *  Compulsory SCPI commands                                               *

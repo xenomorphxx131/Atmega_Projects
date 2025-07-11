@@ -10,10 +10,11 @@
 *  Error Message Buffers have scope within this file                        *
 *****************************************************************************/
 extern long long max_reading;
-extern uint16_t time;
+extern unsigned long debug_time_ms;
 extern float distance_mm;
 extern float threshold_mm;
 extern uint8_t laser_power;
+extern uint16_t water_debounce_timeout;
 
 char bad_command[MAX_TOKEN_LEN + 1] = "";
 PGM_P error_messages[ERROR_QUEUE_LEN + 1];
@@ -26,6 +27,7 @@ float EEMEM IIR_ALPHA[sizeof(float)];
 float EEMEM IIR_BETA[sizeof(float)];
 float EEMEM THRESHOLD_MM[sizeof(float)];
 float EEMEM MAX_DISTANCE_LEAKAGE[sizeof(float)];
+float EEMEM WATER_DEBOUNCE_TIMEOUT[sizeof(uint16_t)];
 bool water_auto = true;
 float max_distance_leakage;
 float iir_alpha;
@@ -121,6 +123,11 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-7];
         command_array_P[i++].function = &scpi_get_max_distance_leakage_q;
+        
+        command_array_P[i].name       = PSTR("WATER_DEBOUNCE_TIMEOUT?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-8];
+        command_array_P[i++].function = &scpi_get_water_debounce_timeout_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
@@ -152,7 +159,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].parent     = &command_array_P[i-4];
         command_array_P[i++].function = &scpi_water_state_q;
 
-	command_array_P[i].name       = PSTR("STORE");
+	command_array_P[i].name       = PSTR("STORe");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
@@ -181,6 +188,11 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-5];
 		command_array_P[i++].function = &scpi_set_max_distance_leakage;
+        
+		command_array_P[i].name       = PSTR("WATER_DEBOUNCE_TIMEOUT");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-6];
+		command_array_P[i++].function = &scpi_set_water_debounce_timeout;
 
 	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
 }
@@ -464,7 +476,7 @@ void debug(char *arg, IO_pointers_t IO)
     for (int i=0; i<=30; i++)
     {
         fprintf(IO.USB_stream, "index: %d ", i);
-        fprintf(IO.USB_stream, "time: %ums ", time);
+        fprintf(IO.USB_stream, "time: %lums ", debug_time_ms);
         data_is_ready = 0;
         while (!data_is_ready)
             VL53L4CD_CheckForDataReady(0x52, &data_is_ready);
@@ -574,7 +586,7 @@ void scpi_set_laserpower( char *arg, IO_pointers_t IO )
         {
             eeprom_busy_wait();
             eeprom_write_block((const void *)&value, &LASER_POWER, sizeof(uint8_t));
-            set_laserpower();
+            retrieve_laserpower_setting();
         }
         else
             scpi_add_error_P(error_arg_too_long, IO);
@@ -598,6 +610,67 @@ void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 {
 	fprintf(IO.USB_stream, "%u\r\n", laser_power);
 }
+
+
+
+
+
+
+
+
+/****************************************************************************
+*  Store Water Debounce Timeout to EEPROM                                   *
+*****************************************************************************/
+void scpi_set_water_debounce_timeout( char *arg, IO_pointers_t IO )
+{
+    char *endptr;
+    uint16_t value;
+	if (strlen(arg) <= MAX_ARG_LEN)
+    {
+        remove_ws(arg);
+        value = (uint16_t)strtol(arg, &endptr, 10);
+        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
+        {
+            eeprom_busy_wait();
+            eeprom_write_block((const void *)&value, &WATER_DEBOUNCE_TIMEOUT, sizeof(uint16_t));
+            retrieve_water_debounce_timeout();
+        }
+        else
+            scpi_add_error_P(error_arg_too_long, IO);
+    }
+	else
+		scpi_add_error_P(error_arg_too_long, IO);
+}
+/****************************************************************************
+*  Update Water Debounce Timeout from EEPROM                                *
+*****************************************************************************/
+void retrieve_water_debounce_timeout()
+{
+    eeprom_busy_wait();
+    eeprom_read_block((void*)&water_debounce_timeout, (const void *)&WATER_DEBOUNCE_TIMEOUT, sizeof(uint16_t));
+}
+/****************************************************************************
+*  SCPI Water Debounce Timeout Setting                                      *
+*****************************************************************************/
+void scpi_get_water_debounce_timeout_q( char *arg, IO_pointers_t IO )
+{
+	fprintf(IO.USB_stream, "%u\r\n", water_debounce_timeout);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /****************************************************************************
 *  Store IIR Factor Alpha to EEPROM                                         *
 *****************************************************************************/
