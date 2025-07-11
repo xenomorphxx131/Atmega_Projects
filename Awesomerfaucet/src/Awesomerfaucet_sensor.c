@@ -8,12 +8,12 @@
 extern float iir_alpha;
 extern float iir_beta;
 extern float iir_gain;
+extern float max_distance_leakage; // For example: 1mm / 30 seconds. 30 seconds ≈ 600 cycles at 50ms/cycle. 1(mm) / 600 = 0.001666.
 float threshold_mm;
 float distance_mm;
 float distance_mm_m1 = 100;
 float distance_mm_m2 = 100;
 float max_distance_mm = 0;
-float max_distance_leakage = 0.00167f; // max_distance_leakage = 1mm / 30 seconds. 30 seconds ≈ 600 cycles at 50ms/cycle ------- TODO make an EEPROM value
 bool foot_present = false;
 /****************************************************************************
 *  Get Sensor Range Reading                                                 *

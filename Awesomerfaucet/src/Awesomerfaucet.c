@@ -68,6 +68,7 @@ int main(void)
     sei();                                          // Enable interrupts
     i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
     Setup_ScpiCommandsArray_P(commands_P);          // Build the command array (mostly pointers to PROGMEM)
+    retrieve_max_distance_leakage();                // Retrieve the MAX Distance leakage term from EEPROM
 	retrieve_IIR_alpha();                           // Retrieve the IIR value ALPHA from EEPROM
 	retrieve_IIR_beta();                            // Retrieve the IIR value BETA from EEPROM
     compute_iir_gain();                             // Computer the IIR normalization term
