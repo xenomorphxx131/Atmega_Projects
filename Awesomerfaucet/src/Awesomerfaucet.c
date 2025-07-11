@@ -70,15 +70,7 @@ int main(void)
     compute_iir_gain();                             // Computer the IIR normalization term
     retrieve_detection_threshold_mm();              // Retrieve the detection threshold from EEPROM
     retrieve_laserpower_setting();                  // Retrieve the laser power value from EEPROM
-    
-    retrieve_water_debounce_timeout();
-    
-
-    
-    
-    
-    
-    
+    retrieve_water_debounce_timeout();              // Retrieve the water debounce timeout from EEPROM
 	VL53L4CD_SensorInit(0x52);                      // Initialize the sensor
     VL53L4CD_SetRangeTiming(0x52, 50, 0);           // Address, timing budget (ms), inter-measurement (0 means no shutdown, take next reading)
     VL53L4CD_StartRanging(0x52);                    // Kick off the first reading

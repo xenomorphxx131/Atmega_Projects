@@ -81,14 +81,9 @@ typedef struct scpi_node_P {
     void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO );
     void retrieve_max_distance_leakage(void);
     void scpi_get_max_distance_leakage_q( char *arg, IO_pointers_t IO );
-    
-    
     void scpi_set_water_debounce_timeout( char *arg, IO_pointers_t IO );
     void retrieve_water_debounce_timeout(void);
     void scpi_get_water_debounce_timeout_q( char *arg, IO_pointers_t IO );
-    
-    
-    
 	void remove_ws ( char *arg );
 /**************************************************************************
 *  Compulsory SCPI commands                                               *
