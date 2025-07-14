@@ -3,7 +3,7 @@
 
 #include <i2c_twi.h>
 
-#define VL6180X_ADDR7b                                  0x29  // The fixed 7 bit I²C addres
+#define VL6180X_ADDR7                                   0x29  // The fixed 8 bit I²C write address
 #define VL6180X_IDENTIFICATION__MODEL_ID                0x000
 #define VL6180X_IDENTIFICATION__MODEL_REV_MAJOR         0x001
 #define VL6180X_IDENTIFICATION__MODEL_REV_MINOR         0x002
