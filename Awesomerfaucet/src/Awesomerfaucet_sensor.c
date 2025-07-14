@@ -23,15 +23,15 @@ void process_sensor()
 	uint8_t isReady;
 	VL53L4CD_ResultsData_t results;
 
-    VL53L4CD_CheckForDataReady(0x52, &isReady);
+    VL53L4CD_CheckForDataReady(VL53L4CD_ADDR7, &isReady);
     if(isReady) // Should happen on a roughly 50ms cadence as controlled by the sensor settings.
     {   /****************************************************************
          *                                                              *
          * Get the sensor value and compute IIR filtered version        *
          *                                                              *
          ****************************************************************/
-        VL53L4CD_GetResult(0x52, &results);     // Read measured distance. RangeStatus = 0 means valid data
-        VL53L4CD_ClearInterrupt(0x52);          // (Mandatory) Clear HW interrupt to restart measurements
+        VL53L4CD_GetResult(VL53L4CD_ADDR7, &results);     // Read measured distance. RangeStatus = 0 means valid data
+        VL53L4CD_ClearInterrupt(VL53L4CD_ADDR7);          // (Mandatory) Clear HW interrupt to restart measurements
         distance_mm_m2 = distance_mm_m1;
         distance_mm_m1 = distance_mm;
         distance_mm = (float)results.distance_mm / iir_gain - iir_alpha*distance_mm_m1 - iir_beta*distance_mm_m2;
