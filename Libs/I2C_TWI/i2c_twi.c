@@ -219,47 +219,6 @@ uint8_t SMBUS_Read_Byte ( uint8_t address, uint8_t subaddress )
     return results;
 }
 
-// I2C16_Read_Byte for use with the VL6180 TOF sensor
-uint8_t I2C16_Read_Byte( uint8_t addr7b, uint16_t subaddress )
-{
-    uint8_t success = 1;
-    uint8_t results = 0xFF;
-
-    success = START() == 'S';                                       // START
-    if (success) success = i2cPutbyte(addr7b * 2) == 'K';           // WRITE ADDRESS
-    if (success) success = i2cPutbyte(subaddress >> 8) == 'K';      // SUB ADDRESS HIGH BYTE
-    if (success) success = i2cPutbyte(subaddress & 0xFF) == 'K';    // SUB ADDRESS LOW BYTE
-    if (success) STOP();                                            // STOP
-    if (success) success = START() == 'S';                          // START
-    if (success) success = i2cPutbyte((addr7b * 2)|READ) == 'K';    // READ ADDRESS
-    if (success) results = i2cGetbyte(LAST);                        // PULL THE BYTE W/NACK
-    if (success) STOP();                                            // STOP
-    _delay_us(5);                                                   // Give it a few us
-    if ((TWCR & _BV(TWSTO)) || !success) reset_i2c();               // Not sure why on some registers
-                                                                    // this bit doesn't clear
-                                                                    // and SDA hangs low
-    return results;
-}
-
-// I2C16_Write_Byte for use with the VL6180 TOF sensor
-uint8_t I2C16_Write_Byte( uint8_t addr7b, uint16_t subaddress, uint8_t data )
-{
-    uint8_t success = 1;
-    uint8_t results = 0xFF;
-
-    success = START() == 'S';                                       // START
-    if (success) success = i2cPutbyte(addr7b * 2) == 'K';           // READ ADDRESS
-    if (success) success = i2cPutbyte(subaddress >> 8) == 'K';      // SUB ADDRESS HIGH
-    if (success) success = i2cPutbyte(subaddress & 0xFF) == 'K';    // SUB ADDRESS LOW
-    if (success) success = i2cPutbyte(data) == 'K';                 // READ ADDRESS
-    if (success) STOP();                                            // STOP
-    _delay_us(5);
-    if ((TWCR & _BV(TWSTO)) || !success) reset_i2c();               // Not sure why on some registers
-                                                                    // this bit doesn't clear
-                                                                    // and SDA hangs low
-    return results;
-}
-
 uint16_t I2C16_Read_Word( uint8_t addr7b, uint16_t subaddress )
 {
     uint8_t success = 1;
@@ -406,44 +365,44 @@ uint8_t SMBUS_Write_Word_PEC ( uint8_t address, uint8_t subaddress, uint8_t hi_b
     return success;
 }
 
-void I2C_16BITSUB_Read_Byte( uint8_t address, uint16_t subaddress, uint8_t *byte)
+void I2C_16BITSUB_Read_Byte( uint8_t address_7b, uint16_t subaddress, uint8_t *byte)
 {
     START();                                        // START
-        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte(address_7b<<1);                  // WRITE ADDRESS
         i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
         i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
     START();                                        // RESTART
-        i2cPutbyte(address|READ);                   // READ ADDRESS
+        i2cPutbyte(address_7b<<1|READ);             // READ ADDRESS
         *byte = i2cGetbyte(LAST);                   // PULL THE BYTE
     STOP();                                         // STOP
 }
 
-void I2C_16BITSUB_Read_Word( uint8_t address, uint16_t subaddress, uint16_t *word)
+void I2C_16BITSUB_Read_Word( uint8_t address_7b, uint16_t subaddress, uint16_t *word)
 {
     uint8_t hbyte=0, lbyte=0;
 
     START();                                        // START
-        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte(address_7b<<1);                  // WRITE ADDRESS
         i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
         i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
     START();                                        // RESTART
-        i2cPutbyte(address|READ);                   // READ ADDRESS
+        i2cPutbyte(address_7b<<1|READ);             // READ ADDRESS
         hbyte = i2cGetbyte(!LAST);                  // PULL THE HIGH BYTE
         lbyte = i2cGetbyte(LAST);                   // PULL THE LOW BYTE
     STOP();                                         // STOP
     *word = (uint16_t)hbyte << 8 | (uint16_t)lbyte;
 }
 
-void I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dword)
+void I2C_16BITSUB_Read_DWord( uint8_t address_7b, uint16_t subaddress, uint32_t *dword)
 {
     uint8_t hbyte=0, hbyte2=0, lbyte2=0, lbyte=0;
 
     START();                                        // START
-        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte(address_7b<<1);                  // WRITE ADDRESS
         i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
         i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
     START();                                        // RESTART
-        i2cPutbyte(address|READ);                   // READ ADDRESS
+        i2cPutbyte(address_7b<<1|READ);             // READ ADDRESS
         hbyte = i2cGetbyte(!LAST);                  // PULL THE HIGHEST BYTE
         hbyte2 = i2cGetbyte(!LAST);                 // PULL THE SECOND BYTE
         lbyte2 = i2cGetbyte(!LAST);                 // PULL THE THIRD BYTE
@@ -452,20 +411,20 @@ void I2C_16BITSUB_Read_DWord( uint8_t address, uint16_t subaddress, uint32_t *dw
     *dword = (uint32_t)hbyte << 24 | (uint32_t)hbyte2 << 16 | (uint32_t)lbyte2 << 8 | (uint32_t)lbyte;
 }
 
-void I2C_16BITSUB_Write_Byte( uint8_t address, uint16_t subaddress, uint8_t byte )
+void I2C_16BITSUB_Write_Byte( uint8_t address_7b, uint16_t subaddress, uint8_t byte )
 {
     START();                                        // START
-        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte(address_7b<<1);                  // WRITE ADDRESS
         i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
         i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
         i2cPutbyte(byte);                           // PUSH THE BYTE
     STOP();                                         // STOP
 }
 
-void I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t word )
+void I2C_16BITSUB_Write_Word( uint8_t address_7b, uint16_t subaddress, uint16_t word )
 {
     START();                                        // START
-        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte(address_7b<<1);                  // WRITE ADDRESS
         i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
         i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
         i2cPutbyte((uint8_t)(word >> 8));           // PUSH THE MSBYTE
@@ -473,10 +432,10 @@ void I2C_16BITSUB_Write_Word( uint8_t address, uint16_t subaddress, uint16_t wor
     STOP();                                         // STOP
 }
 
-void I2C_16BITSUB_Write_DWord( uint8_t address, uint16_t subaddress, uint32_t dword )
+void I2C_16BITSUB_Write_DWord( uint8_t address_7b, uint16_t subaddress, uint32_t dword )
 {
     START();                                        // START
-        i2cPutbyte(address);                        // WRITE ADDRESS
+        i2cPutbyte(address_7b<<1);                  // WRITE ADDRESS
         i2cPutbyte((uint8_t)(subaddress >> 8));     // SUB ADDRESS MSBYTE
         i2cPutbyte((uint8_t)(subaddress & 0xff));   // SUB ADDRESS LSBYTE
         i2cPutbyte((uint8_t)(dword >> 24));         // PUSH THE MSBYTE
