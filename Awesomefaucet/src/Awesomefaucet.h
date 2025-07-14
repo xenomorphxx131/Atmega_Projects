@@ -4,13 +4,15 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef AWESOMEFAUCET_H_
-#define AWESOMEFAUCET_H_
+#ifndef AWESOMERFAUCET_H_
+#define AWESOMERFAUCET_H_
 
+	#include <util/delay.h> 				// Needed for _delay_ms()
+	#include <VL6180X_SM.h>                 // Needed for sensor readings
     #include "Awesomefaucet_scpi.h"
     #include "Awesomefaucet_laser.h"
     #include "Awesomefaucet_water.h"
-    #include "Awesomefaucet_range.h"
     #include "Awesomefaucet_timers.h"
+    #include "Awesomefaucet_sensor.h"
 
 #endif

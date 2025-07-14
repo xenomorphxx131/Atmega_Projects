@@ -7,16 +7,17 @@
 #ifndef AWESOMEFAUCET_SCPI_H_
 #define AWESOMEFAUCET_SCPI_H_
 
-    #include <stdlib.h>						// atoi used in 'scpi_laser_power'
+    #include <stdlib.h>                     // atoi, strtof etc.
     #include <process_USB.h>
-    #include <bootloader.h>					// 'Jump_To_Bootloader'
-	#include <avr/interrupt.h>          	// Needed for cli() and sei()
+    #include <bootloader.h>                 // 'Jump_To_Bootloader'
+	#include <avr/interrupt.h>              // Needed for cli() and sei()
+	#include <VL6180X_SM.h>                 // Needed for sensor readings
     #include "Awesomefaucet_scpiconfig.h"
     #include "Awesomefaucet_sensor.h"
     #include "Awesomefaucet_board.h"
     #include "Awesomefaucet_laser.h"
     #include "Awesomefaucet_water.h"
-    #include "Awesomefaucet_range.h"
+    #include "Awesomefaucet_timers.h"
 /**************************************************************************
 *  Create a data structure to contain the various IO pointers             *
 *  that need global scope                                                 *
@@ -58,26 +59,34 @@ typedef struct scpi_node_P {
 	void st_WAI ( char *arg, IO_pointers_t IO );
     void debug (char *arg, IO_pointers_t IO);
     void scpi_get_range_q (char *arg, IO_pointers_t IO);
-    void scpi_get_als_q(char *arg, IO_pointers_t IO);
 	void scpi_get_laserpower_q( char *arg, IO_pointers_t IO );
 	void scpi_water_auto (char *arg, IO_pointers_t IO);
     void scpi_water_on (char *arg, IO_pointers_t IO);
     void scpi_water_off (char *arg, IO_pointers_t IO);
+    void scpi_water_state_q (char *arg, IO_pointers_t IO);
     void scpi_set_laserpower( char *arg, IO_pointers_t IO );
-	void scpi_set_IIR_value( char *arg, IO_pointers_t IO );
-	void scpi_get_IIR_value( char *arg, IO_pointers_t IO );
+	void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO );
+	void scpi_get_IIR_alpha_q( char *arg, IO_pointers_t IO );
+	void scpi_set_IIR_beta( char *arg, IO_pointers_t IO );
+	void scpi_get_IIR_beta_q( char *arg, IO_pointers_t IO );
+    void scpi_get_IIR_gain_q( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
-	uint8_t retrieve_laserpower_setting(void);
-	uint8_t retrieve_IIR_value(void);
+	void retrieve_laserpower_setting(void);
+	void retrieve_IIR_alpha(void);
+	void retrieve_IIR_beta(void);
+    void compute_iir_gain(void);
+    void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO );
+    void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO );
+    void retrieve_detection_threshold_mm(void);
+    void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO );
+    void retrieve_max_distance_leakage(void);
+    void scpi_get_max_distance_leakage_q( char *arg, IO_pointers_t IO );
+    void scpi_set_water_debounce_timeout( char *arg, IO_pointers_t IO );
+    void retrieve_water_debounce_timeout(void);
+    void scpi_get_water_debounce_timeout_q( char *arg, IO_pointers_t IO );
 	void remove_ws ( char *arg );
 /**************************************************************************
 *  Compulsory SCPI commands                                               *
 *  see: http://www.ivifoundation.org/docs/scpi-99.pdf                     *
 ***************************************************************************/
  #endif
-
- 
- 
- 
- 
- 

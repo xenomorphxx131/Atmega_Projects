@@ -1,92 +1,58 @@
 /****************************************************************************
  *                                                                          *
- *  Awesomefaucet Sensor                                                    *
+ *  Awesomerfaucet Sensor                                                   *
  *                                                                          *
  ****************************************************************************/
 #include "Awesomefaucet_sensor.h"
-/**************************************************************************
-*  Range Reading                                                          *
-***************************************************************************/
-// uint8_t get_range()
-// {
-    // I2C16_Write_Byte( VL6180X_ADDR7b, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_RANGE_INT );
-    // return I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__RANGE_RAW );
-// }
-/**************************************************************************
-*  Range Reading Blocking                                                 *
-***************************************************************************/
-uint8_t read_range_blocking(void)
-{
-    uint8_t range;
-    
-    while (! (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__RANGE_STATUS)) & VL6180X_RESULT__RANGE_DEVICE_READY);                    // wait for device to be ready for range measurement
-    I2C16_Write_Byte( VL6180X_ADDR7b, VL6180X_SYSRANGE__START, VL6180X_SYSRANGE_STARTSTOP);                                             // Start a range measurement
-    while (! (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__INTERRUPT_STATUS_GPIO) & VL6180X_NEW_SAMPLE_READY_THRESHOLD_EVENT));     // Poll until bit 2 is set
-    range = I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__RANGE_VAL );                                                               // read range in mm                 //read8(VL6180X_REG_RESULT_RANGE_VAL);
-    I2C16_Write_Byte( VL6180X_ADDR7b, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_ALL_INTS);                                         // clear all interrupts
-    return range;
-}
-/**************************************************************************
-*  Start Measurement                                                      *
-***************************************************************************/
-// void start_range_measurement()
-// {
-    // I2C16_Write_Byte( VL6180X_ADDR7b, VL6180X_SYSRANGE__START, VL6180X_SYSRANGE_STARTSTOP );
-// }
-/**************************************************************************
-*  Measurement Ready                                                      *
-***************************************************************************/
-// bool range__measurement_ready()
-// {
-    // return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__INTERRUPT_STATUS_GPIO ) & 0x07)  == 4;
-    // // return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__RANGE_STATUS ) & 0x02)  == 0x02;
-// }
-/**************************************************************************
-*  Measurement Running                                                    *
-***************************************************************************/
-// bool range__range_device_ready()
-// {
-    // return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__RANGE_STATUS ) & VL6180X_RESULT__RANGE_DEVICE_READY) == VL6180X_RESULT__RANGE_DEVICE_READY;
-// }
-/**************************************************************************
-*  Blocking Get ALS Reading                                               *
-***************************************************************************/
-// uint16_t get_ALS_blocking()
-// {	// This is a blocking function
-	// Be sure to call cli() entering and sei() and exiting calls to this.
-	// Possible deadlock if don't?
 
-    // while(ALS_sensor_busy()) {;}    		// Just wait it out, it will finish.
-    // start_ALS_measurement();        		// Kick off a fresh reading and
-	// while(!ALS_measurement_ready()) {;}		// Wait for the new reading
-	// return read_ALS();
-// }
-/**************************************************************************
-*  ALS Reading                                                            *
-***************************************************************************/
-uint16_t read_ALS()
+extern float iir_alpha;
+extern float iir_beta;
+extern float iir_gain;
+extern float max_distance_leakage; // For example: 1mm / 30 seconds. 30 seconds ≈ 600 cycles at 50ms/cycle. 1(mm) / 600 = 0.001666.
+float threshold_mm;
+float distance_mm;
+float distance_mm_m1 = 100;
+float distance_mm_m2 = 100;
+float max_distance_mm = 0;
+bool foot_present = false;
+/****************************************************************************
+*  Get Sensor Range Reading                                                 *
+*****************************************************************************/
+void process_sensor()
 {
-    I2C16_Write_Byte( VL6180X_ADDR7b, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_ALS_INT );
-    return I2C16_Read_Word( VL6180X_ADDR7b, VL6180X_RESULT__ALS_VAL );
-}
-/**************************************************************************
-*  Start Measurement                                                      *
-***************************************************************************/
-void start_ALS_measurement()
-{
-    I2C16_Write_Byte( VL6180X_ADDR7b, VL6180X_SYSALS__START, VL6180X_SYSALS_STARTSTOP );
-}
-/**************************************************************************
-*  Measurement Ready                                                      *
-***************************************************************************/
-bool ALS_measurement_ready()
-{
-    return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__INTERRUPT_STATUS_GPIO ) & 0x38)  == (4 << 3);
-}
-/**************************************************************************
-*  Measurement Running                                                    *
-***************************************************************************/
-bool ALS_sensor_busy()
-{
-    return (I2C16_Read_Byte( VL6180X_ADDR7b, VL6180X_RESULT__ALS_STATUS ) & 0x01) == 0;
+    uint8_t reading_mm;
+	uint8_t status;
+    I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__INTERRUPT_STATUS_GPIO, &status);
+    if(status & VL6180X_NEW_SAMPLE_READY_THRESHOLD_EVENT)               // Should happen on a roughly 24ms cadence as controlled by the sensor settings.
+    {   /****************************************************************
+         *                                                              *
+         * Get the sensor value and compute IIR filtered version        *
+         *                                                              *
+         ****************************************************************/
+        distance_mm_m2 = distance_mm_m1;
+        distance_mm_m1 = distance_mm;
+        I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__RANGE_VAL, &reading_mm);
+        I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_ALL_INTS ); // clear all interrupts
+        I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__START, VL6180X_SYSRANGE_STARTSTOP );
+        distance_mm = (float)reading_mm / iir_gain - iir_alpha*distance_mm_m1 - iir_beta*distance_mm_m2;
+        /****************************************************************
+         *                                                              *
+         * Instantly adjust maximum to the highest value observed       *
+         *                                                              *
+         ****************************************************************/
+         if (distance_mm > max_distance_mm)
+             max_distance_mm = distance_mm;
+        /****************************************************************
+         *                                                              *
+         * Look for a foot                                              *
+         *                                                              *
+         ****************************************************************/
+         if (distance_mm < max_distance_mm - threshold_mm)
+         {
+             foot_present = true;
+             max_distance_mm -= max_distance_leakage;
+         }
+         else
+             foot_present = false;
+    }
 }

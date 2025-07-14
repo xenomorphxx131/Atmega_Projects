@@ -1,10 +1,10 @@
 /****************************************************************************
  *                                                                          *
- *  Awesomefaucet Board                                                     *
+ *  Awesomerfaucet Board                                                    *
  *                                                                          *
  ****************************************************************************/
-#ifndef AWESOMEFAUCET_BOARD_H
-#define AWESOMEFAUCET_BOARD_H
+#ifndef AWESOMERFAUCET_BOARD_H
+#define AWESOMERFAUCET_BOARD_H
 
 #include <avr/io.h>
 /****************************************************************************

@@ -1,6 +1,6 @@
 /****************************************************************************
  *                                                                          *
- *  Awesomefaucet Water                                                     *
+ *  Awesomerfaucet Water                                                    *
  *                                                                          *
  ****************************************************************************/
 #include "Awesomefaucet_water.h"
@@ -32,7 +32,7 @@ void update_water()
 /**************************************************************************
 *  Water On                                                               *
 ***************************************************************************/
-void water_on(bool on)
+void water_on(bool turn_on)
 {   
-    WATERPORT = on ? WATERPORT | WATER : WATERPORT & ~WATER;
+    WATERPORT = turn_on ? WATERPORT | WATER : WATERPORT & ~WATER;
 }
