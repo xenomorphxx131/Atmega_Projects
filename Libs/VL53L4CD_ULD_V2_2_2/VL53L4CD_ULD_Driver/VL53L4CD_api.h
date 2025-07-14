@@ -27,6 +27,8 @@
 #define VL53L4CD_IMPLEMENTATION_VER_BUILD       2
 #define VL53L4CD_IMPLEMENTATION_VER_REVISION  	0
 
+#define VL53L4CD_ADDR7 0x29
+
 /**
  *  @brief Driver error type
  */
