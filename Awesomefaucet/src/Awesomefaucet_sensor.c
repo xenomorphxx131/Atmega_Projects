@@ -14,6 +14,7 @@ float distance_mm;
 float distance_mm_m1 = 100;
 float distance_mm_m2 = 100;
 float max_distance_mm = 0;
+float max_distance_mm_reset_rate = 0.1f; // At 25ms rate this gains 4mm/seconds
 bool foot_present = false;
 /****************************************************************************
 *  Get Sensor Range Reading                                                 *
@@ -37,11 +38,11 @@ void process_sensor()
         distance_mm = (float)reading_mm / iir_gain - iir_alpha*distance_mm_m1 - iir_beta*distance_mm_m2;
         /****************************************************************
          *                                                              *
-         * Instantly adjust maximum to the highest value observed       *
+         * Rapidly adjust maximum to the highest value observed         *
          *                                                              *
          ****************************************************************/
          if (distance_mm > max_distance_mm)
-             max_distance_mm = distance_mm;
+             max_distance_mm += max_distance_mm_reset_rate;
         /****************************************************************
          *                                                              *
          * Look for a foot                                              *
