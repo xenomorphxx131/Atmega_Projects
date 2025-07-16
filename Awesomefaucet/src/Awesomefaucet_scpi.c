@@ -496,7 +496,6 @@ void debug(char *arg, IO_pointers_t IO)
     uint16_t counter = 0;
     uint8_t reading_mm;
 
-
     for (int i=0; i < 200; i++)
     {
         I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__START, VL6180X_SYSRANGE_STARTSTOP); //  kick off a reading
@@ -514,7 +513,6 @@ void debug(char *arg, IO_pointers_t IO)
         fprintf(IO.USB_stream, "Reading: %umm\r\n", reading_mm);
         I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_ALL_INTS );
     }
-
     fprintf(IO.USB_stream, "END OF RECORD\r\n\n");
 }
 /****************************************************************************

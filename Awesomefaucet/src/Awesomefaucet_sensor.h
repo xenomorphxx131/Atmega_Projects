@@ -7,6 +7,7 @@
 #ifndef AWESOMERFAUCET_SENSOR_H_
 #define AWESOMERFAUCET_SENSOR_H_
 
+    #include "vl53l4cd_api.h"
 	#include <VL6180X_SM.h>     // Needed for sensor readings
 	#include <stdint.h>         // Needed for integers
 	#include <stdbool.h>        // Needed for booleans

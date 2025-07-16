@@ -65,6 +65,17 @@ MCU = atmega32u4
 #FLASH_SIZE_KB = 32
 #BOOT_START = 0x7000
 
+#########################################################################
+# Select the Target Range Sensor Below                                  #
+#########################################################################
+
+CFLAGS = -D VL6180X       # Older sensor (obsolete) with Ambient Light Sensor (ALS)
+# CFLAGS = -D VL534CD         # New sensor without ALS
+
+#########################################################################
+#                                                                       #
+#########################################################################
+
 # Target architecture (see library "Board Types" documentation).
 ARCH = AVR8
 
@@ -114,6 +125,8 @@ OBJDIR = .
 
 # Path to Libraries
 LIB_PATH = ../../Libs
+VL53L4CD_API_PATH = $(LIB_PATH)/VL53L4CD_ULD_V2_2_2/VL53L4CD_ULD_Driver
+VL53L4CD_PLATFORM_PATH = $(LIB_PATH)/VL53L4CD_ULD_V2_2_2/Platform
 
 BOOTLOADER_PATH = $(LIB_PATH)/BOOTLOADER
 I2C_TWI_PATH = $(LIB_PATH)/I2C_TWI
@@ -144,7 +157,9 @@ SRC = $(TARGET).c \
 	  $(I2C_TWI_PATH)/i2c_twi.c \
 	  $(USB_PATH)/process_USB.c \
 	  $(BOOTLOADER_PATH)/bootloader.c\
-	  $(VL6180_PATH)/VL6180X_SM.c
+	  $(VL6180_PATH)/VL6180X_SM.c \
+	  $(VL53L4CD_API_PATH)/VL53L4CD_api.c\
+	  $(VL53L4CD_PLATFORM_PATH)/platform.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC =
@@ -177,7 +192,9 @@ EXTRAINCDIRS = $(BOOTLOADER_PATH)
 EXTRAINCDIRS += $(I2C_TWI_PATH)/
 EXTRAINCDIRS += $(LUFA_PATH)/
 EXTRAINCDIRS += $(USB_PATH)/
-EXTRAINCDIRS += $(VL6180_PATH)
+EXTRAINCDIRS += $(VL6180_PATH)/
+EXTRAINCDIRS += $(VL53L4CD_API_PATH)/
+EXTRAINCDIRS += $(VL53L4CD_PLATFORM_PATH)
 # EXTRAINCDIRS += $(ASCII_PATH)/
 # EXTRAINCDIRS += $(FREERTOS_SOURCE_DIR)/include/ $(FREERTOS_PORT_DIR)/ 
 # EXTRAINCDIRS += $(FREERTOS_PATH)/Demo/Common/include/
@@ -217,7 +234,7 @@ CPPDEFS += $(LUFA_OPTS)
 #  -Wall...:     warning level
 #  -Wa,...:      tell GCC to pass this to the assembler.
 #  -adhlns...:   create assembler listing
-CFLAGS = -g$(DEBUG)
+CFLAGS += -g$(DEBUG)
 CFLAGS += $(CDEFS)
 CFLAGS += -O$(OPT)
 CFLAGS += -funsigned-char
@@ -229,15 +246,16 @@ CFLAGS += -fshort-enums
 CFLAGS += -fno-strict-aliasing
 CFLAGS += -Wall
 CFLAGS += -Wstrict-prototypes
+CFLAGS += -Wa,-adhlns=$(<:%.c=$(OBJDIR)/%.lst)
+CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
+CFLAGS += $(CSTANDARD)
+# CFLAGS += -DVL6180X
+#CFLAGS += -Wno-deprecated-declarations -D__PROG_TYPES_COMPAT__
 #CFLAGS += -mshort-calls
 #CFLAGS += -fno-unit-at-a-time
 #CFLAGS += -Wundef
 #CFLAGS += -Wunreachable-code
 #CFLAGS += -Wsign-compare
-CFLAGS += -Wa,-adhlns=$(<:%.c=$(OBJDIR)/%.lst)
-CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
-CFLAGS += $(CSTANDARD)
-#CFLAGS += -Wno-deprecated-declarations -D__PROG_TYPES_COMPAT__
 
 #---------------- Compiler Options C++ ----------------
 #  -g*:          generate debugging information
@@ -482,7 +500,7 @@ sizeafter:
 	2>/dev/null; echo; fi
 
 # Display compiler version information.
-gccversion :
+gccversion:
 	@$(CC) --version
 
 # Program the device.

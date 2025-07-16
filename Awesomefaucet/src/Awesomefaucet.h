@@ -9,6 +9,7 @@
 
 	#include <util/delay.h> 				// Needed for _delay_ms()
 	#include <VL6180X_SM.h>                 // Needed for sensor readings
+    #include "vl53l4cd_api.h"
     #include "Awesomefaucet_scpi.h"
     #include "Awesomefaucet_laser.h"
     #include "Awesomefaucet_water.h"
