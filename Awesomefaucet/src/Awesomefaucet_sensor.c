@@ -8,14 +8,17 @@
 extern float iir_alpha;
 extern float iir_beta;
 extern float iir_gain;
-extern float max_distance_leakage; // For example: 1mm / 30 seconds. 30 seconds ≈ 600 cycles at 50ms/cycle. 1(mm) / 600 = 0.001666.
+extern float max_distance_mm_reset_rate;    // for example: 0.1 is 10% of the difference observed.
+extern float max_distance_leakage;          // For example: 1(mm) / 30 seconds. 30 seconds ≈ 600 cycles at 50ms/cycle. 1(mm) / 600 = 0.001666.
 float threshold_mm;
 float distance_mm;
+float max_distance_mm = 0;
 float distance_mm_m1 = 100;
 float distance_mm_m2 = 100;
-float max_distance_mm = 0;
-float max_distance_mm_reset_rate = 0.1f; // At 25ms rate this gains 4mm/seconds
 bool foot_present = false;
+Blackbox blackbox[BLACKBOX_BUFFER_SIZE];
+uint8_t blackbox_index = 0;
+bool record = 1;
 /****************************************************************************
 *  Get Sensor Range Reading                                                 *
 *****************************************************************************/
@@ -23,6 +26,7 @@ void process_sensor()
 {
     uint8_t reading_mm;
 	uint8_t status;
+    
     I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__INTERRUPT_STATUS_GPIO, &status);
     if(status & VL6180X_NEW_SAMPLE_READY_THRESHOLD_EVENT)               // Should happen on a roughly 24ms cadence as controlled by the sensor settings.
     {   /****************************************************************
@@ -41,19 +45,26 @@ void process_sensor()
          * Rapidly adjust maximum to the highest value observed         *
          *                                                              *
          ****************************************************************/
+         max_distance_mm -= max_distance_leakage;
          if (distance_mm > max_distance_mm)
-             max_distance_mm += max_distance_mm_reset_rate;
+             max_distance_mm += max_distance_mm_reset_rate * (distance_mm - max_distance_mm); // Increase by only a portion of the difference
         /****************************************************************
          *                                                              *
          * Look for a foot                                              *
          *                                                              *
          ****************************************************************/
-         if (distance_mm < max_distance_mm - threshold_mm)
-         {
-             foot_present = true;
-             max_distance_mm -= max_distance_leakage;
-         }
-         else
-             foot_present = false;
+         foot_present = distance_mm < max_distance_mm - threshold_mm ? true : false;
+        /****************************************************************
+         *                                                              *
+         * Black Box - Tracks readings to look for false trips          *
+         *                                                              *
+         ****************************************************************/
+        record = !foot_present && record; // If we stop, stay stopped until "record" is re-enabled by SCPI
+        if (record)
+        {
+            blackbox[blackbox_index].distance_mm = distance_mm;
+            blackbox[blackbox_index].max_distance_mm = max_distance_mm;
+            blackbox_index = (blackbox_index + 1) & (BLACKBOX_BUFFER_SIZE - 1);
+        }
     }
 }

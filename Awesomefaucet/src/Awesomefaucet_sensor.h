@@ -12,5 +12,12 @@
 	#include <stdbool.h>        // Needed for booleans
 
     void process_sensor(void);
+    
+    #define BLACKBOX_BUFFER_SIZE 128     // must be a power of two for index wrap efficiency
+
+    typedef struct {
+        float distance_mm;
+        float max_distance_mm;
+    } Blackbox;
 
 #endif

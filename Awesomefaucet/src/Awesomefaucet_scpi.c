@@ -9,12 +9,16 @@
 /****************************************************************************
 *  Error Message Buffers have scope within this file                        *
 *****************************************************************************/
-extern long long max_reading;
+// extern long long max_reading;
 extern unsigned long debug_time_ms;
 extern float distance_mm;
+extern float max_distance_mm;
 extern float threshold_mm;
 extern uint8_t laser_power;
 extern uint16_t water_debounce_timeout;
+extern Blackbox blackbox[BLACKBOX_BUFFER_SIZE];
+extern uint8_t blackbox_index;
+extern bool record;
 
 char bad_command[MAX_TOKEN_LEN + 1] = "";
 PGM_P error_messages[ERROR_QUEUE_LEN + 1];
@@ -27,9 +31,11 @@ float EEMEM IIR_ALPHA[sizeof(float)];
 float EEMEM IIR_BETA[sizeof(float)];
 float EEMEM THRESHOLD_MM[sizeof(float)];
 float EEMEM MAX_DISTANCE_LEAKAGE[sizeof(float)];
+float EEMEM MAX_DISTANCE_MM_RESET_RATE[sizeof(float)];
 float EEMEM WATER_DEBOUNCE_TIMEOUT[sizeof(uint16_t)];
 bool water_auto = true;
 float max_distance_leakage;
+float max_distance_mm_reset_rate;
 float iir_alpha;
 float iir_beta;
 float iir_gain;
@@ -73,6 +79,11 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-4];
 		command_array_P[i++].function = &scpi_get_version_q;
+
+		command_array_P[i].name       = PSTR("RECORD");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-5];
+		command_array_P[i++].function = &scpi_record;
     
 	command_array_P[i].name       = PSTR("*IDN?");
 	command_array_P[i].implied    = false;
@@ -129,6 +140,16 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].parent     = &command_array_P[i-8];
         command_array_P[i++].function = &scpi_get_water_debounce_timeout_q;
 
+        command_array_P[i].name       = PSTR("BLACKBOX?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-9];
+        command_array_P[i++].function = &scpi_get_blackbox_q;
+        
+        command_array_P[i].name       = PSTR("MAX_DISTANCE_MM_RESET_RATE?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-10];
+        command_array_P[i++].function = &scpi_get_max_distance_mm_reset_rate_q;
+
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
@@ -159,7 +180,7 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].parent     = &command_array_P[i-4];
         command_array_P[i++].function = &scpi_water_state_q;
 
-	command_array_P[i].name       = PSTR("STORe");
+	command_array_P[i].name       = PSTR("SET");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &scpi_null_func;
@@ -193,6 +214,11 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-6];
 		command_array_P[i++].function = &scpi_set_water_debounce_timeout;
+        
+		command_array_P[i].name       = PSTR("MAX_DISTANCE_MM_RESET_RATE");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-7];
+		command_array_P[i++].function = &scpi_set_max_distance_mm_reset_rate;
 
 	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
 }
@@ -762,6 +788,37 @@ void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO )
 		scpi_add_error_P(error_arg_too_long, IO);
 }
 /****************************************************************************
+*  Store Max Distance Reset Rate to EEPROM                                  *
+*****************************************************************************/
+void scpi_set_max_distance_mm_reset_rate( char *arg, IO_pointers_t IO )
+{
+    char *endptr;
+    float value;
+	if (strlen(arg) <= MAX_ARG_LEN)
+    {
+        remove_ws(arg);
+        value = strtod(arg, &endptr);
+        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
+        {
+            eeprom_busy_wait();
+            eeprom_write_block((const void *)&value, &MAX_DISTANCE_MM_RESET_RATE, sizeof(float));
+            retrieve_max_distance_mm_reset_rate();
+        }
+        else
+            scpi_add_error_P(error_arg_too_long, IO);
+    }
+	else
+		scpi_add_error_P(error_arg_too_long, IO);
+}
+/****************************************************************************
+*  Update Max Distance Reset Rate from EEPROM                               *
+*****************************************************************************/
+void retrieve_max_distance_mm_reset_rate()
+{
+    eeprom_busy_wait();
+    eeprom_read_block((void*)&max_distance_mm_reset_rate, (const void*)MAX_DISTANCE_MM_RESET_RATE, sizeof(float));
+}
+/****************************************************************************
 *  Update Max Distance Leakage Factor from EEPROM                           *
 *****************************************************************************/
 void retrieve_max_distance_leakage()
@@ -789,4 +846,34 @@ void compute_iir_gain()
 void scpi_get_IIR_gain_q( char *arg, IO_pointers_t IO )
 {
 	fprintf(IO.USB_stream, "%f\r\n", (double)iir_gain);
+}
+/****************************************************************************
+*  SCPI Get Blackbox Distances (mm)                                         *
+*****************************************************************************/
+void scpi_get_blackbox_q( char *arg, IO_pointers_t IO )
+{
+    fprintf(IO.USB_stream, "{\"RECORDING\": %s, ", record ? "True" : "False");
+    fprintf(IO.USB_stream, "\"DISTANCE_mm\": [");
+    uint8_t count = 0;
+    while (count < BLACKBOX_BUFFER_SIZE)
+        fprintf(IO.USB_stream, "%.3f,", (double)blackbox[(blackbox_index + count++) & (BLACKBOX_BUFFER_SIZE - 1)].distance_mm);
+    fprintf(IO.USB_stream, "], \"MAX_DISTANCE_mm\": [");
+    count = 0;
+    while (count < BLACKBOX_BUFFER_SIZE)
+        fprintf(IO.USB_stream, "%.3f,", (double)blackbox[(blackbox_index + count++) & (BLACKBOX_BUFFER_SIZE - 1)].max_distance_mm);
+    fprintf(IO.USB_stream, "]}\r\n");
+}
+/****************************************************************************
+*  Record (enable Black Box)                                                *
+*****************************************************************************/
+void scpi_record( char *arg, IO_pointers_t IO )
+{
+	record = true;
+}
+/******************************************************************************
+*  SCPI Get Max Distance Reset Rate                                           *
+*******************************************************************************/
+void scpi_get_max_distance_mm_reset_rate_q( char *arg, IO_pointers_t IO )
+{
+	fprintf(IO.USB_stream, "%f\r\n", (double)max_distance_mm_reset_rate);
 }
