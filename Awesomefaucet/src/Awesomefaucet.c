@@ -5,9 +5,9 @@
  ****************************************************************************/
 #include "Awesomefaucet.h"
 
-/**************************************************************************
-*                            Main                                         *
-***************************************************************************/
+/****************************************************************************
+*                            Main                                           *
+*****************************************************************************/
 int main(void)
 {
     /**************************************************************************
@@ -71,7 +71,7 @@ int main(void)
     retrieve_detection_threshold_mm();              // Retrieve the detection threshold from EEPROM
     retrieve_laserpower_setting();                  // Retrieve the laser power value from EEPROM
     retrieve_water_debounce_timeout();              // Retrieve the water debounce timeout from EEPROM
-    retrieve_max_distance_mm_reset_rate();             // Retrieve the max distance reset rate from EEPROM
+    retrieve_max_distance_mm_reset_rate();          // Retrieve the max distance reset rate from EEPROM
     VL6180X_Setup();                                // Enter the super secret setup commands for the VL6180x
     do {I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__RANGE_STATUS, &sensor_answer);}
     while (! (sensor_answer & VL6180X_RESULT__RANGE_DEVICE_READY));    // wait for device to be ready for range measurement
@@ -87,9 +87,9 @@ int main(void)
         update_water();
     }
 }
-/****************************************************************************
-*    Interrupt Service Routine for Timer 0 (62.5ns * 64 * 256 = 1.024ms)    *
-*****************************************************************************/
+/********************************************************************************
+*    Interrupt Service Routine for Timer 0 (62.5ns * 64 * 256 = 1.024ms)        *
+*********************************************************************************/
 ISR(TIMER0_OVF_vect)
 {
     cli();
