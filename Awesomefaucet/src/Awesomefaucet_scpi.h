@@ -89,6 +89,7 @@ typedef struct scpi_node_P {
     void scpi_get_max_distance_mm_reset_rate_q( char *arg, IO_pointers_t IO );
     void scpi_set_max_distance_mm_reset_rate( char *arg, IO_pointers_t IO );
     void retrieve_max_distance_mm_reset_rate(void);
+    void scpi_get_range_and_maxrange_q(char *arg, IO_pointers_t IO);
 	void remove_ws ( char *arg );
 /**************************************************************************
 *  Compulsory SCPI commands                                               *

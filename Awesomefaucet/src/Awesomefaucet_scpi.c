@@ -149,6 +149,11 @@ int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-10];
         command_array_P[i++].function = &scpi_get_max_distance_mm_reset_rate_q;
+        
+        command_array_P[i].name       = PSTR("RANGE_AND_MAXRANGE?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-11];
+        command_array_P[i++].function = &scpi_get_range_and_maxrange_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
@@ -521,6 +526,13 @@ void debug(char *arg, IO_pointers_t IO)
 void scpi_get_range_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%fmm\r\n", (double)distance_mm);
+}
+/****************************************************************************
+*  SCPI Get Range and Max Range Readings - comma separated                  *
+*****************************************************************************/
+void scpi_get_range_and_maxrange_q(char *arg, IO_pointers_t IO)
+{
+    fprintf(IO.USB_stream, "{\"RANGE\":%f,\"MAXRANGE\":%f}\r\n", (double)distance_mm, (double)max_distance_mm);
 }
 /****************************************************************************
 *  Clear Port                                                               *
