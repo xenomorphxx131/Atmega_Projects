@@ -1,5 +1,7 @@
 from PyICe import lab_interfaces
 from datetime import datetime
+import matplotlib.pyplot as plt
+import numpy as np
 import time
 
 int_factory = lab_interfaces.interface_factory()
@@ -19,8 +21,19 @@ while True:
         while sensor.ask('water:state?') == "1":
             reset_time = datetime.now()
         print(f" Water OFF {datetime.now()}\n")
-        
-        print(sensor.ask('GET:BLACKBOX?'))
-        print()
-        print()
-        print()
+        blackbox = eval(sensor.ask('GET:BLACKBOX?'))
+        plt.plot(blackbox["DISTANCE_mm"], label='"DISTANCE_mm"', linewidth=2)
+        plt.plot(blackbox["MAX_DISTANCE_mm"], label='"MAX_DISTANCE_mm"', linewidth=2)
+        plt.legend()
+        plt.xlabel('Time [0.5s/div]')
+        plt.autoscale(enable=True, axis='y')
+        ymin, ymax = plt.ylim()
+        ymin = int(np.floor(ymin))
+        ymax = int(np.ceil(ymax))
+        ytick_values = np.linspace(ymin, ymax, 5)
+        ytick_values = np.round(ytick_values).astype(int)
+        plt.yticks(ytick_values)
+        plt.grid(True)
+        plt.show()
+        sensor.write('RECORD')
+        print(f"Restarting Water Monitoring Program at {datetime.now()} .....\n")
