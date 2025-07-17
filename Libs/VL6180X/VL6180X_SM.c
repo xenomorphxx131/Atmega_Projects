@@ -41,11 +41,9 @@ void VL6180X_Setup()
     I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSALS__ANALOGUE_GAIN, 0x46);           // Sets the light and dark gain (upper nibble). Dark gain should not be changed.
     I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSALS__INTEGRATION_PERIOD, 0x63);      // Set ALS integration time to 100ms perform a single temperature calibration of the ranging sensor
     I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSALS__INTERMEASUREMENT_PERIOD, 0x31); // Set default ALS inter-measurement periodto 500ms
-
-    I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__VHV_REPEAT_RATE, 0);          // sets the # of range measurements after which auto calibration of system is performed, 0 = off (was 255)
+    I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__VHV_REPEAT_RATE, 1);          // Sets the # of range measurements after which auto calibration of system is performed, 0 = off (was 255)
     I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__VHV_RECALIBRATE, 0x01);       // One time calibrate of the VCEL laser
     I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__INTERMEASUREMENT_PERIOD, 0);  // SYSRANGE__INTERMEASUREMENT_PERIOD: Time delay between measurements in Ranging continuous mode. Range 0-254 (0 = 10ms). Step size = 10ms
     // I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__MAX_CONVERGENCE_TIME, 50);    //  Maximum time to run measurement in Ranging modes. Range 1 - 63 ms (1 code = 1 ms); Measurement aborted when limit reached to aid power reduction. For example, 0x01 = 1ms, 0x0a = 10ms.
-
     I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSTEM__INTERRUPT_CONFIG_GPIO, 0x24);   // Configures interrupt on 'New Sample Ready threshold event' for both ALS and Range
 }
