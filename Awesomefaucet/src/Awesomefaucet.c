@@ -84,7 +84,7 @@ int main(void)
                                 VL6180X_SYSRANGE_STARTSTOP);    // Kick off the first reading
     #elif defined(VL534CD)
         VL53L4CD_SensorInit(VL53L4CD_ADDR7);                    // Initialize the sensor
-        VL53L4CD_SetRangeTiming(VL53L4CD_ADDR7, 50, 0);         // Address, timing budget (ms), inter-measurement (0 means no shutdown, take next reading)
+        VL53L4CD_SetRangeTiming(VL53L4CD_ADDR7, 25, 0);         // Address, timing budget (ms), inter-measurement (0 means no shutdown, take next reading)
         VL53L4CD_StartRanging(VL53L4CD_ADDR7);                  // Kick off the first reading
     #endif
     /****************************************************************************
