@@ -11,7 +11,6 @@
     #include <process_USB.h>
     #include <bootloader.h>                 // 'Jump_To_Bootloader'
 	#include <avr/interrupt.h>              // Needed for cli() and sei()
-	#include <VL6180X_SM.h>                 // Needed for sensor readings
     #include "Awesomefaucet_scpiconfig.h"
     #include "Awesomefaucet_sensor.h"
     #include "Awesomefaucet_board.h"
@@ -45,7 +44,7 @@ typedef struct scpi_node_P {
 	void scpi_add_error_P(PGM_P error_message, IO_pointers_t IO);
 	void scpi_prStr_P (  PGM_P arg, FILE *fstream );
 	void PGM_P_to_string ( PGM_P arg, char * name , FILE *fstream);
-	int	 Setup_ScpiCommandsArray_P ( scpi_commands_P_t command_array_P[] );
+	uint8_t	 Setup_ScpiCommandsArray_P ( scpi_commands_P_t command_array_P[] );
 	void scpi_null_func ( char *arg, IO_pointers_t IO );
 	void st_OPC_q	( char *arg, IO_pointers_t IO );
 	void scpi_empty_func ( char *arg, IO_pointers_t IO );

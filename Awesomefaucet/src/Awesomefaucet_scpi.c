@@ -42,48 +42,48 @@ float iir_gain;
 /****************************************************************************
 *  Setup Awesomfaucet Specific SCPI commands and functions                  *
 *****************************************************************************/
-int Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
+uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 {
-	int i = 0;
-	command_array_P[i].name      = PSTR("NULL");
-	command_array_P[i].implied    = true;
-	command_array_P[i].parent     = NULL;
+	uint8_t i = 0;
+	command_array_P[i].name         = PSTR("NULL");
+	command_array_P[i].implied      = true;
+	command_array_P[i].parent       = NULL;
 	command_array_P[i++].function   = &scpi_null_func;
 
-	command_array_P[i].name      = PSTR("*OPC?");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &st_OPC_q;
+	command_array_P[i].name         = PSTR("*OPC?");
+	command_array_P[i].implied      = false;
+	command_array_P[i].parent       = &command_array_P[0];
+	command_array_P[i++].function   = &st_OPC_q;
 
-	command_array_P[i].name      = PSTR("SYSTem");
-	command_array_P[i].implied    = true;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_empty_func;
+	command_array_P[i].name         = PSTR("SYSTem");
+	command_array_P[i].implied      = true;
+	command_array_P[i].parent       = &command_array_P[0];
+	command_array_P[i++].function   = &scpi_empty_func;
 
-		command_array_P[i].name      = PSTR("RST");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-1];
-		command_array_P[i++].function = &scpi_empty_func;
+		command_array_P[i].name         = PSTR("RST");
+		command_array_P[i].implied      = false;
+		command_array_P[i].parent       = &command_array_P[i-1];
+		command_array_P[i++].function   = &scpi_empty_func;
 
-			command_array_P[i].name      = PSTR("BTLOader");
-			command_array_P[i].implied    = false;
-			command_array_P[i].parent     = &command_array_P[i-1];
-			command_array_P[i++].function = &sys_rst_btloader;
+			command_array_P[i].name         = PSTR("BTLOader");
+			command_array_P[i].implied      = false;
+			command_array_P[i].parent       = &command_array_P[i-1];
+			command_array_P[i++].function   = &sys_rst_btloader;
 
-		command_array_P[i].name      = PSTR("ERRor?");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-3];
-		command_array_P[i++].function = &sys_error_q;
+		command_array_P[i].name         = PSTR("ERRor?");
+		command_array_P[i].implied      = false;
+		command_array_P[i].parent       = &command_array_P[i-3];
+		command_array_P[i++].function   = &sys_error_q;
 
-		command_array_P[i].name      = PSTR("VERSion?");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-4];
-		command_array_P[i++].function = &scpi_get_version_q;
+		command_array_P[i].name         = PSTR("VERSion?");
+		command_array_P[i].implied      = false;
+		command_array_P[i].parent       = &command_array_P[i-4];
+		command_array_P[i++].function   = &scpi_get_version_q;
 
-		command_array_P[i].name       = PSTR("RECORD");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-5];
-		command_array_P[i++].function = &scpi_record;
+		command_array_P[i].name         = PSTR("RECORD");
+		command_array_P[i].implied      = false;
+		command_array_P[i].parent       = &command_array_P[i-5];
+		command_array_P[i++].function   = &scpi_record;
     
 	command_array_P[i].name       = PSTR("*IDN?");
 	command_array_P[i].implied    = false;
@@ -497,28 +497,28 @@ void st_WAI( char *arg, IO_pointers_t IO ) {}
 *****************************************************************************/
 void debug(char *arg, IO_pointers_t IO)
 {
-    uint8_t sensor_answer;
-    uint16_t counter = 0;
-    uint8_t reading_mm;
+    // uint8_t sensor_answer;
+    // uint16_t counter = 0;
+    // uint8_t reading_mm;
 
-    for (int i=0; i < 200; i++)
-    {
-        I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__START, VL6180X_SYSRANGE_STARTSTOP); //  kick off a reading
-        do {
-            I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__INTERRUPT_STATUS_GPIO, &sensor_answer); // wait for reading
-            if (sensor_answer)
-            {
-                fprintf(IO.USB_stream, "time: %lums ", debug_time_ms);
-                fprintf(IO.USB_stream, "RESULT__INTERRUPT_STATUS_GPIO: %x\r\n", sensor_answer);
-            }
-        }
-        while (! (sensor_answer & VL6180X_NEW_SAMPLE_READY_THRESHOLD_EVENT) && counter < 1000);
+    // for (int i=0; i < 200; i++)
+    // {
+        // I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__START, VL6180X_SYSRANGE_STARTSTOP); //  kick off a reading
+        // do {
+            // I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__INTERRUPT_STATUS_GPIO, &sensor_answer); // wait for reading
+            // if (sensor_answer)
+            // {
+                // fprintf(IO.USB_stream, "time: %lums ", debug_time_ms);
+                // fprintf(IO.USB_stream, "RESULT__INTERRUPT_STATUS_GPIO: %x\r\n", sensor_answer);
+            // }
+        // }
+        // while (! (sensor_answer & VL6180X_NEW_SAMPLE_READY_THRESHOLD_EVENT) && counter < 1000);
     
-        I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__RANGE_VAL, &reading_mm);
-        fprintf(IO.USB_stream, "Reading: %umm\r\n", reading_mm);
-        I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_ALL_INTS );
-    }
-    fprintf(IO.USB_stream, "END OF RECORD\r\n\n");
+        // I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__RANGE_VAL, &reading_mm);
+        // fprintf(IO.USB_stream, "Reading: %umm\r\n", reading_mm);
+        // I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_ALL_INTS );
+    // }
+    // fprintf(IO.USB_stream, "END OF RECORD\r\n\n");
 }
 /****************************************************************************
 *  SCPI Get Range Reading                                                   *
