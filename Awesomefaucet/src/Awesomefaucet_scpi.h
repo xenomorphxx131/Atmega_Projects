@@ -6,11 +6,11 @@
 #ifndef AWESOMEFAUCET_SCPI_H_
 #define AWESOMEFAUCET_SCPI_H_
 
-    #include <stdlib.h>                     // strtod, strtol etc.
+    #include <stdlib.h>                 // strtod, strtol etc.
     #include <process_USB.h>
 	#include <scpi_parser.h>
-    #include <bootloader.h>                 // 'Jump_To_Bootloader
-    #include "Awesomefaucet_info.h"         // Project namne, version, etc.
+    #include <bootloader.h>             // 'Jump_To_Bootloader
+    #include "Awesomefaucet_info.h"     // Project namne, version, array size, etc.
     #include "Awesomefaucet_board.h"
     #include "Awesomefaucet_laser.h"
     #include "Awesomefaucet_water.h"
