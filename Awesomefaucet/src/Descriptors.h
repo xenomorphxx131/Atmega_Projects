@@ -38,7 +38,6 @@
 
 	/* Includes: */
 		#include <avr/pgmspace.h>
-
 		#include <LUFA/Drivers/USB/USB.h>
 
 	/* Macros: */
@@ -107,4 +106,3 @@
 		                                    ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
 
 #endif
-
