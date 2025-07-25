@@ -9,7 +9,7 @@ sensor = int_factory.get_visa_serial_interface("COM" + input("Enter COM Port Num
 readings = []
 print("Collecting Readings, Please Wait...")
 starttime = time.time()
-for reading in range(20000):
+for reading in range(5000):
     readings.append(eval(sensor.ask('get:RANGE_AND_MAXRANGE?')))
 endtime = time.time()
 

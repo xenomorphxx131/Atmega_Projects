@@ -125,14 +125,15 @@ OBJDIR = .
 
 # Path to Libraries
 LIB_PATH = ../../Libs
-VL53L4CD_API_PATH = $(LIB_PATH)/VL53L4CD_ULD_V2_2_2/VL53L4CD_ULD_Driver
 VL53L4CD_PLATFORM_PATH = $(LIB_PATH)/VL53L4CD_ULD_V2_2_2/Platform
+VL53L4CD_API_PATH = $(LIB_PATH)/VL53L4CD_ULD_V2_2_2/VL53L4CD_ULD_Driver
 
-BOOTLOADER_PATH = $(LIB_PATH)/BOOTLOADER
-I2C_TWI_PATH = $(LIB_PATH)/I2C_TWI
-LUFA_PATH = $(LIB_PATH)/LUFA
 USB_PATH = $(LIB_PATH)/USB
+LUFA_PATH = $(LIB_PATH)/LUFA
+SCPI_PATH = $(LIB_PATH)/SCPI
 VL6180_PATH = $(LIB_PATH)/VL6180X
+I2C_TWI_PATH = $(LIB_PATH)/I2C_TWI
+BOOTLOADER_PATH = $(LIB_PATH)/BOOTLOADER
 
 # LUFA library compile-time options and predefined tokens
 LUFA_OPTS  = -D USB_DEVICE_ONLY
@@ -154,10 +155,11 @@ SRC = $(TARGET).c \
 	  Descriptors.c \
 	  $(LUFA_SRC_USB) \
 	  $(LUFA_SRC_USBCLASS) \
-	  $(I2C_TWI_PATH)/i2c_twi.c \
 	  $(USB_PATH)/process_USB.c \
-	  $(BOOTLOADER_PATH)/bootloader.c\
+	  $(I2C_TWI_PATH)/i2c_twi.c \
+	  $(SCPI_PATH)/scpi_parser.c \
 	  $(VL6180_PATH)/VL6180X_SM.c \
+	  $(BOOTLOADER_PATH)/bootloader.c\
 	  $(VL53L4CD_API_PATH)/VL53L4CD_api.c\
 	  $(VL53L4CD_PLATFORM_PATH)/platform.c
 
@@ -188,11 +190,12 @@ DEBUG = dwarf-2
 #     Each directory must be seperated by a space.
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
-EXTRAINCDIRS = $(BOOTLOADER_PATH)
-EXTRAINCDIRS += $(I2C_TWI_PATH)/
+EXTRAINCDIRS  = $(USB_PATH)/
 EXTRAINCDIRS += $(LUFA_PATH)/
-EXTRAINCDIRS += $(USB_PATH)/
+EXTRAINCDIRS += $(SCPI_PATH)/
 EXTRAINCDIRS += $(VL6180_PATH)/
+EXTRAINCDIRS += $(I2C_TWI_PATH)/
+EXTRAINCDIRS += $(BOOTLOADER_PATH)/
 EXTRAINCDIRS += $(VL53L4CD_API_PATH)/
 EXTRAINCDIRS += $(VL53L4CD_PLATFORM_PATH)
 # EXTRAINCDIRS += $(ASCII_PATH)/

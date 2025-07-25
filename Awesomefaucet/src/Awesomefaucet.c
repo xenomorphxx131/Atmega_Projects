@@ -17,7 +17,7 @@ int main(void)
     i2c_twi_port_t      i2cport;
     IO_pointers_t       IO;                                 // Create the passable IO pointer
     char                str_in[MAX_IN_STR_LEN+1] = "";      // Incoming string
-    int                 str_len = 0;                        // Length of incoming string
+    int                 str_len;                            // Length of incoming string
     scpi_commands_P_t   commands_P[COMMAND_ARRAY_SIZE];     // Create the SCPI command array
     CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USB_stream);
     /**************************************************************************
@@ -74,12 +74,12 @@ int main(void)
     #ifdef VL6180X
         uint8_t sensor_answer;
         VL6180X_Setup();                                        // Enter the super secret setup commands for the VL6180x
-        do {I2C_16BITSUB_Read_Byte(VL6180X_ADDR7,\
+        do {I2C_16BITSUB_Read_Byte( VL6180X_ADDR7,\
                                     VL6180X_RESULT__RANGE_STATUS,\
                                     &sensor_answer);}
         while (! (sensor_answer & \
                 VL6180X_RESULT__RANGE_DEVICE_READY));           // wait for device to be ready for range measurement
-        I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, \
+        I2C_16BITSUB_Write_Byte(VL6180X_ADDR7, \
                                 VL6180X_SYSRANGE__START, \
                                 VL6180X_SYSRANGE_STARTSTOP);    // Kick off the first reading
     #elif defined(VL534CD)
