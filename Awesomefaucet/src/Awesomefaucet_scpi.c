@@ -152,36 +152,16 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-11];
         command_array_P[i++].function = &scpi_get_range_and_maxrange_q;
+        
+        command_array_P[i].name       = PSTR("WATER_STATE?");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-12];
+        command_array_P[i++].function = &scpi_water_state_q;
 
 	command_array_P[i].name       = PSTR("CLRI2C");
 	command_array_P[i].implied    = false;
 	command_array_P[i].parent     = &command_array_P[0];
 	command_array_P[i++].function = &clr_i2c;
-        
-	command_array_P[i].name       = PSTR("WATER");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_null_func;
-    
-        command_array_P[i].name       = PSTR("ON");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-1];
-        command_array_P[i++].function = &scpi_water_on;
-        
-        command_array_P[i].name       = PSTR("OFF");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-2];
-        command_array_P[i++].function = &scpi_water_off;
-		
-        command_array_P[i].name       = PSTR("AUTO");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-3];
-        command_array_P[i++].function = &scpi_water_auto;
-        
-        command_array_P[i].name       = PSTR("STATE?");
-        command_array_P[i].implied    = false;
-        command_array_P[i].parent     = &command_array_P[i-4];
-        command_array_P[i++].function = &scpi_water_state_q;
 
 	command_array_P[i].name       = PSTR("SET");
 	command_array_P[i].implied    = false;
@@ -222,6 +202,26 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 		command_array_P[i].implied    = false;
 		command_array_P[i].parent     = &command_array_P[i-7];
 		command_array_P[i++].function = &scpi_set_max_distance_mm_reset_rate;
+        
+		command_array_P[i].name       = PSTR("WATER");
+		command_array_P[i].implied    = false;
+		command_array_P[i].parent     = &command_array_P[i-8];
+		command_array_P[i++].function = &scpi_null_func;
+        
+            command_array_P[i].name       = PSTR("ON");
+            command_array_P[i].implied    = false;
+            command_array_P[i].parent     = &command_array_P[i-1];
+            command_array_P[i++].function = &scpi_water_on;
+
+            command_array_P[i].name       = PSTR("OFF");
+            command_array_P[i].implied    = false;
+            command_array_P[i].parent     = &command_array_P[i-2];
+            command_array_P[i++].function = &scpi_water_off;
+
+            command_array_P[i].name       = PSTR("AUTO");
+            command_array_P[i].implied    = false;
+            command_array_P[i].parent     = &command_array_P[i-3];
+            command_array_P[i++].function = &scpi_water_auto;
 
 	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
 }
