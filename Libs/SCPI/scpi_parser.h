@@ -7,15 +7,15 @@
 #ifndef SCPI_PARSER_H_
 #define SCPI_PARSER_H_
 
-// #include <avr/pgmspace.h>   
-    #include <string.h>     // strlen
-    #include <ctype.h>      // isspace
-    #include <i2c_twi.h>    // i2c_twi_port_t
+    #include <avr/pgmspace.h>           // Should need this for PGM_P but doesn't. Coming in from somewhere else.
+    #include <string.h>                 // strlen
+    #include <ctype.h>                  // isspace
+    #include <i2c_twi.h>                // i2c_twi_port_t
+    #include "Awesomefaucet_info.h"     // Command array size.
     #include <process_USB.h>
 /****************************************************************************
 *  Define various SCPI parameters                                           *
 *****************************************************************************/
-	#define COMMAND_ARRAY_SIZE 36 
 	#define MAX_IN_STR_LEN 260
 	#define MAX_TOKEN_LEN 80
 	#define ERROR_QUEUE_LEN 2
