@@ -64,26 +64,37 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
     scpi_commands_P_t* current_state = NULL;                                                // Pointer to commands in command array. Initialize to the top (no command).
     scpi_commands_P_t* current_ptr;                                                         // Pointer to commands in command array used for tokens.
     uint8_t valid_command = false;                                                          // Valid command variable
-
+    /****************************************************************************
+     * Get the argument if there is one                                         *
+     ****************************************************************************/
+    argument = strpbrk(input_string, " ");                                                  // Check for a space indicating an argument
+    if (argument != NULL)                                                                   // Return value will be NULL if no spaces
+    {
+        *argument = NUL;                                                                    // Moves termination of the the original string to the where the space used to be
+        argument++;                                                                         // Move argument pointer one past the space
+        if (strlen(argument) > MAX_ARG_LEN)                                                 // Check for argument length error
+        {                                                                                   // If too long...
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);                                       // document the error and...
+            return;                                                                         // bail from the whole SCPI input
+        }
+        if (strpbrk(argument, " ") != NULL)                                                 // If any more spaces
+        {                                                                                   //
+            scpi_add_error_P(ERROR_BAD_PATH_OR_HEADER, IO);                                 // document the error and...
+            strncpy(bad_command, "Too many Spaces", sizeof("Too many Spaces"));             //
+            return;                                                                         // bail from the whole SCPI input
+        }
+    }
+    /****************************************************************************
+     * Parse the remaining tokens                                               *
+     ****************************************************************************/
     token = strtok(input_string, ":");                                                      // Scan string looking for ":" separators
     while (token != NUL)
     {                                                                                       // Search for new tokens
         valid_command = false;
-        argument = strpbrk(token, " ");                                                     // Check for space indicating an argument
-        if (argument[0] == ' ' )                                                            // or other chars
-        {
-            argument[0] = NUL;                                                              // Terminates last token
-            argument++;                                                                     // Move argument pointer past space
-        }
         if (strlen(token) > MAX_TOKEN_LEN)                                                  // Check for token length error
         {
             scpi_add_error_P(ERROR_MNEMONIC_TOO_LONG, IO);                                  // Document the error
-            break;                                                                          // Bail from the token search loop
-        }
-        if (strlen(argument) > MAX_ARG_LEN)                                                 // Check for argument length error
-        {
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);                                       // Document the error
-            break;                                                                          // Bail from the token search loop
+            return;                                                                         // Bail from the token search loop
         }
         for(cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)                                 // Walk through known commands looking for a match
         {
@@ -102,7 +113,7 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
         }
         if (!valid_command)                                                                 // if a command wasn't found, determine if an implied command is found
             valid_command = scpi_find_implied(&current_state, token, cmd_array_P);          // this function updates current_state
-        if (!valid_command)                                                                 // if no match or implied match was not? found there was a real error
+        if (!valid_command)                                                                 // if no match or implied match was not found, there was a real error
         {
             scpi_add_error_P(ERROR_BAD_PATH_OR_HEADER, IO);                                 // Indicate bad token
             strncpy(bad_command, token, MAX_TOKEN_LEN);                                     // Send up to MAX_TOKEN_LEN of bad token
