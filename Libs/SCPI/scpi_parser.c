@@ -9,9 +9,9 @@
 char bad_command[MAX_TOKEN_LEN + 1] = "";
 PGM_P error_messages[ERROR_QUEUE_LEN + 1];
 int error_number = 0;
-char const error_mnemonic_too_long[]    PROGMEM = "-112,Program mnemonic too long";
-char const error_arg_too_long[]         PROGMEM = "-112,Argument too long";
-char const error_bad_path_or_header[]   PROGMEM = "-113,Bad path or header: ";
+char const ERROR_MNEMONIC_TOO_LONG[]    PROGMEM = "-112,Program mnemonic too long";
+char const ERROR_ARG_TOO_LONG[]         PROGMEM = "-112,Argument too long";
+char const ERROR_BAD_PATH_OR_HEADER[]   PROGMEM = "-113,Bad path or header: ";
 /****************************************************************************
 *  Build input string from terminal then run SCPI command.                  *
 *****************************************************************************/
@@ -65,7 +65,7 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
     scpi_commands_P_t* current_ptr;                                                         // Pointer to commands in command array used for tokens.
     uint8_t valid_command = false;                                                          // Valid command variable
 
-    token = strtok (input_string, ":");                                                     // Scan string looking for ":" separators
+    token = strtok(input_string, ":");                                                      // Scan string looking for ":" separators
     while (token != NUL)
     {                                                                                       // Search for new tokens
         argument = strpbrk(token, " ");                                                     // Check for space indicating an argument
@@ -77,19 +77,19 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
         }
         if (strlen(token) > MAX_TOKEN_LEN)                                                  // Check for token length error
         {
-            scpi_add_error_P(error_mnemonic_too_long, IO);                                  // Document the error
+            scpi_add_error_P(ERROR_MNEMONIC_TOO_LONG, IO);                                  // Document the error
             break;                                                                          // Bail from the token search loop
         }
         if (strlen(argument) > MAX_ARG_LEN)                                                 // Check for argument length error
         {
-            scpi_add_error_P(error_arg_too_long, IO);                                       // Document the error
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);                                       // Document the error
             break;                                                                          // Bail from the token search loop
         }
         
         for(cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)                                 // Walk through known commands looking for a match
         {
             current_ptr = &cmd_array_P[cmd_i];                                              // Get pointer to found command
-            if (current_ptr->parent == current_state)                                       // only process children of the current state
+            if (current_ptr->parent == current_state)                                       // Only process children of the current state
             {
                 PGM_P_to_string(cmd_array_P[cmd_i].name, long_name, IO.USB_stream);
                 scpi_get_short_name(long_name, short_name);
@@ -101,15 +101,15 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
                 }
             }
         }
-        if (!valid_command)                                                                 // if a command wasn't found, determine if an implied command is
+        if (!valid_command)                                                                 // if a command wasn't found, determine if an implied command is found
             valid_command = scpi_find_implied(&current_state, token, cmd_array_P);          // this function updates current_state
         if (!valid_command)                                                                 // if no match or implied match was not? found there was a real error
         {
-            scpi_add_error_P(error_bad_path_or_header, IO);                                 // Indicate bad token
+            scpi_add_error_P(ERROR_BAD_PATH_OR_HEADER, IO);                                 // Indicate bad token
             strncpy(bad_command, token, MAX_TOKEN_LEN);                                     // Send up to MAX_TOKEN_LEN of bad token
             return;
         }
-        token = strtok (NULL, ":");                                                         // Otherwise get the next : separated token
+        token = strtok(NULL, ":");                                                          // Otherwise get the next : separated token
     }                                                                                       // End of new token search
     if (valid_command) current_state->function(argument, IO);                               // Run the handler function of the tail
 }

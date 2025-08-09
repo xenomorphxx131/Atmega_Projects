@@ -22,7 +22,7 @@ extern bool record;
 extern char bad_command[];
 extern PGM_P error_messages[];
 extern int error_number;
-extern char const error_arg_too_long[];
+extern char const ERROR_ARG_TOO_LONG[];
 
 uint8_t EEMEM LASER_POWER[sizeof(uint8_t)];
 float EEMEM IIR_ALPHA[sizeof(float)];
@@ -42,67 +42,67 @@ float iir_gain;
 *****************************************************************************/
 uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 {
-	uint8_t i = 0;
-	command_array_P[i].name         = PSTR("NULL");
-	command_array_P[i].implied      = true;
-	command_array_P[i].parent       = NULL;
-	command_array_P[i++].function   = &scpi_null_func;
+    uint8_t i = 0;
+    command_array_P[i].name         = PSTR("NULL");
+    command_array_P[i].implied      = true;
+    command_array_P[i].parent       = NULL;
+    command_array_P[i++].function   = &scpi_null_func;
 
-	command_array_P[i].name         = PSTR("*OPC?");
-	command_array_P[i].implied      = false;
-	command_array_P[i].parent       = &command_array_P[0];
-	command_array_P[i++].function   = &st_OPC_q;
+    command_array_P[i].name         = PSTR("*OPC?");
+    command_array_P[i].implied      = false;
+    command_array_P[i].parent       = &command_array_P[0];
+    command_array_P[i++].function   = &st_OPC_q;
 
-	command_array_P[i].name         = PSTR("SYSTem");
-	command_array_P[i].implied      = true;
-	command_array_P[i].parent       = &command_array_P[0];
-	command_array_P[i++].function   = &scpi_null_func;
+    command_array_P[i].name         = PSTR("SYSTem");
+    command_array_P[i].implied      = true;
+    command_array_P[i].parent       = &command_array_P[0];
+    command_array_P[i++].function   = &scpi_null_func;
 
-		command_array_P[i].name         = PSTR("RST");
-		command_array_P[i].implied      = false;
-		command_array_P[i].parent       = &command_array_P[i-1];
-		command_array_P[i++].function   = &scpi_null_func;
+        command_array_P[i].name         = PSTR("RST");
+        command_array_P[i].implied      = false;
+        command_array_P[i].parent       = &command_array_P[i-1];
+        command_array_P[i++].function   = &scpi_null_func;
 
-			command_array_P[i].name         = PSTR("BTLOader");
-			command_array_P[i].implied      = false;
-			command_array_P[i].parent       = &command_array_P[i-1];
-			command_array_P[i++].function   = &sys_rst_btloader;
+            command_array_P[i].name         = PSTR("BTLOader");
+            command_array_P[i].implied      = false;
+            command_array_P[i].parent       = &command_array_P[i-1];
+            command_array_P[i++].function   = &sys_rst_btloader;
 
-		command_array_P[i].name         = PSTR("ERRor?");
-		command_array_P[i].implied      = false;
-		command_array_P[i].parent       = &command_array_P[i-3];
-		command_array_P[i++].function   = &sys_error_q;
+        command_array_P[i].name         = PSTR("ERRor?");
+        command_array_P[i].implied      = false;
+        command_array_P[i].parent       = &command_array_P[i-3];
+        command_array_P[i++].function   = &sys_error_q;
 
-		command_array_P[i].name         = PSTR("VERSion?");
-		command_array_P[i].implied      = false;
-		command_array_P[i].parent       = &command_array_P[i-4];
-		command_array_P[i++].function   = &scpi_get_version_q;
+        command_array_P[i].name         = PSTR("VERSion?");
+        command_array_P[i].implied      = false;
+        command_array_P[i].parent       = &command_array_P[i-4];
+        command_array_P[i++].function   = &scpi_get_version_q;
 
-		command_array_P[i].name         = PSTR("RECORD");
-		command_array_P[i].implied      = false;
-		command_array_P[i].parent       = &command_array_P[i-5];
-		command_array_P[i++].function   = &scpi_record;
+        command_array_P[i].name         = PSTR("RECORD");
+        command_array_P[i].implied      = false;
+        command_array_P[i].parent       = &command_array_P[i-5];
+        command_array_P[i++].function   = &scpi_record;
     
-	command_array_P[i].name       = PSTR("*IDN?");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_IDN_q;
+    command_array_P[i].name       = PSTR("*IDN?");
+    command_array_P[i].implied    = false;
+    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i++].function = &scpi_IDN_q;
     
-	command_array_P[i].name       = PSTR("DEBUG?");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &debug;
+    command_array_P[i].name       = PSTR("DEBUG?");
+    command_array_P[i].implied    = false;
+    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i++].function = &debug;
     
-	command_array_P[i].name       = PSTR("GET");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_null_func;
+    command_array_P[i].name       = PSTR("GET");
+    command_array_P[i].implied    = false;
+    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i++].function = &scpi_null_func;
     
         command_array_P[i].name       = PSTR("RANGE?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-1];
         command_array_P[i++].function = &scpi_get_range_q;
-		
+        
         command_array_P[i].name       = PSTR("IIR_ALPHA?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-2];
@@ -117,7 +117,7 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-4];
         command_array_P[i++].function = &scpi_get_IIR_gain_q;
-		
+        
         command_array_P[i].name       = PSTR("LASERPOWER?");
         command_array_P[i].implied    = false;
         command_array_P[i].parent     = &command_array_P[i-5];
@@ -158,55 +158,55 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
         command_array_P[i].parent     = &command_array_P[i-12];
         command_array_P[i++].function = &scpi_water_state_q;
 
-	command_array_P[i].name       = PSTR("CLRI2C");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &clr_i2c;
+    command_array_P[i].name       = PSTR("CLRI2C");
+    command_array_P[i].implied    = false;
+    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i++].function = &clr_i2c;
 
-	command_array_P[i].name       = PSTR("SET");
-	command_array_P[i].implied    = false;
-	command_array_P[i].parent     = &command_array_P[0];
-	command_array_P[i++].function = &scpi_null_func;
-		
-		command_array_P[i].name       = PSTR("IIR_ALPHA");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-1];
-		command_array_P[i++].function = &scpi_set_IIR_alpha;
+    command_array_P[i].name       = PSTR("SET");
+    command_array_P[i].implied    = false;
+    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i++].function = &scpi_null_func;
         
-		command_array_P[i].name       = PSTR("IIR_BETA");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-2];
-		command_array_P[i++].function = &scpi_set_IIR_beta;
-		
-		command_array_P[i].name       = PSTR("LASERPOWER");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-3];
-		command_array_P[i++].function = &scpi_set_laserpower;
+        command_array_P[i].name       = PSTR("IIR_ALPHA");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-1];
+        command_array_P[i++].function = &scpi_set_IIR_alpha;
         
-		command_array_P[i].name       = PSTR("DETECTION_THRESHOLD_MM");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-4];
-		command_array_P[i++].function = &scpi_set_detection_threshold_mm;
+        command_array_P[i].name       = PSTR("IIR_BETA");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-2];
+        command_array_P[i++].function = &scpi_set_IIR_beta;
         
-		command_array_P[i].name       = PSTR("MAX_DISTANCE_LEAKAGE");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-5];
-		command_array_P[i++].function = &scpi_set_max_distance_leakage;
+        command_array_P[i].name       = PSTR("LASERPOWER");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-3];
+        command_array_P[i++].function = &scpi_set_laserpower;
         
-		command_array_P[i].name       = PSTR("WATER_DEBOUNCE_TIMEOUT");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-6];
-		command_array_P[i++].function = &scpi_set_water_debounce_timeout;
+        command_array_P[i].name       = PSTR("DETECTION_THRESHOLD_MM");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-4];
+        command_array_P[i++].function = &scpi_set_detection_threshold_mm;
         
-		command_array_P[i].name       = PSTR("MAX_DISTANCE_MM_RESET_RATE");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-7];
-		command_array_P[i++].function = &scpi_set_max_distance_mm_reset_rate;
+        command_array_P[i].name       = PSTR("MAX_DISTANCE_LEAKAGE");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-5];
+        command_array_P[i++].function = &scpi_set_max_distance_leakage;
         
-		command_array_P[i].name       = PSTR("WATER");
-		command_array_P[i].implied    = false;
-		command_array_P[i].parent     = &command_array_P[i-8];
-		command_array_P[i++].function = &scpi_null_func;
+        command_array_P[i].name       = PSTR("WATER_DEBOUNCE_TIMEOUT");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-6];
+        command_array_P[i++].function = &scpi_set_water_debounce_timeout;
+        
+        command_array_P[i].name       = PSTR("MAX_DISTANCE_MM_RESET_RATE");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-7];
+        command_array_P[i++].function = &scpi_set_max_distance_mm_reset_rate;
+        
+        command_array_P[i].name       = PSTR("WATER");
+        command_array_P[i].implied    = false;
+        command_array_P[i].parent     = &command_array_P[i-8];
+        command_array_P[i++].function = &scpi_null_func;
         
             command_array_P[i].name       = PSTR("ON");
             command_array_P[i].implied    = false;
@@ -223,58 +223,58 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
             command_array_P[i].parent     = &command_array_P[i-3];
             command_array_P[i++].function = &scpi_water_auto;
 
-	return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
+    return i; // This is incremented so it matches "COMMAND_ARRAY_SIZE"
 }
 /****************************************************************************
 *  *OPC (Operation Complete Query) function                                 *
 *****************************************************************************/
 void st_OPC_q ( char *arg, IO_pointers_t IO )
 {
-	scpi_prStr_P(PSTR("1\r\n"), IO.USB_stream);
+    scpi_prStr_P(PSTR("1\r\n"), IO.USB_stream);
 }
 /****************************************************************************
 *  Write to the bootloader start address                                    *
 *****************************************************************************/
 void sys_rst_btloader( char *arg, IO_pointers_t IO )
 {
-	Jump_To_Bootloader();
+    Jump_To_Bootloader();
 }
 /****************************************************************************
 *  :SYSTem:ERRor?                                                           *
 *****************************************************************************/
 void sys_error_q( char *arg, IO_pointers_t IO )
 {
-	if (error_number == 0)
-		scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
-	else
-	{
-		scpi_prStr_P(error_messages[error_number], IO.USB_stream);
-		if (bad_command[0] != NUL)
-		{
-			fprintf(IO.USB_stream, "%s\r\n", bad_command);
-			bad_command[0] = NUL;
-		}	
-		error_number--;
-	}
+    if (error_number == 0)
+        scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
+    else
+    {
+        scpi_prStr_P(error_messages[error_number], IO.USB_stream);
+        if (bad_command[0] != NUL)
+        {
+            fprintf(IO.USB_stream, "%s\r\n", bad_command);
+            bad_command[0] = NUL;
+        }
+        error_number--;
+    }
 }
 /****************************************************************************
 *  VERSION? function                                                        *
 *****************************************************************************/
 void scpi_get_version_q( char *arg, IO_pointers_t IO )
 {
-	scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO.USB_stream);
-	scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
+    scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO.USB_stream);
+    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
 /****************************************************************************
 *  *IDN? function                                                           *
 *****************************************************************************/
 void scpi_IDN_q( char *arg, IO_pointers_t IO )
 {
-	scpi_prStr_P(PSTR(COMPANY_NAME), IO.USB_stream);
+    scpi_prStr_P(PSTR(COMPANY_NAME), IO.USB_stream);
     scpi_prStr_P(PSTR(" | "), IO.USB_stream);
-	scpi_prStr_P(PSTR(PROJECT_NAME), IO.USB_stream);
+    scpi_prStr_P(PSTR(PROJECT_NAME), IO.USB_stream);
     scpi_prStr_P(PSTR(" | "), IO.USB_stream);
-	scpi_prStr_P(PSTR("Firmware Revision: "), IO.USB_stream);
+    scpi_prStr_P(PSTR("Firmware Revision: "), IO.USB_stream);
     scpi_prStr_P(PSTR(FIRMWARE_VERSION), IO.USB_stream);
     scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
 }
@@ -349,7 +349,7 @@ void clr_i2c (char *arg, IO_pointers_t IO)
 void scpi_water_auto (char *arg, IO_pointers_t IO)
 {
     water_auto = true;
-	water_on(false);
+    water_on(false);
 }
 /****************************************************************************
 *  SCPI Water On                                                            *
@@ -357,7 +357,7 @@ void scpi_water_auto (char *arg, IO_pointers_t IO)
 void scpi_water_on (char *arg, IO_pointers_t IO)
 {
     water_auto = false;
-	water_on(true);
+    water_on(true);
 }
 /****************************************************************************
 *  SCPI Water Off                                                           *
@@ -365,7 +365,7 @@ void scpi_water_on (char *arg, IO_pointers_t IO)
 void scpi_water_off (char *arg, IO_pointers_t IO)
 {
     water_auto = false;
-	water_on(false);
+    water_on(false);
 }
 /****************************************************************************
 *  SCPI Water State Query                                                   *
@@ -381,7 +381,7 @@ void scpi_set_laserpower( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     uint8_t value;
-	if (strlen(arg) <= MAX_ARG_LEN)
+    if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
         value = (uint8_t)strtol(arg, &endptr, 10);
@@ -392,10 +392,10 @@ void scpi_set_laserpower( char *arg, IO_pointers_t IO )
             retrieve_laserpower_setting();
         }
         else
-            scpi_add_error_P(error_arg_too_long, IO);
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
     }
-	else
-		scpi_add_error_P(error_arg_too_long, IO);
+    else
+        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
 }
 /****************************************************************************
 *  Update Laser Power from EEPROM                                           *
@@ -411,7 +411,7 @@ void retrieve_laserpower_setting()
 *****************************************************************************/
 void scpi_get_laserpower_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%u\r\n", laser_power);
+    fprintf(IO.USB_stream, "%u\r\n", laser_power);
 }
 /****************************************************************************
 *  Store Water Debounce Timeout to EEPROM                                   *
@@ -420,7 +420,7 @@ void scpi_set_water_debounce_timeout( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     uint16_t value;
-	if (strlen(arg) <= MAX_ARG_LEN)
+    if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
         value = (uint16_t)strtol(arg, &endptr, 10);
@@ -431,10 +431,10 @@ void scpi_set_water_debounce_timeout( char *arg, IO_pointers_t IO )
             retrieve_water_debounce_timeout();
         }
         else
-            scpi_add_error_P(error_arg_too_long, IO);
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
     }
-	else
-		scpi_add_error_P(error_arg_too_long, IO);
+    else
+        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
 }
 /****************************************************************************
 *  Update Water Debounce Timeout from EEPROM                                *
@@ -449,7 +449,7 @@ void retrieve_water_debounce_timeout()
 *****************************************************************************/
 void scpi_get_water_debounce_timeout_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%u\r\n", water_debounce_timeout);
+    fprintf(IO.USB_stream, "%u\r\n", water_debounce_timeout);
 }
 /****************************************************************************
 *  Store IIR Factor Alpha to EEPROM                                         *
@@ -458,7 +458,7 @@ void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-	if (strlen(arg) <= MAX_ARG_LEN)
+    if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
         value = strtod(arg, &endptr);
@@ -469,10 +469,10 @@ void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
             retrieve_IIR_alpha();
         }
         else
-            scpi_add_error_P(error_arg_too_long, IO);
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
     }
-	else
-		scpi_add_error_P(error_arg_too_long, IO);
+    else
+        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
 }
 /****************************************************************************
 *  Update IIR Factor Alpha from EEPROM                                      *
@@ -488,7 +488,7 @@ void retrieve_IIR_alpha()
 *****************************************************************************/
 void scpi_get_IIR_alpha_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%f\r\n", (double)iir_alpha);
+    fprintf(IO.USB_stream, "%f\r\n", (double)iir_alpha);
 }
 /****************************************************************************
 *  Store IIR Factor Beta to EEPROM                                          *
@@ -497,7 +497,7 @@ void scpi_set_IIR_beta( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-	if (strlen(arg) <= MAX_ARG_LEN)
+    if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
         value = strtod(arg, &endptr);
@@ -508,10 +508,10 @@ void scpi_set_IIR_beta( char *arg, IO_pointers_t IO )
             retrieve_IIR_beta();
         }
         else
-            scpi_add_error_P(error_arg_too_long, IO);
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
     }
-	else
-		scpi_add_error_P(error_arg_too_long, IO);
+    else
+        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
 }
 /****************************************************************************
 *  Update IIR Factor Beta from EEPROM                                       *
@@ -527,7 +527,7 @@ void retrieve_IIR_beta()
 *****************************************************************************/
 void scpi_get_IIR_beta_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%f\r\n", (double)iir_beta);
+    fprintf(IO.USB_stream, "%f\r\n", (double)iir_beta);
 }
 /****************************************************************************
 *  Store Detection Threshold to EEPROM                                      *
@@ -536,7 +536,7 @@ void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-	if (strlen(arg) <= MAX_ARG_LEN)
+    if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
         value = strtod(arg, &endptr);
@@ -547,10 +547,10 @@ void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO )
             retrieve_detection_threshold_mm();
         }
         else
-            scpi_add_error_P(error_arg_too_long, IO);
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
     }
-	else
-		scpi_add_error_P(error_arg_too_long, IO);
+    else
+        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
 }
 /****************************************************************************
 *  Update Detection Threshold from EEPROM                                   *
@@ -565,7 +565,7 @@ void retrieve_detection_threshold_mm()
 *****************************************************************************/
 void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%f\r\n", (double)threshold_mm);
+    fprintf(IO.USB_stream, "%f\r\n", (double)threshold_mm);
 }
 /****************************************************************************
 *  Store Max Distance Leakage to EEPROM                                     *
@@ -574,7 +574,7 @@ void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-	if (strlen(arg) <= MAX_ARG_LEN)
+    if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
         value = strtod(arg, &endptr);
@@ -585,10 +585,10 @@ void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO )
             retrieve_max_distance_leakage();
         }
         else
-            scpi_add_error_P(error_arg_too_long, IO);
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
     }
-	else
-		scpi_add_error_P(error_arg_too_long, IO);
+    else
+        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
 }
 /****************************************************************************
 *  Store Max Distance Reset Rate to EEPROM                                  *
@@ -597,7 +597,7 @@ void scpi_set_max_distance_mm_reset_rate( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-	if (strlen(arg) <= MAX_ARG_LEN)
+    if (strlen(arg) <= MAX_ARG_LEN)
     {
         remove_ws(arg);
         value = strtod(arg, &endptr);
@@ -608,10 +608,10 @@ void scpi_set_max_distance_mm_reset_rate( char *arg, IO_pointers_t IO )
             retrieve_max_distance_mm_reset_rate();
         }
         else
-            scpi_add_error_P(error_arg_too_long, IO);
+            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
     }
-	else
-		scpi_add_error_P(error_arg_too_long, IO);
+    else
+        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
 }
 /****************************************************************************
 *  Update Max Distance Reset Rate from EEPROM                               *
@@ -634,21 +634,21 @@ void retrieve_max_distance_leakage()
 *******************************************************************************/
 void scpi_get_max_distance_leakage_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%f\r\n", (double)max_distance_leakage);
+    fprintf(IO.USB_stream, "%f\r\n", (double)max_distance_leakage);
 }
 /****************************************************************************
 *  Compute IIR Gain                                                         *
 *****************************************************************************/
 void compute_iir_gain()
 {
-	iir_gain = 1.0f / (1.0f + iir_alpha + iir_beta);
+    iir_gain = 1.0f / (1.0f + iir_alpha + iir_beta);
 }
 /****************************************************************************
 *  SCPI Get IIR Gain                                                        *
 *****************************************************************************/
 void scpi_get_IIR_gain_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%f\r\n", (double)iir_gain);
+    fprintf(IO.USB_stream, "%f\r\n", (double)iir_gain);
 }
 /****************************************************************************
 *  SCPI Get Blackbox Distances (mm)                                         *
@@ -671,12 +671,12 @@ void scpi_get_blackbox_q( char *arg, IO_pointers_t IO )
 *****************************************************************************/
 void scpi_record( char *arg, IO_pointers_t IO )
 {
-	record = true;
+    record = true;
 }
 /****************************************************************************
 *  SCPI Get Max Distance Reset Rate                                         *
 *****************************************************************************/
 void scpi_get_max_distance_mm_reset_rate_q( char *arg, IO_pointers_t IO )
 {
-	fprintf(IO.USB_stream, "%f\r\n", (double)max_distance_mm_reset_rate);
+    fprintf(IO.USB_stream, "%f\r\n", (double)max_distance_mm_reset_rate);
 }
