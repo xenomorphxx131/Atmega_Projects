@@ -68,8 +68,8 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
     token = strtok(input_string, ":");                                                      // Scan string looking for ":" separators
     while (token != NUL)
     {                                                                                       // Search for new tokens
-        argument = strpbrk(token, " ");                                                     // Check for space indicating an argument
         valid_command = false;
+        argument = strpbrk(token, " ");                                                     // Check for space indicating an argument
         if (argument[0] == ' ' )                                                            // or other chars
         {
             argument[0] = NUL;                                                              // Terminates last token
@@ -111,7 +111,8 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
         }
         token = strtok(NULL, ":");                                                          // Otherwise get the next : separated token
     }                                                                                       // End of new token search
-    if (valid_command) current_state->function(argument, IO);                               // Run the handler function of the tail
+    if (valid_command)
+        current_state->function(argument, IO);                                              // Run the handler function of the tail
 }
 /****************************************************************************
 *  Parser Find Implied                                                      *
