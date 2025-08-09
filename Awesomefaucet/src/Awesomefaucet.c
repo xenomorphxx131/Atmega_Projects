@@ -16,8 +16,6 @@ int main(void)
     static FILE         USB_stream;                         // Create the USB Stream data
     i2c_twi_port_t      i2cport;
     IO_pointers_t       IO;                                 // Create the passable IO pointer
-    char                str_in[MAX_IN_STR_LEN+1] = "";      // Incoming string
-    int                 str_len;                            // Length of incoming string
     scpi_commands_P_t   commands_P[COMMAND_ARRAY_SIZE];     // Create the SCPI command array
     CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USB_stream);
     /**************************************************************************
@@ -93,7 +91,7 @@ int main(void)
     while (true)
     {
         process_USB();
-        process_scpi_input(str_in, &str_len, commands_P, IO);
+        process_scpi_input(commands_P, IO);
         process_sensor();
         update_water();
     }
