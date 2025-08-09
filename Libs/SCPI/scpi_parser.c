@@ -20,7 +20,7 @@ void process_scpi_input(scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
     int16_t ReceivedByte;
     uint8_t usb_data;                                                               // Temporary USB data storage
     static int  string_index = 0;                                                   // Running string index
-    static char str_in[MAX_IN_STR_LEN+1] = "";                                      // Running incoming string
+    static char input_string[MAX_IN_STR_LEN+1] = "";                                // Running incoming string
 
     ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
     while (ReceivedByte >= 0)                                                       // Returns -1 if empty, else 0-255
@@ -29,20 +29,20 @@ void process_scpi_input(scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
         if ((usb_data == ';') || (usb_data == '\r') || (usb_data == '\n'))          // Check for one of three SCPI terminations
         {
             if (string_index > 0)
-                scpi_process_cmd_P(str_in, cmd_array_P, IO);                        // Process
-            str_in[0] = NUL;                                                        // Empty str_in by placing the termination character in the first position
+                scpi_process_cmd_P(input_string, cmd_array_P, IO);                  // Process
+            input_string[0] = NUL;                                                  // Empty input_string by placing the termination character in the first position
             string_index = 0;                                                       // Reset the string_index
         }
         else
         {
             if (( usb_data == '\b' || usb_data == DEL_KEY ) && string_index > 0)    // If backspace or DELETE key (ASC127) and the length is non-zero
-                str_in[--string_index] = NUL;                                       // Decrement string_index, Move termination character back the first position
+                input_string[--string_index] = NUL;                                       // Decrement string_index, Move termination character back the first position
             else                                                                    // If not backspace and...
             {
                 if (string_index < MAX_IN_STR_LEN - 1)                              // as long as the length is still OK...
                 {
-                    str_in[string_index] = usb_data;                                // pile on whatever is being sent to current str_in and increment string_index
-                    str_in[++string_index] = NUL;                                   // and terminate the string with the NUL character
+                    input_string[string_index] = usb_data;                          // pile on whatever is being sent to current input_string and increment string_index
+                    input_string[++string_index] = NUL;                             // and terminate the string with the NUL character
                 }
                 else
                     scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO.USB_stream);
