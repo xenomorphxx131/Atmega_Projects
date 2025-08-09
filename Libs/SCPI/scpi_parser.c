@@ -17,8 +17,8 @@ char const error_bad_path_or_header[]   PROGMEM = "-113,Bad path or header: ";
 *****************************************************************************/
 void process_scpi_input(scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
 {
-    int16_t        ReceivedByte;
-    uint8_t        usb_data;                                                // Temporary USB data storage
+    int16_t ReceivedByte;
+    uint8_t usb_data;                                                       // Temporary USB data storage
     static int  str_len = 0;                                                // Running string length
     static char str_in[MAX_IN_STR_LEN+1] = "";                              // Incoming string
 
@@ -40,7 +40,8 @@ void process_scpi_input(scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
             else                                                            // If not backspace and
             {
                 if (str_len < MAX_IN_STR_LEN - 1)                           // as long as the length is ok
-                {   str_in[str_len] = usb_data;                             // pile on whatever is being sent to current str_in and increment str_len
+                {
+                    str_in[str_len] = usb_data;                             // pile on whatever is being sent to current str_in and increment str_len
                     str_in[++str_len] = NUL;                                // and terminate the string with the NUL character
                 }
                 else
@@ -66,7 +67,7 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
 
     token = strtok (input_string, ":");                                                     // Scan string looking for ":" separators
     while (token != NUL)
-    {//--------------------------------------------------------------->                     // Search for new tokens
+    {                                                                                       // Search for new tokens
         argument = strpbrk(token, " ");                                                     // Check for space indicating an argument
         valid_command = false;
         if (argument[0] == ' ' )                                                            // or other chars
@@ -100,20 +101,17 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
                 }
             }
         }
-        if (!valid_command)
-            // if a command wasn't found, determine if an implied command is
-            // this function updates current_state
-            valid_command = scpi_find_implied(&current_state, token, cmd_array_P);
-        if (!valid_command)
-{
-            // if no match or implied match was not? found there was a real error
-            scpi_add_error_P(error_bad_path_or_header, IO);             // Indicate bad token
-            strncpy(bad_command, token, MAX_TOKEN_LEN);                 // Send up to MAX_TOKEN_LEN of bad token
+        if (!valid_command)                                                                 // if a command wasn't found, determine if an implied command is
+            valid_command = scpi_find_implied(&current_state, token, cmd_array_P);          // this function updates current_state
+        if (!valid_command)                                                                 // if no match or implied match was not? found there was a real error
+        {
+            scpi_add_error_P(error_bad_path_or_header, IO);                                 // Indicate bad token
+            strncpy(bad_command, token, MAX_TOKEN_LEN);                                     // Send up to MAX_TOKEN_LEN of bad token
             return;
         }
-        token = strtok (NULL, ":");                                     // Otherwise get the next : separated token
-    }//---------------------------------------------------------------> // End of new token search
-    if (valid_command) current_state->function(argument, IO);           // Run the handler function of the tail
+        token = strtok (NULL, ":");                                                         // Otherwise get the next : separated token
+    }                                                                                       // End of new token search
+    if (valid_command) current_state->function(argument, IO);                               // Run the handler function of the tail
 }
 /****************************************************************************
 *  Parser Find Implied                                                      *
@@ -140,9 +138,12 @@ bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_comm
                     *current_state = &cmd_array_P[cmd_i];
                     return true;
                 }
-                else if (parent_ptr == NULL) break;
-                else if(parent_ptr->implied == true) current_ptr = parent_ptr;
-                else break;
+                else if (parent_ptr == NULL)
+                    break;
+                else if(parent_ptr->implied == true)
+                    current_ptr = parent_ptr;
+                else
+                    break;
             }
             while(true);
         }
