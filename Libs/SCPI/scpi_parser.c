@@ -130,7 +130,7 @@ bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_comm
         scpi_get_short_name(long_name, short_name);
         if ((strcmp(long_name, token) == 0) || (strcmp(short_name, token) == 0))    // If the command matches
         {
-            do
+            while(true)
             {
                 parent_ptr = current_ptr->parent;
                 if (parent_ptr == *current_state)
@@ -145,7 +145,6 @@ bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_comm
                 else
                     break;
             }
-            while(true);
         }
     }
     return false;
