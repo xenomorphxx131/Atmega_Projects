@@ -93,7 +93,7 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
             {
                 PGM_P_to_string(cmd_array_P[cmd_i].name, long_name, IO.USB_stream);
                 scpi_get_short_name(long_name, short_name);
-                if ((strcmp(long_name, token) == 0) || (strcmp(short_name, token) == 0))    // If the command matches
+                if (!strcmp(long_name, token) || !strcmp(short_name, token))                // If the command matches long name or short name
                 {
                     current_state = current_ptr;                                            // Update current_state to new found token
                     valid_command = true;
@@ -128,7 +128,7 @@ bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_comm
         current_ptr = &cmd_array_P[cmd_i];                                          // Get pointer to found command
         PGM_P_to_string(current_ptr->name, long_name, NULL);
         scpi_get_short_name(long_name, short_name);
-        if ((strcmp(long_name, token) == 0) || (strcmp(short_name, token) == 0))    // If the command matches
+        if (!strcmp(long_name, token) || !strcmp(short_name, token))                // If the command matches long name or short name
         {
             while(true)
             {
