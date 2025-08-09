@@ -15,6 +15,9 @@ if input("Program Device?") in ["Y", "y"]:
     sensor.write('SET:MAX_DISTANCE_MM_RESET_RATE 0.025')            # Adjusts the MAX upward tracking rate. Each cycle adjusts the max by this percentage times the current difference from the max.
     sensor.write(f'SET:WATER_DEBOUNCE_TIMEOUT {round(2/0.001024)}') # This is the water dwell time after a foot is removed in 1.024ms steps. There will also be a natural dwell from filtering as well.
 
+print()
+print(sensor.ask('*IDN?'))
+print()
 print(f"RANGE: {sensor.ask('GET:RANGE?')}mm")
 print(f"IIR_ALPHA: {sensor.ask('GET:IIR_ALPHA?')}")
 print(f"IIR_BETA: {sensor.ask('GET:IIR_BETA?')}")
