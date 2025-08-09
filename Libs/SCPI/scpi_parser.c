@@ -85,7 +85,6 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
             scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);                                       // Document the error
             break;                                                                          // Bail from the token search loop
         }
-        
         for(cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)                                 // Walk through known commands looking for a match
         {
             current_ptr = &cmd_array_P[cmd_i];                                              // Get pointer to found command
