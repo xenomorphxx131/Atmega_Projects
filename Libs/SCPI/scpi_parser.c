@@ -18,37 +18,37 @@ char const error_bad_path_or_header[]   PROGMEM = "-113,Bad path or header: ";
 void process_scpi_input(scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
 {
     int16_t ReceivedByte;
-    uint8_t usb_data;                                                       // Temporary USB data storage
-    static int  str_len = 0;                                                // Running string length
-    static char str_in[MAX_IN_STR_LEN+1] = "";                              // Incoming string
+    uint8_t usb_data;                                                               // Temporary USB data storage
+    static int  string_index = 0;                                                   // Running string index
+    static char str_in[MAX_IN_STR_LEN+1] = "";                                      // Running incoming string
 
     ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
-    while (ReceivedByte >= 0)                                               // Returns -1 if empty, else 0-255
-    {    usb_data = toupper((char)ReceivedByte);                            // Get all chars and convert to upper case.
-        if ((usb_data == ';')       ||                                      // Check for ';' or
-            (usb_data == '\r')      ||                                      // 'Enter' key or
-            (usb_data == '\n'))                                             // Other 'Enter' key
+    while (ReceivedByte >= 0)                                                       // Returns -1 if empty, else 0-255
+    {
+        usb_data = toupper((char)ReceivedByte);                                     // Get all chars and convert to upper case.
+        if ((usb_data == ';') || (usb_data == '\r') || (usb_data == '\n'))          // Check for one of three SCPI terminations
         {
-            if (str_len > 0) scpi_process_cmd_P(str_in, cmd_array_P, IO);   // Process
-            str_in[0] = NUL;                                                // Empty str_in.
-            str_len = 0;                                                    // Clear str_len counter
+            if (string_index > 0)
+                scpi_process_cmd_P(str_in, cmd_array_P, IO);                        // Process
+            str_in[0] = NUL;                                                        // Empty str_in by placing the termination character in the first position
+            string_index = 0;                                                       // Reset the string_index
         }
         else
         {
-            if (( usb_data == '\b' || usb_data == DEL_KEY ) && str_len > 0) // If backspace or DELETE key (ASC127) and it's not already 0
-                str_in[--str_len] = NUL;                                    // Decrement str_len, Move termination character back one.
-            else                                                            // If not backspace and
+            if (( usb_data == '\b' || usb_data == DEL_KEY ) && string_index > 0)    // If backspace or DELETE key (ASC127) and the length is non-zero
+                str_in[--string_index] = NUL;                                       // Decrement string_index, Move termination character back the first position
+            else                                                                    // If not backspace and...
             {
-                if (str_len < MAX_IN_STR_LEN - 1)                           // as long as the length is ok
+                if (string_index < MAX_IN_STR_LEN - 1)                              // as long as the length is still OK...
                 {
-                    str_in[str_len] = usb_data;                             // pile on whatever is being sent to current str_in and increment str_len
-                    str_in[++str_len] = NUL;                                // and terminate the string with the NUL character
+                    str_in[string_index] = usb_data;                                // pile on whatever is being sent to current str_in and increment string_index
+                    str_in[++string_index] = NUL;                                   // and terminate the string with the NUL character
                 }
                 else
-                    scpi_prStr_P(PSTR("ERROR command too long\r\n"),IO.USB_stream);
+                    scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO.USB_stream);
             }
         }
-    ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+        ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
     }
 }
 /****************************************************************************
