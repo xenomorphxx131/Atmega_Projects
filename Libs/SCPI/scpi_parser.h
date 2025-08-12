@@ -49,7 +49,7 @@ typedef struct scpi_node_P {
     void scpi_get_short_name(char *long_name, char *short_name);
 	void scpi_add_error_P(PGM_P error_message, IO_pointers_t IO);
 	void scpi_prStr_P (  PGM_P arg, FILE *fstream );
-	void PGM_P_to_string ( PGM_P arg, char * name, FILE *fstream);
+	void PGM_P_to_string ( PGM_P arg, char * name);
 	void scpi_null_func ( char *arg, IO_pointers_t IO);
 	void remove_ws ( char *arg );
 /****************************************************************************

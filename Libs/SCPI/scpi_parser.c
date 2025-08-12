@@ -101,7 +101,7 @@ void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO
             current_ptr = &cmd_array_P[cmd_i];                                              // Get pointer to found command
             if (current_ptr->parent == current_state)                                       // Only process children of the current state
             {
-                PGM_P_to_string(cmd_array_P[cmd_i].name, long_name, IO.USB_stream);
+                PGM_P_to_string(cmd_array_P[cmd_i].name, long_name);
                 scpi_get_short_name(long_name, short_name);
                 if (!strcmp(long_name, token) || !strcmp(short_name, token))                // If the command matches long name or short name
                 {
@@ -137,7 +137,7 @@ bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_comm
     for(int cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)                         // Walk through known commands looking for a match
     {
         current_ptr = &cmd_array_P[cmd_i];                                          // Get pointer to found command
-        PGM_P_to_string(current_ptr->name, long_name, NULL);
+        PGM_P_to_string(current_ptr->name, long_name);
         scpi_get_short_name(long_name, short_name);
         if (!strcmp(long_name, token) || !strcmp(short_name, token))                // If the command matches long name or short name
         {
@@ -199,14 +199,14 @@ void scpi_prStr_P( PGM_P arg, FILE* fstream )
 
     while (the_char != NUL)
     {    
-        fputc(the_char,fstream);
+        fputc(the_char, fstream);
         the_char = pgm_read_byte(&arg[++string_index]);
     }
 }
 /****************************************************************************
 *  Prints a program memory string one char at a time to the terminal        *
 *****************************************************************************/
-void PGM_P_to_string( PGM_P arg, char* name, FILE* fstream )
+void PGM_P_to_string( PGM_P arg, char* name )
 {
     uint16_t i=0;
 
