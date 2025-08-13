@@ -8,7 +8,7 @@
 
     #include <stdlib.h>                 // strtod, strtol etc.
     #include <process_USB.h>
-	#include <scpi_parser.h>
+    #include <scpi_parser.h>
     #include <bootloader.h>             // 'Jump_To_Bootloader
     #include "Awesomefaucet_info.h"     // Project namne, version, array size, etc.
     #include "Awesomefaucet_board.h"
@@ -19,33 +19,33 @@
 /****************************************************************************
 * SCPI Commands                                                             *
 *****************************************************************************/
-	uint8_t	 Setup_ScpiCommandsArray_P ( scpi_commands_P_t command_array_P[] );
-	void st_OPC_q	( char *arg, IO_pointers_t IO );
-	void sys_rst_btloader ( char *arg, IO_pointers_t IO );
-	void sys_error_q ( char *arg, IO_pointers_t IO );
-	void scpi_get_version_q(char*, IO_pointers_t IO);
-	void scpi_IDN_q( char *arg, IO_pointers_t IO );
-	void st_CLS ( char *arg, IO_pointers_t IO );
-	void st_RST ( char *arg, IO_pointers_t IO );
-	void st_TST ( char *arg, IO_pointers_t IO );
-	void st_WAI ( char *arg, IO_pointers_t IO );
+    uint8_t Setup_ScpiCommandsArray_P ( scpi_commands_P_t command_array_P[] );
+    void st_OPC_q    ( char *arg, IO_pointers_t IO );
+    void sys_rst_btloader ( char *arg, IO_pointers_t IO );
+    void sys_error_q ( char *arg, IO_pointers_t IO );
+    void scpi_get_version_q(char*, IO_pointers_t IO);
+    void scpi_IDN_q( char *arg, IO_pointers_t IO );
+    void st_CLS ( char *arg, IO_pointers_t IO );
+    void st_RST ( char *arg, IO_pointers_t IO );
+    void st_TST ( char *arg, IO_pointers_t IO );
+    void st_WAI ( char *arg, IO_pointers_t IO );
     void debug (char *arg, IO_pointers_t IO);
     void scpi_get_range_q (char *arg, IO_pointers_t IO);
-	void scpi_get_laserpower_q( char *arg, IO_pointers_t IO );
-	void scpi_water_auto (char *arg, IO_pointers_t IO);
+    void scpi_get_laserpower_q( char *arg, IO_pointers_t IO );
+    void scpi_water_auto (char *arg, IO_pointers_t IO);
     void scpi_water_on (char *arg, IO_pointers_t IO);
     void scpi_water_off (char *arg, IO_pointers_t IO);
     void scpi_water_state_q (char *arg, IO_pointers_t IO);
     void scpi_set_laserpower( char *arg, IO_pointers_t IO );
-	void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO );
-	void scpi_get_IIR_alpha_q( char *arg, IO_pointers_t IO );
-	void scpi_set_IIR_beta( char *arg, IO_pointers_t IO );
-	void scpi_get_IIR_beta_q( char *arg, IO_pointers_t IO );
+    void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO );
+    void scpi_get_IIR_alpha_q( char *arg, IO_pointers_t IO );
+    void scpi_set_IIR_beta( char *arg, IO_pointers_t IO );
+    void scpi_get_IIR_beta_q( char *arg, IO_pointers_t IO );
     void scpi_get_IIR_gain_q( char *arg, IO_pointers_t IO );
     void clr_i2c (char *arg, IO_pointers_t IO);
-	void retrieve_laserpower_setting(void);
-	void retrieve_IIR_alpha(void);
-	void retrieve_IIR_beta(void);
+    void retrieve_laserpower_setting(void);
+    void retrieve_IIR_alpha(void);
+    void retrieve_IIR_beta(void);
     void compute_iir_gain(void);
     void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO );
     void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO );
