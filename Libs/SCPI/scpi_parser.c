@@ -9,9 +9,11 @@
 char bad_command[MAX_TOKEN_LEN + 1] = "";
 PGM_P error_messages[ERROR_QUEUE_LEN + 1];
 int error_number = 0;
-char const ERROR_MNEMONIC_TOO_LONG[]    PROGMEM = "-112,Program mnemonic too long";
-char const ERROR_ARG_TOO_LONG[]         PROGMEM = "-112,Argument too long";
-char const ERROR_BAD_PATH_OR_HEADER[]   PROGMEM = "-113,Bad path or header: ";
+char const MNEMONIC_TOO_LONG[]      PROGMEM = "-112,Program mnemonic too long";
+char const ARG_TOO_LONG[]           PROGMEM = "-112,Argument too long";
+char const BAD_PATH_OR_HEADER[]     PROGMEM = "-113,Bad path or header: ";
+char const TOO_MANY_PARAMETERS[]    PROGMEM = "-108,Too many parameters: ";
+char const TOO_FEW_PARAMETERS[]     PROGMEM = "-108,Too few parameters";
 /****************************************************************************
 *  Build input string from terminal then run SCPI command.                  *
 *****************************************************************************/
@@ -45,108 +47,118 @@ void process_scpi_input(scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
                     input_string[++string_index] = NUL;                             // and terminate the string with the NUL character
                 }
                 else
-                    scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO.USB_stream);
+                    // scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO.USB_stream);
+                    scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO);
             }
         }
         ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
     }
 }
 /****************************************************************************
-*  Parse and process input string from terminal then run SCPI command.      *
+*  Parse and process input string from com port then run SCPI command.      *
 *****************************************************************************/
 void scpi_process_cmd_P( char* input_string, scpi_commands_P_t cmd_array_P[], IO_pointers_t IO )
 {
-    char* token;
-    char* argument = "";
-    static char long_name[MAX_TOKEN_LEN+1] = "";
-    static char short_name[MAX_TOKEN_LEN+1] = "";
-    int cmd_i = 0;                                                                          // Command index for walking dictionary
-    scpi_commands_P_t* current_state = NULL;                                                // Pointer to commands in command array. Initialize to the top (no command).
-    scpi_commands_P_t* current_ptr;                                                         // Pointer to commands in command array used for tokens.
-    uint8_t valid_command = false;                                                          // Valid command variable
+    char *token;
+    char *argument = "";
+    char *long_name;
+    char *short_name;
+    int cmd_i = 0;                                                              // Command index for walking dictionary
+    scpi_commands_P_t *current_command = NULL;                                  // Pointer to commands in command array. Initialize to the top (no command).
+    scpi_commands_P_t *next_command;                                            // Pointer to commands in command array used for tokens.
+    bool valid_command = false;                                                 // Valid command variable
     /****************************************************************************
      * Get the argument if there is one                                         *
      ****************************************************************************/
-    argument = strpbrk(input_string, " ");                                                  // Check for a space indicating an argument
-    if (argument != NULL)                                                                   // Return value will be NULL if no spaces
+    argument = strpbrk(input_string, " ");                                      // Check for a space indicating an argument
+    if (argument != NULL)                                                       // Return value will be NULL if no spaces
     {
-        *argument = NUL;                                                                    // Moves termination of the the original string to the where the space used to be
-        argument++;                                                                         // Move argument pointer one past the space
-        if (strlen(argument) > MAX_ARG_LEN)                                                 // Check for argument length error
-        {                                                                                   // If too long...
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);                                       // document the error and...
-            return;                                                                         // bail from the whole SCPI input
-        }
-        if (strpbrk(argument, " ") != NULL)                                                 // If any more spaces
-        {                                                                                   //
-            scpi_add_error_P(ERROR_BAD_PATH_OR_HEADER, IO);                                 // document the error and...
-            strncpy(bad_command, "Too many Spaces", sizeof("Too many Spaces"));             //
-            return;                                                                         // bail from the whole SCPI input
+        *argument = NUL;                                                        // Moves termination of the original string to the where the space used to be
+        argument++;                                                             // Move argument pointer one past the space
+        if (strlen(argument) > MAX_ARG_LEN)                                     // Check for argument length error
+        {                                                                       // If too long...
+            scpi_add_error_arg_too_long(IO);                                    // document the error and...
+            return;                                                             // bail from the whole SCPI input
+        }                                                                       // TODO: Allow for strings delimited by ""
+        if (strpbrk(argument, " ") != NULL)                                     // If any more spaces...
+        {                                                                       // Declare the error,
+            scpi_add_error_P(TOO_MANY_PARAMETERS, IO);                          // and...
+            strncpy(bad_command, argument, MAX_TOKEN_LEN);                      // display the malfored argument.
+            return;                                                             // Bail from the whole SCPI input
         }
     }
     /****************************************************************************
-     * Parse the remaining tokens                                               *
+     * Parse the command tokens                                                 *
      ****************************************************************************/
-    token = strtok(input_string, ":");                                                      // Scan string looking for ":" separators
-    while (token != NUL)
-    {                                                                                       // Search for new tokens
+    token = strtok(input_string, ":");                                          // Scan string looking for ":" separators
+    while (token != NULL)                                                       // until we run out of tokens
+    {                                                                           // Search for new tokens
         valid_command = false;
-        if (strlen(token) > MAX_TOKEN_LEN)                                                  // Check for token length error
+        /************************************************************************
+         * Check the command length                                             *
+         ************************************************************************/
+        if (strlen(token) > MAX_TOKEN_LEN)
         {
-            scpi_add_error_P(ERROR_MNEMONIC_TOO_LONG, IO);                                  // Document the error
-            return;                                                                         // Bail from the token search loop
+            scpi_add_error_P(MNEMONIC_TOO_LONG, IO);
+            return;
         }
-        for(cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)                                 // Walk through known commands looking for a match
+        /************************************************************************
+         * Walk the command list in pairs keeping a continuous link to the past *
+         ************************************************************************/
+        for(cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)                     // Walk through known commands looking for a match.
         {
-            current_ptr = &cmd_array_P[cmd_i];                                              // Get pointer to found command
-            if (current_ptr->parent == current_state)                                       // Only process children of the current state
+            next_command = &cmd_array_P[cmd_i];                                 // Get a pointer to next_command.
+            if (next_command->parent == current_command)                        // Only proceed if the next_command's parent is the current_command.
             {
-                PGM_P_to_string(cmd_array_P[cmd_i].name, long_name);
-                scpi_get_short_name(long_name, short_name);
-                if (!strcmp(long_name, token) || !strcmp(short_name, token))                // If the command matches long name or short name
-                {
-                    current_state = current_ptr;                                            // Update current_state to new found token
-                    valid_command = true;
-                    break;
+                long_name = PGM_P_to_string(cmd_array_P[cmd_i].name);           // Get the long_name
+                short_name = scpi_get_short_name(long_name);                    // and the short_name
+                if (!strcmp(long_name, token) || !strcmp(short_name, token))    // If the command matches either long_name or short_name...
+                {                                                               //
+                    current_command = next_command;                             // Make the current_command the next_command for the next iteration.
+                    valid_command = true;                                       // Mark it as valid up until now.
+                    break;                                                      // Stop walking the command list once a valid command is found.
                 }
             }
         }
-        if (!valid_command)                                                                 // if a command wasn't found, determine if an implied command is found
-            valid_command = scpi_find_implied(&current_state, token, cmd_array_P);          // this function updates current_state
-        if (!valid_command)                                                                 // if no match or implied match was not found, there was a real error
+        if (!valid_command)                                                     // If no match check for implied match.
         {
-            scpi_add_error_P(ERROR_BAD_PATH_OR_HEADER, IO);                                 // Indicate bad token
-            strncpy(bad_command, token, MAX_TOKEN_LEN);                                     // Send up to MAX_TOKEN_LEN of bad token
-            return;
+            if (!scpi_find_implied(&current_command, token, cmd_array_P))       // If an implied command wasn't found, there was a real error. This function updates current_command.
+            {
+                scpi_add_error_P(BAD_PATH_OR_HEADER, IO);                       // Indicate bad token
+                strncpy(bad_command, token, MAX_TOKEN_LEN);                     // Record the bad token string for debug output
+                return;                                                         // Bail out
+            }
+            else
+                valid_command = true;                                           // Not really needed, will run the function if it didn't bail during implied check.
         }
-        token = strtok(NULL, ":");                                                          // Otherwise get the next : separated token
-    }                                                                                       // End of new token search
-    if (valid_command)
-        current_state->function(argument, IO);                                              // Run the handler function of the tail
+        token = strtok(NULL, ":");                                              // Otherwise get the next ":" separated token
+    }                                                                           // End of new token search
+    // if (valid_command)                                                       // Not needed. If it got this far, it's runnable.
+        current_command->function(argument, IO);                                // If it's valid or it didn't bail at scpi_find_implied(), it should be a runnable head.
 }
 /****************************************************************************
 *  Parser Find Implied                                                      *
 *****************************************************************************/
-bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_commands_P_t cmd_array_P[])
+bool scpi_find_implied(scpi_commands_P_t **current_command, char *token, scpi_commands_P_t cmd_array_P[])
 {
-    scpi_commands_P_t* current_ptr;
-    scpi_commands_P_t* parent_ptr;
-    static char long_name[MAX_TOKEN_LEN+1] = "";
-    static char short_name[MAX_TOKEN_LEN+1] = "";
+    scpi_commands_P_t *current_ptr;
+    scpi_commands_P_t *parent_ptr;
+    char *long_name;
+    char *short_name;
 
-    for(int cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)                         // Walk through known commands looking for a match
+    for(int cmd_i = 0; cmd_i < COMMAND_ARRAY_SIZE; cmd_i++)             // Walk through known commands looking for a match
     {
-        current_ptr = &cmd_array_P[cmd_i];                                          // Get pointer to found command
-        PGM_P_to_string(current_ptr->name, long_name);
-        scpi_get_short_name(long_name, short_name);
-        if (!strcmp(long_name, token) || !strcmp(short_name, token))                // If the command matches long name or short name
+        current_ptr = &cmd_array_P[cmd_i];                              // Get pointer to found command
+        long_name = PGM_P_to_string(current_ptr->name);
+        short_name = scpi_get_short_name(long_name);
+        if (!strcmp(long_name, token) || !strcmp(short_name, token))    // If the command matches long name or short name
         {
             while(true)
             {
                 parent_ptr = current_ptr->parent;
-                if (parent_ptr == *current_state)
+                if (parent_ptr == *current_command)
                 {
-                    *current_state = &cmd_array_P[cmd_i];
+                    *current_command = &cmd_array_P[cmd_i];
                     return true;
                 }
                 else if (parent_ptr == NULL)
@@ -163,9 +175,10 @@ bool scpi_find_implied(scpi_commands_P_t **current_state, char *token, scpi_comm
 /****************************************************************************
 *  Parser Get Short Name                                                    *
 *****************************************************************************/
-void scpi_get_short_name(char* long_name, char* short_name)
+char *scpi_get_short_name(char *long_name )
 {
     uint16_t long_index=0, short_index = 0;
+    static char short_name[MAX_TOKEN_LEN+1] = "";
 
     short_name[0] = NUL;
     while (long_name[long_index] != NUL)                                // Walk the name string
@@ -180,6 +193,7 @@ void scpi_get_short_name(char* long_name, char* short_name)
         long_index++;
     }
     short_name[short_index] = NUL;                                      // Terminate the short_name string
+    return short_name;
 }
 /****************************************************************************
 *  Adds error to error queue                                                *
@@ -190,27 +204,42 @@ void scpi_add_error_P(PGM_P error_message, IO_pointers_t IO)
         error_messages[++error_number] = error_message;
 }
 /****************************************************************************
+*  Adds arg too long error to queue                                         *
+*****************************************************************************/
+void scpi_add_error_arg_too_long(IO_pointers_t IO)
+{
+    scpi_add_error_P(ARG_TOO_LONG, IO);
+}
+/****************************************************************************
+*  Adds too few parameters error to queue                                   *
+*****************************************************************************/
+void scpi_add_error_too_few_parameters(IO_pointers_t IO)
+{
+    scpi_add_error_P(TOO_FEW_PARAMETERS, IO);
+}
+/****************************************************************************
 *  Prints a program memory string one char at a time to the terminal        *
 *****************************************************************************/
-void scpi_prStr_P( PGM_P arg, FILE* fstream )
+void scpi_prStr_P( PGM_P arg, IO_pointers_t IO )
 {
     uint16_t string_index=0;
-    char the_char= pgm_read_byte(arg);
+    char the_char = pgm_read_byte(arg);
 
     while (the_char != NUL)
-    {    
-        fputc(the_char, fstream);
+    {
+        fputc(the_char, IO.USB_stream);
         the_char = pgm_read_byte(&arg[++string_index]);
     }
 }
 /****************************************************************************
 *  Prints a program memory string one char at a time to the terminal        *
 *****************************************************************************/
-void PGM_P_to_string( PGM_P arg, char* name )
+char *PGM_P_to_string( PGM_P arg )
 {
+    static char name[MAX_TOKEN_LEN+1] = "";
     uint16_t i=0;
 
-    name[i] =  pgm_read_byte(arg);
+    name[i] = pgm_read_byte(arg);
     while (name[i] != NUL)
     {
         i++;
@@ -218,6 +247,7 @@ void PGM_P_to_string( PGM_P arg, char* name )
     }
     i++;
     name[i] = NUL;
+    return name;
 }
 /****************************************************************************
 *   NULL Function called when command is not recognized or not compplete.   *
@@ -226,10 +256,10 @@ void scpi_null_func( char *arg, IO_pointers_t IO ) {}
 /****************************************************************************
 *  my_remove_ws                                                             *
 *****************************************************************************/
-void remove_ws( char* arg )
-{
-    uint16_t read_index, write_index = 0;                                       //read index, write index
+// void remove_ws( char *arg )
+// {
+    // uint16_t read_index, write_index = 0;                                       //read index, write index
 
-    for ( read_index=0 ; read_index <= strlen(arg) ; read_index++ )             // Walk string looking for whitespaces, <= preserves NUL char
-        if ( !isspace(arg[read_index]) ) arg[write_index++] = arg[read_index];  // Strip off leading and any additional whitespaces
-}
+    // for ( read_index=0; read_index <= strlen(arg); read_index++ )               // Walk string looking for whitespaces, <= preserves NUL char
+        // if ( !isspace(arg[read_index]) ) arg[write_index++] = arg[read_index];  // Strip off leading and any additional whitespaces
+// }

@@ -22,7 +22,6 @@ extern bool record;
 extern char bad_command[];
 extern PGM_P error_messages[];
 extern int error_number;
-extern char const ERROR_ARG_TOO_LONG[];
 
 uint8_t EEMEM LASER_POWER[sizeof(uint8_t)];
 float EEMEM IIR_ALPHA[sizeof(float)];
@@ -43,19 +42,14 @@ float iir_gain;
 uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 {
     uint8_t i = 0;
-    command_array_P[i].name         = PSTR("NULL");
-    command_array_P[i].implied      = true;
-    command_array_P[i].parent       = NULL;
-    command_array_P[i++].function   = &scpi_null_func;
-
     command_array_P[i].name         = PSTR("*OPC?");
     command_array_P[i].implied      = false;
-    command_array_P[i].parent       = &command_array_P[0];
+    command_array_P[i].parent       = NULL;
     command_array_P[i++].function   = &st_OPC_q;
 
     command_array_P[i].name         = PSTR("SYSTem");
     command_array_P[i].implied      = true;
-    command_array_P[i].parent       = &command_array_P[0];
+    command_array_P[i].parent       = NULL;
     command_array_P[i++].function   = &scpi_null_func;
 
         command_array_P[i].name         = PSTR("RST");
@@ -85,17 +79,17 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
     
     command_array_P[i].name       = PSTR("*IDN?");
     command_array_P[i].implied    = false;
-    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i].parent     = NULL;
     command_array_P[i++].function = &scpi_IDN_q;
     
     command_array_P[i].name       = PSTR("DEBUG?");
     command_array_P[i].implied    = false;
-    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i].parent     = NULL;
     command_array_P[i++].function = &debug;
     
     command_array_P[i].name       = PSTR("GET");
     command_array_P[i].implied    = false;
-    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i].parent     = NULL;
     command_array_P[i++].function = &scpi_null_func;
     
         command_array_P[i].name       = PSTR("RANGE?");
@@ -160,12 +154,12 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 
     command_array_P[i].name       = PSTR("CLRI2C");
     command_array_P[i].implied    = false;
-    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i].parent     = NULL;
     command_array_P[i++].function = &clr_i2c;
 
     command_array_P[i].name       = PSTR("SET");
     command_array_P[i].implied    = false;
-    command_array_P[i].parent     = &command_array_P[0];
+    command_array_P[i].parent     = NULL;
     command_array_P[i++].function = &scpi_null_func;
         
         command_array_P[i].name       = PSTR("IIR_ALPHA");
@@ -230,7 +224,7 @@ uint8_t Setup_ScpiCommandsArray_P( scpi_commands_P_t command_array_P[] )
 *****************************************************************************/
 void st_OPC_q ( char *arg, IO_pointers_t IO )
 {
-    scpi_prStr_P(PSTR("1\r\n"), IO.USB_stream);
+    scpi_prStr_P(PSTR("1\r\n"), IO);
 }
 /****************************************************************************
 *  Write to the bootloader start address                                    *
@@ -245,10 +239,10 @@ void sys_rst_btloader( char *arg, IO_pointers_t IO )
 void sys_error_q( char *arg, IO_pointers_t IO )
 {
     if (error_number == 0)
-        scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
+        scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO);
     else
     {
-        scpi_prStr_P(error_messages[error_number], IO.USB_stream);
+        scpi_prStr_P(error_messages[error_number], IO);
         if (bad_command[0] != NUL)
         {
             fprintf(IO.USB_stream, "%s\r\n", bad_command);
@@ -262,21 +256,21 @@ void sys_error_q( char *arg, IO_pointers_t IO )
 *****************************************************************************/
 void scpi_get_version_q( char *arg, IO_pointers_t IO )
 {
-    scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO.USB_stream);
-    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
+    scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO);
+    scpi_prStr_P(PSTR("\r\n"), IO);
 }
 /****************************************************************************
 *  *IDN? function                                                           *
 *****************************************************************************/
 void scpi_IDN_q( char *arg, IO_pointers_t IO )
 {
-    scpi_prStr_P(PSTR(COMPANY_NAME), IO.USB_stream);
-    scpi_prStr_P(PSTR(" | "), IO.USB_stream);
-    scpi_prStr_P(PSTR(PROJECT_NAME), IO.USB_stream);
-    scpi_prStr_P(PSTR(" | "), IO.USB_stream);
-    scpi_prStr_P(PSTR("Firmware Revision: "), IO.USB_stream);
-    scpi_prStr_P(PSTR(FIRMWARE_VERSION), IO.USB_stream);
-    scpi_prStr_P(PSTR("\r\n"), IO.USB_stream);
+    scpi_prStr_P(PSTR(COMPANY_NAME), IO);
+    scpi_prStr_P(PSTR(" | "), IO);
+    scpi_prStr_P(PSTR(PROJECT_NAME), IO);
+    scpi_prStr_P(PSTR(" | "), IO);
+    scpi_prStr_P(PSTR("Firmware Revision: "), IO);
+    scpi_prStr_P(PSTR(FIRMWARE_VERSION), IO);
+    scpi_prStr_P(PSTR("\r\n"), IO);
 }
 /****************************************************************************
 *  *CLS (Clear Status) function                                             *
@@ -381,21 +375,16 @@ void scpi_set_laserpower( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     uint8_t value;
-    if (strlen(arg) <= MAX_ARG_LEN)
-    {
-        remove_ws(arg);
-        value = (uint8_t)strtol(arg, &endptr, 10);
-        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
-        {
-            eeprom_busy_wait();
-            eeprom_write_block((const void *)&value, &LASER_POWER, sizeof(uint8_t));
-            retrieve_laserpower_setting();
-        }
-        else
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
-    }
+
+    if (strlen(arg) > MAX_ARG_LEN)  scpi_add_error_arg_too_long(IO);
+    else if (strlen(arg) < 1)       scpi_add_error_too_few_parameters(IO);
     else
-        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
+    {
+        value = (uint8_t)strtol(arg, &endptr, 10);
+        eeprom_busy_wait();
+        eeprom_write_block((const void *)&value, &LASER_POWER, sizeof(uint8_t));
+        retrieve_laserpower_setting();
+    }
 }
 /****************************************************************************
 *  Update Laser Power from EEPROM                                           *
@@ -420,21 +409,17 @@ void scpi_set_water_debounce_timeout( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     uint16_t value;
-    if (strlen(arg) <= MAX_ARG_LEN)
-    {
-        remove_ws(arg);
-        value = (uint16_t)strtol(arg, &endptr, 10);
-        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
-        {
-            eeprom_busy_wait();
-            eeprom_write_block((const void *)&value, &WATER_DEBOUNCE_TIMEOUT, sizeof(uint16_t));
-            retrieve_water_debounce_timeout();
-        }
-        else
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
-    }
+
+    if (strlen(arg) > MAX_ARG_LEN)  scpi_add_error_arg_too_long(IO);
+    else if (strlen(arg) < 1)       scpi_add_error_too_few_parameters(IO);
     else
-        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
+    {
+        value = (uint16_t)strtol(arg, &endptr, 10);
+        eeprom_busy_wait();
+        eeprom_write_block((const void *)&value, &WATER_DEBOUNCE_TIMEOUT, sizeof(uint16_t));
+        retrieve_water_debounce_timeout();
+    }
+
 }
 /****************************************************************************
 *  Update Water Debounce Timeout from EEPROM                                *
@@ -458,21 +443,16 @@ void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-    if (strlen(arg) <= MAX_ARG_LEN)
-    {
-        remove_ws(arg);
-        value = strtod(arg, &endptr);
-        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
-        {
-            eeprom_busy_wait();
-            eeprom_write_block((const void *)&value, &IIR_ALPHA, sizeof(float));
-            retrieve_IIR_alpha();
-        }
-        else
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
-    }
+
+    if (strlen(arg) > MAX_ARG_LEN)  scpi_add_error_arg_too_long(IO);
+    else if (strlen(arg) < 1)       scpi_add_error_too_few_parameters(IO);
     else
-        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
+    {
+        value = strtod(arg, &endptr);
+        eeprom_busy_wait();
+        eeprom_write_block((const void *)&value, &IIR_ALPHA, sizeof(float));
+        retrieve_IIR_alpha();
+    }
 }
 /****************************************************************************
 *  Update IIR Factor Alpha from EEPROM                                      *
@@ -497,21 +477,17 @@ void scpi_set_IIR_beta( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-    if (strlen(arg) <= MAX_ARG_LEN)
-    {
-        remove_ws(arg);
-        value = strtod(arg, &endptr);
-        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
-        {
-            eeprom_busy_wait();
-            eeprom_write_block((const void *)&value, &IIR_BETA, sizeof(float));
-            retrieve_IIR_beta();
-        }
-        else
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
-    }
+
+    if (strlen(arg) > MAX_ARG_LEN)  scpi_add_error_arg_too_long(IO);
+    else if (strlen(arg) < 1)       scpi_add_error_too_few_parameters(IO);
     else
-        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
+    {
+        value = strtod(arg, &endptr);
+        eeprom_busy_wait();
+        eeprom_write_block((const void *)&value, &IIR_BETA, sizeof(float));
+        retrieve_IIR_beta();
+    }
+
 }
 /****************************************************************************
 *  Update IIR Factor Beta from EEPROM                                       *
@@ -536,21 +512,17 @@ void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-    if (strlen(arg) <= MAX_ARG_LEN)
-    {
-        remove_ws(arg);
-        value = strtod(arg, &endptr);
-        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
-        {
-            eeprom_busy_wait();
-            eeprom_write_block((const void *)&value, &THRESHOLD_MM, sizeof(float));
-            retrieve_detection_threshold_mm();
-        }
-        else
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
-    }
+
+    if (strlen(arg) > MAX_ARG_LEN)  scpi_add_error_arg_too_long(IO);
+    else if (strlen(arg) < 1)       scpi_add_error_too_few_parameters(IO);
     else
-        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
+    {
+        value = strtod(arg, &endptr);
+        eeprom_busy_wait();
+        eeprom_write_block((const void *)&value, &THRESHOLD_MM, sizeof(float));
+        retrieve_detection_threshold_mm();
+    }
+
 }
 /****************************************************************************
 *  Update Detection Threshold from EEPROM                                   *
@@ -574,21 +546,16 @@ void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-    if (strlen(arg) <= MAX_ARG_LEN)
-    {
-        remove_ws(arg);
-        value = strtod(arg, &endptr);
-        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
-        {
-            eeprom_busy_wait();
-            eeprom_write_block((const void *)&value, &MAX_DISTANCE_LEAKAGE, sizeof(float));
-            retrieve_max_distance_leakage();
-        }
-        else
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
-    }
+
+    if (strlen(arg) > MAX_ARG_LEN)  scpi_add_error_arg_too_long(IO);
+    else if (strlen(arg) < 1)       scpi_add_error_too_few_parameters(IO);
     else
-        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
+    {
+        value = strtod(arg, &endptr);
+        eeprom_busy_wait();
+        eeprom_write_block((const void *)&value, &MAX_DISTANCE_LEAKAGE, sizeof(float));
+        retrieve_max_distance_leakage();
+    }
 }
 /****************************************************************************
 *  Store Max Distance Reset Rate to EEPROM                                  *
@@ -597,21 +564,16 @@ void scpi_set_max_distance_mm_reset_rate( char *arg, IO_pointers_t IO )
 {
     char *endptr;
     float value;
-    if (strlen(arg) <= MAX_ARG_LEN)
-    {
-        remove_ws(arg);
-        value = strtod(arg, &endptr);
-        if (strlen(arg) <= MAX_ARG_LEN && strlen(arg) >= 1)
-        {
-            eeprom_busy_wait();
-            eeprom_write_block((const void *)&value, &MAX_DISTANCE_MM_RESET_RATE, sizeof(float));
-            retrieve_max_distance_mm_reset_rate();
-        }
-        else
-            scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
-    }
+
+    if (strlen(arg) > MAX_ARG_LEN)  scpi_add_error_arg_too_long(IO);
+    else if (strlen(arg) < 1)       scpi_add_error_too_few_parameters(IO);
     else
-        scpi_add_error_P(ERROR_ARG_TOO_LONG, IO);
+    {
+        value = strtod(arg, &endptr);
+        eeprom_busy_wait();
+        eeprom_write_block((const void *)&value, &MAX_DISTANCE_MM_RESET_RATE, sizeof(float));
+        retrieve_max_distance_mm_reset_rate();
+    }
 }
 /****************************************************************************
 *  Update Max Distance Reset Rate from EEPROM                               *
