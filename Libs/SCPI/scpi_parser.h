@@ -15,9 +15,9 @@
 /****************************************************************************
 *  Define various SCPI parameters                                           *
 *****************************************************************************/
-    #define MAX_SCPI_NODES 100
+    #define MAX_SCPI_NODES 50
     #define MAX_IN_STR_LEN 80
-    #define MAX_TOKEN_LEN 30
+    #define MAX_TOKEN_LEN 40
     #define ERROR_QUEUE_LENGTH 2
     #define MAX_TOKEN_COUNT 16
     #define MAX_ARG_LEN 16
@@ -35,9 +35,16 @@ typedef struct {
 /****************************************************************************
 *  Macros to be used when creating the project specific SCPI array          *
 *****************************************************************************/
-#define SCPI_OPEN_REGISTRY(MACRO_PASSED_ARRAY) uint16_t registry_index = 0; SCPI_Node_t **__local_command_array = MACRO_PASSED_ARRAY; // Makes and remembers a local copy of the command array.
-#define SCPI(cvar_name, scpi_node, parent, function, implied) static SCPI_Node_t cvar_name = {scpi_node, parent, function, implied}; __local_command_array[registry_index++] = &cvar_name; check_command_array_size(registry_index)//, &sys_rst_btloader)
-#define SCPI_CLOSE_REGISTRY() __local_command_array[registry_index] = NULL
+#define SCPI_OPEN_REGISTRY(MACRO_PASSED_ARRAY)                                              /* Macro initializer                                                                    */ \
+        uint16_t registry_index = 0;                                                        /* Create the array indexer                                                             */ \
+        SCPI_Node_t **__local_command_array = MACRO_PASSED_ARRAY                            /* Rename the command array to a local secret variable passed by the registry initilzer */
+
+#define SCPI(cvar_name, scpi_node, parent, function, implied, counterr_func, io_pointer)    /* Macro initializer                                                                    */ \
+        static SCPI_Node_t cvar_name = {scpi_node, parent, function, implied};              /* Create a local instance of each SCPI node (instance of a SCPI_Node_t struct)         */ \
+        __local_command_array[registry_index++] = &cvar_name;                               /* Append the command array with the newly created instance of a SCPI_Node_t            */ \
+        if (registry_index >= MAX_SCPI_NODES) counterr_func("", io_pointer)                 /* Run the error function defined for SCPI array size problems (Jump to Bootloader?     */
+
+#define SCPI_CLOSE_REGISTRY() __local_command_array[registry_index] = NULL                  /* Close out the command array with a loop detectbale terminating instance              */
 /****************************************************************************
 *  SCPI Node Struct                                                         *
 *****************************************************************************/
@@ -68,7 +75,6 @@ typedef struct
     void scpi_prStr_P(PGM_P progmem_string, IO_pointers_t IO);
     void sys_error_q(char *arg, IO_pointers_t IO);
     void scpi_prStr_P_cr_nl(IO_pointers_t IO);
-    void check_command_array_size(uint16_t array_size);
 /****************************************************************************
 *  Compulsory SCPI commands                                                 *
 *  see: http://www.ivifoundation.org/docs/scpi-99.pdf                       *

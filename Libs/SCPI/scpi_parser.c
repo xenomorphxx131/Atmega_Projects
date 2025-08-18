@@ -246,10 +246,3 @@ void scpi_prStr_P_cr_nl(IO_pointers_t IO)
 {
     scpi_prStr_P(PSTR("\r\n"), IO);
 }
-/****************************************************************************
-*           *
-*****************************************************************************/
-void check_command_array_size(uint16_t array_size)
-{
-    if (array_size > MAX_SCPI_NODES);
-}
