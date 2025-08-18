@@ -19,7 +19,6 @@
     #define MAX_IN_STR_LEN 80
     #define MAX_TOKEN_LEN 40
     #define ERROR_QUEUE_LENGTH 2
-    #define MAX_TOKEN_COUNT 16
     #define MAX_ARG_LEN 16
     #define DEL_KEY '\x7F'
     #define NUL '\0'
