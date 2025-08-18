@@ -37,50 +37,50 @@ float iir_gain;
 *****************************************************************************/
 void setup_scpi_commands(SCPI_Node_t **scpi_nodes, IO_pointers_t IO)
 {
-    OPEN_SCPI_REGISTRY();
+    SCPI_OPEN_REGISTRY();
 
-  /*REGISTER_SCPI(.node,           .value,                             .parent,    .function,                              .implied)
+  /*SCPI(.node,           .value,                             .parent,    .function,                              .implied)
     ------------------------------------------------------------------------------------------------------------------------------- */
-    REGISTER_SCPI(OPC,              "*OPC?",                            NULL,       &st_OPC_q,                              false);
-    REGISTER_SCPI(IDN,              "*IDN?",                            NULL,       &scpi_IDN_q,                            false);
-    REGISTER_SCPI(CLRI2C,           "CLRI2C",                           NULL,       &clr_i2c,                               false);
-    REGISTER_SCPI(DEBUG,            "DEBUG?",                           NULL,       &debug,                                 false);
+    SCPI(OPC,              "*OPC?",                            NULL,       &st_OPC_q,                              false);
+    SCPI(IDN,              "*IDN?",                            NULL,       &scpi_IDN_q,                            false);
+    SCPI(CLRI2C,           "CLRI2C",                           NULL,       &clr_i2c,                               false);
+    SCPI(DEBUG,            "DEBUG?",                           NULL,       &debug,                                 false);
 
-    REGISTER_SCPI(SYSTEM,           "SYSTem",                           NULL,       NULL,                                   true);
-    REGISTER_SCPI(RST,                  "RST",                          &SYSTEM,    NULL,                                   false);
-    REGISTER_SCPI(BTLOADER,                 "BTLOader",                 &RST,       &sys_rst_btloader,                      false);
-    REGISTER_SCPI(ERROR,                "ERRor?",                       &SYSTEM,    &sys_error_q,                           false);
-    REGISTER_SCPI(VERSION,              "VERSion?",                     &SYSTEM,    &scpi_get_version_q,                    false);
-    REGISTER_SCPI(RECORD,               "RECORD",                       &SYSTEM,    &scpi_record,                           false);
+    SCPI(SYSTEM,           "SYSTem",                           NULL,       NULL,                                   true);
+    SCPI(RST,                  "RST",                          &SYSTEM,    NULL,                                   false);
+    SCPI(BTLOADER,                 "BTLOader",                 &RST,       &sys_rst_btloader,                      false);
+    SCPI(ERROR,                "ERRor?",                       &SYSTEM,    &sys_error_q,                           false);
+    SCPI(VERSION,              "VERSion?",                     &SYSTEM,    &scpi_get_version_q,                    false);
+    SCPI(RECORD,               "RECORD",                       &SYSTEM,    &scpi_record,                           false);
 
-    REGISTER_SCPI(GET,              "GET",                              NULL,       NULL,                                   false);
-    REGISTER_SCPI(RANGEq,               "RANGE?",                       &GET,       &scpi_get_range_q,                      false);
-    REGISTER_SCPI(IIR_ALPHAq,           "IIR_ALPHA?",                   &GET,       &scpi_get_IIR_alpha_q,                  false);
-    REGISTER_SCPI(IIR_BETAq,            "IIR_BETA?",                    &GET,       &scpi_get_IIR_beta_q,                   false);
-    REGISTER_SCPI(IIR_GAINq,            "IIR_GAIN?",                    &GET,       &scpi_get_IIR_gain_q,                   false);
-    REGISTER_SCPI(LASER_POWERq,         "LASERPOWER?",                  &GET,       &scpi_get_laserpower_q,                 false);
-    REGISTER_SCPI(DET_THRESHOLDq,       "DETECTION_THRESHOLD_MM?",      &GET,       &scpi_get_detection_threshold_mm_q,     false);
-    REGISTER_SCPI(MAX_DIS_LEAKAGEq,     "MAX_DISTANCE_LEAKAGE?",        &GET,       &scpi_get_max_distance_leakage_q,       false);
-    REGISTER_SCPI(WATER_DEB_TIMEOUTq,   "WATER_DEBOUNCE_TIMEOUT?",      &GET,       &scpi_get_water_debounce_timeout_q,     false);
-    REGISTER_SCPI(BLACKBOXq,            "BLACKBOX?",                    &GET,       &scpi_get_blackbox_q,                   false);
-    REGISTER_SCPI(MX_DIST_MM_RST_RATEq, "MAX_DISTANCE_MM_RESET_RATE?",  &GET,       &scpi_get_max_distance_mm_reset_rate_q, false);
-    REGISTER_SCPI(RANGESq,              "RANGE_AND_MAXRANGE?",          &GET,       &scpi_get_range_and_maxrange_q,         false);
-    REGISTER_SCPI(WATER_STATEq,         "WATER_STATE?",                 &GET,       &scpi_water_state_q,                    false);
+    SCPI(GET,              "GET",                              NULL,       NULL,                                   false);
+    SCPI(RANGEq,               "RANGE?",                       &GET,       &scpi_get_range_q,                      false);
+    SCPI(IIR_ALPHAq,           "IIR_ALPHA?",                   &GET,       &scpi_get_IIR_alpha_q,                  false);
+    SCPI(IIR_BETAq,            "IIR_BETA?",                    &GET,       &scpi_get_IIR_beta_q,                   false);
+    SCPI(IIR_GAINq,            "IIR_GAIN?",                    &GET,       &scpi_get_IIR_gain_q,                   false);
+    SCPI(LASER_POWERq,         "LASERPOWER?",                  &GET,       &scpi_get_laserpower_q,                 false);
+    SCPI(DET_THRESHOLDq,       "DETECTION_THRESHOLD_MM?",      &GET,       &scpi_get_detection_threshold_mm_q,     false);
+    SCPI(MAX_DIS_LEAKAGEq,     "MAX_DISTANCE_LEAKAGE?",        &GET,       &scpi_get_max_distance_leakage_q,       false);
+    SCPI(WATER_DEB_TIMEOUTq,   "WATER_DEBOUNCE_TIMEOUT?",      &GET,       &scpi_get_water_debounce_timeout_q,     false);
+    SCPI(BLACKBOXq,            "BLACKBOX?",                    &GET,       &scpi_get_blackbox_q,                   false);
+    SCPI(MX_DIST_MM_RST_RATEq, "MAX_DISTANCE_MM_RESET_RATE?",  &GET,       &scpi_get_max_distance_mm_reset_rate_q, false);
+    SCPI(RANGESq,              "RANGE_AND_MAXRANGE?",          &GET,       &scpi_get_range_and_maxrange_q,         false);
+    SCPI(WATER_STATEq,         "WATER_STATE?",                 &GET,       &scpi_water_state_q,                    false);
 
-    REGISTER_SCPI(SET,              "SET",                              NULL,       NULL,                                   false);
-    REGISTER_SCPI(IIR_ALPHA,            "IIR_ALPHA",                    &SET,       &scpi_set_IIR_alpha,                    false);
-    REGISTER_SCPI(IIR_BETA,             "IIR_BETA",                     &SET,       &scpi_set_IIR_beta,                     false);
-    REGISTER_SCPI(LASER_POWER,          "LASERPOWER",                   &SET,       &scpi_set_laserpower,                   false);
-    REGISTER_SCPI(DET_THRESHOLD,        "DETECTION_THRESHOLD_MM",       &SET,       &scpi_set_detection_threshold_mm,       false);
-    REGISTER_SCPI(MAX_DIS_LEAKAGE,      "MAX_DISTANCE_LEAKAGE",         &SET,       &scpi_set_max_distance_leakage,         false);
-    REGISTER_SCPI(WATER_DEB_TIMEOUT,    "WATER_DEBOUNCE_TIMEOUT",       &SET,       &scpi_set_water_debounce_timeout,       false);
-    REGISTER_SCPI(MX_DIST_MM_RST_RATE,  "MAX_DISTANCE_MM_RESET_RATE",   &SET,       &scpi_set_max_distance_mm_reset_rate,   false);
-    REGISTER_SCPI(WATER_v,              "WATER",                        &SET,       NULL,                                   false);
-    REGISTER_SCPI(ON,                       "ON",                       &WATER_v,   &scpi_water_on,                         false);
-    REGISTER_SCPI(OFF,                      "OFF",                      &WATER_v,   &scpi_water_off,                        false);
-    REGISTER_SCPI(AUTO,                     "AUTO",                     &WATER_v,   &scpi_water_auto,                       false);
+    SCPI(SET,              "SET",                              NULL,       NULL,                                   false);
+    SCPI(IIR_ALPHA,            "IIR_ALPHA",                    &SET,       &scpi_set_IIR_alpha,                    false);
+    SCPI(IIR_BETA,             "IIR_BETA",                     &SET,       &scpi_set_IIR_beta,                     false);
+    SCPI(LASER_POWER,          "LASERPOWER",                   &SET,       &scpi_set_laserpower,                   false);
+    SCPI(DET_THRESHOLD,        "DETECTION_THRESHOLD_MM",       &SET,       &scpi_set_detection_threshold_mm,       false);
+    SCPI(MAX_DIS_LEAKAGE,      "MAX_DISTANCE_LEAKAGE",         &SET,       &scpi_set_max_distance_leakage,         false);
+    SCPI(WATER_DEB_TIMEOUT,    "WATER_DEBOUNCE_TIMEOUT",       &SET,       &scpi_set_water_debounce_timeout,       false);
+    SCPI(MX_DIST_MM_RST_RATE,  "MAX_DISTANCE_MM_RESET_RATE",   &SET,       &scpi_set_max_distance_mm_reset_rate,   false);
+    SCPI(WATER_v,              "WATER",                        &SET,       NULL,                                   false);
+    SCPI(ON,                       "ON",                       &WATER_v,   &scpi_water_on,                         false);
+    SCPI(OFF,                      "OFF",                      &WATER_v,   &scpi_water_off,                        false);
+    SCPI(AUTO,                     "AUTO",                     &WATER_v,   &scpi_water_auto,                       false);
 
-    CLOSE_SCPI_REGISTRY();
+    SCPI_CLOSE_REGISTRY();
 }
 /****************************************************************************
 *  *OPC (Operation Complete Query) function                                 *
