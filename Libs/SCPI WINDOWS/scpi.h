@@ -40,7 +40,7 @@ const char *NO_ERROR            = "+0,\"No error\"\r\n";
 
 typedef struct SCPI_Node_t
     {
-    char scpi_node[MAX_TOKEN_LEN];                        // PGM_P scpi_node;
+    char scpi_node[MAX_TOKEN_LEN];
     const struct SCPI_Node_t *parent;
     void (*function)(char*, IO_pointers_t);
     const bool implied;

@@ -64,7 +64,7 @@ void scpi_process_cmd_P( char *input_string, SCPI_Node_t **scpi_nodes, IO_pointe
     char token[MAX_TOKEN_LEN+1];
     char argument[MAX_ARG_LEN+1] = "";
     char long_name[MAX_TOKEN_LEN+1];
-    char short_name[MAX_TOKEN_LEN+1];   
+    char short_name[MAX_TOKEN_LEN+1];
     SCPI_Node_t *current_command = NULL;                                        // Pointer to commands in command array. Initialize to the top (no command).
     SCPI_Node_t *next_command;                                                  // Pointer to commands in command array used for tokens.
     bool valid_command = false;                                                 // Valid command variable
@@ -77,12 +77,12 @@ void scpi_process_cmd_P( char *input_string, SCPI_Node_t **scpi_nodes, IO_pointe
     space = strpbrk(input_string, " ");                                         // Check for a space indicating an argument
     if (space != NULL)                                                          // Return value will be NULL if no spaces
     {
-        if (strlen(space+1) > MAX_ARG_LEN)
+        if (strlen(space + 1) > MAX_ARG_LEN)
         {
             scpi_add_error_P(ARG_TOO_LONG, space+1, MAX_TOKEN_LEN);             // and...
             return;
         }
-        strncpy(argument, space+1, MAX_ARG_LEN);                                // Copy up to max arg length
+        strncpy(argument, space + 1, MAX_ARG_LEN);                                // Copy up to max arg length
         if (strpbrk(argument, " ") != NULL)                                     // If any more spaces...
         {                                                                       // Declare the error,
             scpi_add_error_P(TOO_MANY_PARAMETERS, argument, MAX_ARG_LEN);       // and...
@@ -143,8 +143,10 @@ bool scpi_find_implied(SCPI_Node_t **current_command, char *token, SCPI_Node_t *
     const SCPI_Node_t *parent_ptr;
     char long_name[MAX_TOKEN_LEN+1];
     char short_name[MAX_TOKEN_LEN+1];
+    uint16_t command_index;
 
-    for (uint16_t command_index=0; scpi_nodes[command_index] != NULL; command_index++)  // Walk through known commands looking for a match.
+    command_index = 0;
+    while(scpi_nodes[command_index] != NULL)// Walk through known commands looking for a match.
     {
         current_ptr = scpi_nodes[command_index];                              // Get pointer to found command
         strncpy(long_name, current_ptr->scpi_node, MAX_TOKEN_LEN);
@@ -167,6 +169,7 @@ bool scpi_find_implied(SCPI_Node_t **current_command, char *token, SCPI_Node_t *
                     break;
             }
         }
+        command_index++;
     }
     return false;
 }
@@ -175,16 +178,17 @@ bool scpi_find_implied(SCPI_Node_t **current_command, char *token, SCPI_Node_t *
 *****************************************************************************/
 char *scpi_get_short_name(char *long_name )
 {
-    uint16_t long_index=0, short_index = 0;
-    static char short_name[MAX_TOKEN_LEN+1] = "";                       // Static so it can be passed back out
+    uint16_t long_index = 0;
+    uint16_t short_index = 0;
+    static char short_name[MAX_TOKEN_LEN+1];                        // Static so it can be passed back out
 
     short_name[0] = NUL;
     while (long_name[long_index] != NUL)                                // Walk the name string
     {   
         if (long_name[long_index] == toupper(long_name[long_index]))    // Check if the character is uppercase
         {   
-            short_name[short_index] = long_name[long_index];            // build up the short_name
-            short_index++;   
+            short_name[short_index++] = long_name[long_index];            // build up the short_name
+            // short_index++;
         }   
         else
             long_name[long_index] = toupper(long_name[long_index]); 
