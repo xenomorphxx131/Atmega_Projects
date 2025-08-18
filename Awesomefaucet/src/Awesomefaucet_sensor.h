@@ -14,7 +14,7 @@
 
     void process_sensor(void);
     
-    #define BLACKBOX_BUFFER_SIZE 128     // must be a power of two for index wrap efficiency
+    #define BLACKBOX_BUFFER_SIZE 64 // Must be a power of two for index wrap efficiency
 
     typedef struct {
         float distance_mm;

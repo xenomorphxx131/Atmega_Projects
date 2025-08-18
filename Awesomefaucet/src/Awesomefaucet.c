@@ -13,10 +13,9 @@ int main(void)
     /**************************************************************************
     *  Create data structures                                                 *
     ***************************************************************************/
-    static FILE         USB_stream;                         // Create the USB Stream data
-    i2c_twi_port_t      i2cport;
-    IO_pointers_t       IO;                                 // Create the passable IO pointer
-    scpi_commands_P_t   commands_P[COMMAND_ARRAY_SIZE];     // Create the SCPI command array
+    static FILE         USB_stream;                             // Create the USB Stream data
+    i2c_twi_port_t      i2cport;                                // Create the I2C Struct
+    IO_pointers_t       IO;                                     // Create the passable IO pointer
     CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USB_stream);
     /**************************************************************************
     *  Assign values to data structures and setup hardware                    *
@@ -60,10 +59,11 @@ int main(void)
     CDC_init();                                                 // LUFA stuff
     sei();                                                      // Enable interrupts
     i2cTwiInit(IO.I2C_port);                                    // Initialize I2C TWI Port
-    Setup_ScpiCommandsArray_P(commands_P);                      // Build the command array (mostly pointers to PROGMEM)
+    SCPI_Node_t *scpi_nodes[MAX_SCPI_NODES];                    // Allocate the command array
+    setup_scpi_commands(scpi_nodes, IO);                        // Populate the command array
     retrieve_max_distance_leakage();                            // Retrieve the MAX Distance leakage term from EEPROM
-	retrieve_IIR_alpha();                                       // Retrieve the IIR value ALPHA from EEPROM
-	retrieve_IIR_beta();                                        // Retrieve the IIR value BETA from EEPROM
+    retrieve_IIR_alpha();                                       // Retrieve the IIR value ALPHA from EEPROM
+    retrieve_IIR_beta();                                        // Retrieve the IIR value BETA from EEPROM
     compute_iir_gain();                                         // Computer the IIR normalization term
     retrieve_detection_threshold_mm();                          // Retrieve the detection threshold from EEPROM
     retrieve_laserpower_setting();                              // Retrieve the laser power value from EEPROM
@@ -91,7 +91,7 @@ int main(void)
     while (true)
     {
         process_USB();
-        process_scpi_input(commands_P, IO);
+        process_scpi_input(scpi_nodes, IO);
         process_sensor();
         update_water();
     }
