@@ -59,8 +59,8 @@ int main(void)
     CDC_init();                                                 // LUFA stuff
     sei();                                                      // Enable interrupts
     i2cTwiInit(IO.I2C_port);                                    // Initialize I2C TWI Port
-    SCPI_Node_t *command_array[MAX_SCPI_NODES];                    // Allocate the command array
-    setup_scpi_commands(command_array, IO);                        // Populate the command array
+    SCPI_Node_t *command_array[MAX_SCPI_NODES];                 // Allocate the command array
+    setup_scpi_commands(command_array, IO);                     // Populate the command array
     retrieve_max_distance_leakage();                            // Retrieve the MAX Distance leakage term from EEPROM
     retrieve_IIR_alpha();                                       // Retrieve the IIR value ALPHA from EEPROM
     retrieve_IIR_beta();                                        // Retrieve the IIR value BETA from EEPROM
