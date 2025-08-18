@@ -21,7 +21,7 @@
     #define ERROR_QUEUE_LENGTH 2
     #define MAX_TOKEN_COUNT 16
     #define MAX_ARG_LEN 16
-    #define DEL_KEY 127
+    #define DEL_KEY '\x7F'
     #define NUL '\0'
 /****************************************************************************
 *  Create a data structure to contain the various IO pointers               *
@@ -35,9 +35,9 @@ typedef struct {
 /****************************************************************************
 *  Macros to be used when creating the project specific SCPI array          *
 *****************************************************************************/
-#define SCPI_OPEN_REGISTRY() uint16_t registry_index = 0
-#define SCPI(cvar_name, scpi_node, parent, function, implied) static SCPI_Node_t cvar_name = {scpi_node, parent, function, implied}; scpi_nodes[registry_index++] = &cvar_name; check_command_array_size(registry_index)//, &sys_rst_btloader)
-#define SCPI_CLOSE_REGISTRY() scpi_nodes[registry_index] = NULL
+#define SCPI_OPEN_REGISTRY(MACRO_PASSED_ARRAY) uint16_t registry_index = 0; SCPI_Node_t **__local_command_array = MACRO_PASSED_ARRAY; // Makes and remembers a local copy of the command array.
+#define SCPI(cvar_name, scpi_node, parent, function, implied) static SCPI_Node_t cvar_name = {scpi_node, parent, function, implied}; __local_command_array[registry_index++] = &cvar_name; check_command_array_size(registry_index)//, &sys_rst_btloader)
+#define SCPI_CLOSE_REGISTRY() __local_command_array[registry_index] = NULL
 /****************************************************************************
 *  SCPI Node Struct                                                         *
 *****************************************************************************/

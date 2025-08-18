@@ -35,12 +35,12 @@ float iir_gain;
 /****************************************************************************
 *  Setup Awesomfaucet Specific SCPI commands and functions                  *
 *****************************************************************************/
-void setup_scpi_commands(SCPI_Node_t **scpi_nodes, IO_pointers_t IO)
+void setup_scpi_commands(SCPI_Node_t **command_array, IO_pointers_t IO)
 {
-    SCPI_OPEN_REGISTRY();
+    SCPI_OPEN_REGISTRY(command_array);
 
   /*SCPI(.node,           .value,                             .parent,    .function,                              .implied)
-    ------------------------------------------------------------------------------------------------------------------------------- */
+    ----------------------------------------------------------------------------------------------------------------------- */
     SCPI(OPC,              "*OPC?",                            NULL,       &st_OPC_q,                              false);
     SCPI(IDN,              "*IDN?",                            NULL,       &scpi_IDN_q,                            false);
     SCPI(CLRI2C,           "CLRI2C",                           NULL,       &clr_i2c,                               false);
