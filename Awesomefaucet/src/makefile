@@ -70,7 +70,7 @@ MCU = atmega32u4
 #########################################################################
 
 # CFLAGS = -D VL6180X       # Older sensor (obsolete) with Ambient Light Sensor (ALS)
-CFLAGS = -D VL534CD         # New sensor without ALS
+CFLAGS = -D VL53L4CD        # New sensor without ALS
 
 #########################################################################
 #                                                                       #
