@@ -14,8 +14,8 @@ extern bool water_auto;
  *****************************************************************************/
 void update_water()
 {
-	static bool water_debounce_timer_armed = false;
-	
+    static bool water_debounce_timer_armed = false;
+    
     if (foot_present)
     {
         if (water_auto) water_on(true);
