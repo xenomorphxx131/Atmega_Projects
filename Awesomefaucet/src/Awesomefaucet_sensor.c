@@ -24,13 +24,13 @@ bool record = 1;
 *****************************************************************************/
 void process_sensor()
 {
-	uint8_t isReady;
+    uint8_t isReady;
     uint8_t reading_mm;
     
     #ifdef VL6180X
         I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__INTERRUPT_STATUS_GPIO, &isReady);
         if(isReady & VL6180X_NEW_SAMPLE_READY_THRESHOLD_EVENT)               // Should happen on a roughly 24ms cadence as controlled by the sensor settings.
-    #elif defined(VL534CD)
+    #elif defined(VL53L4CD)
         VL53L4CD_ResultsData_t results;
         VL53L4CD_CheckForDataReady(VL53L4CD_ADDR7, &isReady);
         if(isReady)                                                         // Should happen on a roughly 50ms cadence as controlled by the sensor settings.
@@ -46,7 +46,7 @@ void process_sensor()
             I2C_16BITSUB_Read_Byte(VL6180X_ADDR7, VL6180X_RESULT__RANGE_VAL, &reading_mm);
             I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSTEM__INTERRUPT_CLEAR, VL6180X_CLEAR_ALL_INTS ); // clear all interrupts
             I2C_16BITSUB_Write_Byte( VL6180X_ADDR7, VL6180X_SYSRANGE__START, VL6180X_SYSRANGE_STARTSTOP );
-        #elif defined(VL534CD)
+        #elif defined(VL53L4CD)
             VL53L4CD_GetResult(VL53L4CD_ADDR7, &results);     // Read measured distance. RangeStatus = 0 means valid data
             VL53L4CD_ClearInterrupt(VL53L4CD_ADDR7);          // (Mandatory) Clear HW interrupt to restart measurements
             reading_mm = results.distance_mm;
