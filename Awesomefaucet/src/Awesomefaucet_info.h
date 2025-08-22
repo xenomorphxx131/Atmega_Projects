@@ -4,7 +4,7 @@
 /****************************************************************************
 *  VERSIONS and other Meta Data                                             *
 *****************************************************************************/
-    #define FIRMWARE_VERSION "3.2"
+    #define FIRMWARE_VERSION "3.2.1"
     #define COMPANY_NAME "Hypertronix"
     #define PROJECT_NAME "Awesome Faucet"
     #ifdef VL6180X

@@ -77,12 +77,13 @@ void scpi_process_cmd_P( char *input_string, SCPI_Node_t **scpi_nodes, IO_pointe
             scpi_add_error_P(ARG_TOO_LONG, space+1, MAX_TOKEN_LEN);             // Log error and...
             return;                                                             // bail if too long
         }
-        strncpy(argument, space + 1, MAX_ARG_LEN);                              // Copy up to max arg length
         if (strpbrk(argument, " ") != NULL)                                     // If any more spaces...
         {                                                                       // Declare the error,
             scpi_add_error_P(TOO_MANY_PARAMETERS, argument, MAX_ARG_LEN);       // and...
             return;                                                             // bail from the whole SCPI input
         }
+        strncpy(argument, space + 1, MAX_ARG_LEN);                              // Copy up to max arg length
+        *space = NUL;                                                           // Put the termination character where the space was in the input string.
     }
     /****************************************************************************
      * Parse the command tokens                                                 *
