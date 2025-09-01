@@ -69,8 +69,8 @@ MCU = atmega32u4
 # Select the Target Range Sensor Below                                  #
 #########################################################################
 
-CFLAGS = -D VL6180X       # Older sensor (obsolete) with Ambient Light Sensor (ALS)
-# CFLAGS = -D VL53L4CD        # New sensor without ALS
+# CFLAGS = -D VL6180X       # Older sensor (obsolete) with Ambient Light Sensor (ALS)
+CFLAGS = -D VL53L4CD        # New sensor without ALS
 
 #########################################################################
 #                                                                       #
