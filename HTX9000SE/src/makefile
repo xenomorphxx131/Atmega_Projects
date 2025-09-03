@@ -113,26 +113,20 @@ TARGET = USB_Load_Box
 OBJDIR = .
 
 # Path to Libraries
-LIB_PATH = ./Libs
-LUFA_LIB_PATH = ../../Libs
+LIB_PATH = ../../Libs
+OLD_LIB_PATH = ./Libs
 
 # Path to the LUFA library
-LUFA_PATH = $(LUFA_LIB_PATH)/LUFA
+LUFA_PATH = $(LIB_PATH)/LUFA
 
 # Path to I2C Library
-I2C_PATH = $(LIB_PATH)/I2C
+# I2C_PATH = $(OLD_LIB_PATH)/I2C
 
 # Path to USB Library
 USB_PATH = $(LIB_PATH)/USB
 
 # Path to USB Library
 LCD_PATH = $(LIB_PATH)/LCD
-
-# Path to ASCII Library
-ASCII_PATH = $(LIB_PATH)/ASCII
-
-# Path to SCPI Library
-SCPI_PATH = $(LIB_PATH)/SCPI
 
 # Path to LCD Library
 LCD_PATH = $(LIB_PATH)/LCD
@@ -161,23 +155,18 @@ include $(LUFA_PATH)/LUFA/makefile
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c \
-	  $(SCPI_PATH)/Loadbox_scpi.c \
-	  Descriptors.c \
-	  $(LCD_PATH)/LCD_7032i.c \
-	  $(LUFA_SRC_USB) \
-	  $(LUFA_SRC_USBCLASS) \
-	  $(I2C_PATH)/i2c_twi.c \
-	  $(SCPI_PATH)/scpi.c \
-	  $(THERMISTOR_PATH)/thermistor.c \
-	  $(USB_PATH)/process_USB.c \
-	  $(TOUCHPAD_PATH)/touchpad.c \
-	  $(LCDMANAGER_PATH)/lcd_manager.c \
-	  $(BOOTLOADER_PATH)/bootloader.c
-#	  $(FREERTOS_SOURCE_DIR)/tasks.c \
-#	  $(FREERTOS_SOURCE_DIR)/queue.c \
-#	  $(FREERTOS_SOURCE_DIR)/list.c \
-#	  $(FREERTOS_SOURCE_DIR)/portable/MemMang/heap_1.c \
-#	  $(FREERTOS_PORT_DIR)/port.c
+    scpi.c \
+    i2c_twi.c \
+    Descriptors.c \
+    Loadbox_scpi.c \
+    $(LUFA_SRC_USB) \
+    $(LUFA_SRC_USBCLASS) \
+    $(LCD_PATH)/LCD_7032i.c \
+    $(USB_PATH)/process_USB.c \
+    $(TOUCHPAD_PATH)/touchpad.c \
+    $(THERMISTOR_PATH)/thermistor.c \
+    $(BOOTLOADER_PATH)/bootloader.c \
+    $(LCDMANAGER_PATH)/lcd_manager.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC =
@@ -207,17 +196,13 @@ DEBUG = dwarf-2
 #     Use forward slashes for directory separators.
 #     For a directory that has spaces, enclose it in quotes.
 EXTRAINCDIRS = $(LUFA_PATH)/
-EXTRAINCDIRS += $(I2C_PATH)/
 EXTRAINCDIRS += $(LCD_PATH)/
 EXTRAINCDIRS += $(USB_PATH)/
-EXTRAINCDIRS += $(ASCII_PATH)/
-EXTRAINCDIRS += $(SCPI_PATH)/
 EXTRAINCDIRS += $(THERMISTOR_PATH)/
 EXTRAINCDIRS += $(TOUCHPAD_PATH) /
 EXTRAINCDIRS += $(LCDMANAGER_PATH) /
 EXTRAINCDIRS += $(BOOTLOADER_PATH)
-# EXTRAINCDIRS += $(FREERTOS_SOURCE_DIR)/include/ $(FREERTOS_PORT_DIR)/ 
-# EXTRAINCDIRS += $(FREERTOS_PATH)/Demo/Common/include/
+EXTRAINCDIRS += $(SCPI_PATH)
 
 # Compiler flag to set the C Standard level.
 #     c89   = "ANSI" C
