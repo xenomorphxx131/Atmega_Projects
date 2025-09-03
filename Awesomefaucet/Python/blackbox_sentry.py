@@ -15,10 +15,10 @@ time.sleep(5)
 reset_time = datetime.now()
 print(f"\nBegin Water Monitoring Program at {datetime.now()} .....\n")
 while True:
-    if sensor.ask('water:state?') == "1":
+    if sensor.ask('GET:WATER_STATE?') == "1":
         current_time = datetime.now()
         print(f" Water ON at: {current_time}, contiguous time with no trips: {current_time - reset_time}")
-        while sensor.ask('water:state?') == "1":
+        while sensor.ask('GET:WATER_STATE?') == "1":
             reset_time = datetime.now()
         print(f" Water OFF {datetime.now()}\n")
         blackbox = eval(sensor.ask('GET:BLACKBOX?'))
