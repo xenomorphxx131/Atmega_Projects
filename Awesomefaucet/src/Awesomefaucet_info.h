@@ -1,5 +1,5 @@
-#ifndef SCPI_CONFIG_H_
-#define SCPI_CONFIG_H_
+#ifndef AWESOMEFAUCET_INFO_H_
+#define AWESOMEFAUCET_INFO_H_
 
 /****************************************************************************
 *  VERSIONS and other Meta Data                                             *
