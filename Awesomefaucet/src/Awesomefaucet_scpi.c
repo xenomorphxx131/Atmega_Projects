@@ -35,7 +35,7 @@ float iir_gain;
 /****************************************************************************
 *  Setup Awesomfaucet Specific SCPI commands and functions                  *
 *****************************************************************************/
-void setup_scpi_commands(SCPI_Node_t **command_array, IO_pointers_t IO)
+void setup_scpi_commands(SCPI_Node_t **command_array)
 {
     SCPI_OPEN_REGISTRY(command_array, Jump_To_Bootloader);
 

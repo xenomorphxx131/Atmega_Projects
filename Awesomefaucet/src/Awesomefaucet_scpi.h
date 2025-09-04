@@ -19,7 +19,7 @@
 /****************************************************************************
 * SCPI Commands                                                             *
 *****************************************************************************/
-    void setup_scpi_commands(SCPI_Node_t **command_array, IO_pointers_t IO);
+    void setup_scpi_commands(SCPI_Node_t **command_array);
     void st_OPC_q(char *arg, IO_pointers_t IO);
     void sys_rst_btloader(char *arg, IO_pointers_t IO);
     void scpi_get_version_q(char*, IO_pointers_t IO);
