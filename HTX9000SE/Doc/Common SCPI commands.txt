@@ -1,0 +1,47 @@
+Command Structure
+
+CURRent <value>
+SOURce:CURRent <value>
+///SOURce:CURRent:TRIG <value>
+
+CURRent:RANGe:LOW <value>
+SOURce:CURRent:RANGe:LOW <value>
+///SOURce:CURRent:TRIG:RANGe:LOW <value>
+
+CURRent:RANGe:HIGH <value>
+SOURce:CURRent:RANGe:HIGH <value>
+///SOURce:CURRent:TRIG:RANGe:HIGH <value>
+
+CALibrate:BOArdrev <value>
+CALibrate:DATA?
+
+ERR?
+SYSTEM:RST:BTLOADER
+
+SOURce:CURRent:RANGe:LOW 22mA
+SOURce:CURRent:RANGe:HIGH 22mA
+
+SOURce:CURRent:RANGe:LOW 5A
+SOURce:CURRent:RANGe:HIGH 1uA
+
+CALibrate:DATE 2/8/2013
+CAL:OUTP:CURR:DAC:RANG:HI 65535
+
+CALibrate:OUTP:CURRENT:DAC:RANGE:HI 65535
+CALibrate:OUTP:CURRENT:VALUE:RANGE:HI 2.499962A
+
+CALibrate:OUTP:CURRENT:DAC:RANGE:LO 65535
+CALibrate:OUTP:CURRENT:VALUE:RANGE:LO 24.99962mA
+
+CALibrate:DATE <value>
+CALibrate:DATA?
+
+CONTrast <value> (store contrast value in EEPROM)
+
+x:x:x:x:x:x:x:x:x:x:x:x:x:x:x:x:x:x:x:x
+
+1:2:3:4:5:6:7:8:9:0:1:2:3:4:5:6:7:8:9:0
+
+TEMPerature?
+
+MENU?

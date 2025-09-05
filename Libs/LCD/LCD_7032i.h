@@ -13,6 +13,7 @@
 #define LCD_7032i_H
 #include "USB_Load_Box_Board.h" // Super Weak
 #include "i2c_twi.h"
+#include <stdbool.h>
 /****************************************************************************
  *                    Commands                                              *
  ****************************************************************************/
@@ -34,7 +35,7 @@
 /****************************************************************************
  *                        Values                                            *
  ****************************************************************************/
-#define LCD_ADDRESS                 0x7C // [0x7C]    I²C LCD_Address
+#define LCD_ADDRESS                 0x7C // Datasheet value (It's really 7-bit 0x3C)
 
 #define BIASLO                      0x00 // Bias = 1/5
 #define BIASHI                      0x04 // Bias = 1/4
@@ -149,8 +150,6 @@
 #define CGRAM_CHAR6                 6
 #define CGRAM_CHAR7                 7
 
-#define ON                          0x01
-#define OFF                         0x00
 /****************************************************************************
  *                    Special Characters                                    *
  ****************************************************************************/

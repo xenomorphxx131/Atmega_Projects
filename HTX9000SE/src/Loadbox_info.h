@@ -1,0 +1,11 @@
+#ifndef LOADBOX_INFO_H_
+#define LOADBOX_INFO_H_
+
+/****************************************************************************
+*  VERSIONS and other Meta Data                                             *
+*****************************************************************************/
+    #define FIRMWARE_VERSION    "3.0.0"
+    #define COMPANY_NAME        "Hypertronix"
+    #define PROJECT_NAME        "HTX9000SE"
+
+#endif

@@ -3,12 +3,12 @@
 /**************************************************************************
 *  Create up a TWI I2C port with hyper mega global scope                  *
 ***************************************************************************/
-i2c_port_t  i2cport_1;
-uint16_t    Soft_LCD_NTC_Timer = 0;
-bool        time_to_update_LCD_NTC  = NO;
-bool        update_timers = NO;
-long        LCD_temperature_timer = 0;
-uint16_t    keypad_timer = 0;
+i2c_twi_port_t  i2cport;
+uint16_t        Soft_LCD_NTC_Timer = 0;
+bool            time_to_update_LCD_NTC = false;
+bool            update_timers = false;
+long            LCD_temperature_timer = 0;
+uint16_t        keypad_timer = 0;
 /**************************************************************************
 *                            Main                                         *
 ***************************************************************************/
@@ -17,83 +17,34 @@ int main(void)
 /**************************************************************************
 *  Create data structures                                                 *
 ***************************************************************************/
-    static FILE         USB_stream;                        // Create the USB Stream data
-    static FILE         LCD_stream;                        // Create the LCD Stream data
-    IO_pointers_t       IO;                                // Create the passable IO pointer
-    char                str_in[MAX_IN_STR_LEN+1] = "";    // Incoming string
-    int                 str_len = 0;                    // Length of incoming string
-    scpi_commands_P_t   commands_P[COMMAND_ARRAY_SIZE];    // Create the SCPI command array
-    int                 command_count;                    // Used to check that commands were counted properly
+    static FILE     USB_stream;             // Create the USB Stream data
+    static FILE     LCD_stream;             // Create the LCD Stream data
+    IO_pointers_t   IO;                     // Create the passable IO pointer
     CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USB_stream);
     fdev_setup_stream(&LCD_stream, LCD_Put_Char, NULL, _FDEV_SETUP_WRITE);
-//    static FILE LCD_stream = FDEV_SETUP_STREAM(LCD_Put_Char, NULL, _FDEV_SETUP_WRITE);
-//    to use this format, comment out the line "static FILE LCD_stream";
+//    static FILE LCD_stream = FDEV_SETUP_STREAM(LCD_Put_Char, NULL, _FDEV_SETUP_WRITE); // To use this format, comment out the line "static FILE LCD_stream";
 /**************************************************************************
 *  Assign values to data structures                                       *
 ***************************************************************************/
-    IO.USB_stream = &USB_stream;                                    // Assign the USB stream field
-    IO.LCD_stream = &LCD_stream;                                    // Assign the LCD stream field
-    IO.I2C_port1 = &i2cport_1;                                      // Assign the I2C stream field
-    i2cport_1.sdaport = &SDAPORT;                                   // Assign the SDAPORT field
-    i2cport_1.sclport = &SCLPORT;                                   // Assign the SCLPORT field
-    i2cport_1.sdaddr = &SDADDR;                                     // Assign the SDADDR field
-    i2cport_1.sclddr = &SCLDDR;                                     // Assign the SCLDDR field
-    i2cport_1.sdapin = &SDAPIN;                                     // Assign the SDAPIN field
-    i2cport_1.sclpin = &SCLPIN;                                     // Assign the SCLPIN field
-    i2cport_1.sda = SDA;                                            // Assign the SDA field
-    i2cport_1.scl = SCL;                                            // Assign the SCL field
-    i2cport_1.br = 25;                                              // Assign the bit rate field - SCL frequency = (CPU Clock frequency)/(16 + 2*BR * 4^PS)
-    i2cport_1.ps = 0;                                               // Note: TWBR should be 10 or higher if the TWI operates in Master mode. If TWBR is lower
-                                                                    // than 10, the Master may produce an incorrect output on SDA and SCL for the reminder
-                                                                    // of the byte. The problem occurs when operating the TWI in Master mode, sending
-                                                                    // Start + SLA + R/W to a Slave (a Slave does not need to be connected to the bus for
-                                                                    // the condition to happen).
-    SetupHardware();                                                // Initialize ports, pins and timers
-    _delay_ms(512);                                                 // Help USB get recognized on reset
-    USB_Init();                                                     // LUFA stuff
-    CDC_init();                                                     // LUFA stuff
-    sei();                                                          // Enable interrupts
-    i2cTwiInit(IO.I2C_port1);                                       // Initialize I2C TWI Port
-    LCD_Init();                                                     // Initialize the LCD display. Requires an already setup I2C port.
-    command_count = Setup_ScpiCommandsArray_Loadbox_P (commands_P); // Build the command array (mostly pointers to PROGMEM)
-    // This is an error message if the command count isn't right
-    if (command_count != COMMAND_ARRAY_SIZE)
-    {
-        LCD_Clear();
-        LCD_Home();
-        scpi_prStr_P(PSTR("Array Size "), IO.LCD_stream);
-        fprintf(IO.LCD_stream, "%d", command_count);
-    }
-    scpi_set_dac(0, IO.I2C_port1);  // Added 4/9/2019 by FL: if load box is delivering current when micro is reset,
-                                    // then when firmware boots up, the load box is still delivering current (DAC not reset)
-                                    // even though the display reads zero current, which is misleading.
-    setup_icons();                                                  // Send the H, L and lock icons to the screen
-    Run_Intro_Screen(IO);                                           // Splash Screen on LCD
-    // fprintf(IO.USB_stream, "%s\r\n", "987mR654321A.0uB");           //Use in conjunction with the key monitor in touchpad.c
-    for (EVER)
-    {
-        process_USB();
-        scpi_process_input(str_in, &str_len, commands_P, IO);
-        process_keypad(IO);                                         // IO here only needed for debug.
-        acquire_command(IO);
-        process_soft_timers(IO);
-    }
-} // END main()
-/****************************************************************************
-*  LCD_Put_Char is a wrapper to bundle the I2C port argument                *
-*  so that a single argument function can be passed to the stream handler   *
-*****************************************************************************/
-int LCD_Put_Char (char the_char, FILE *stream)
-{
-        LCD_Display_Char(the_char);
-        return 0;
-}
-/****************************************************************************
- *            SetupHardware                                                    *
- *        Configures the board hardware and chip peripherals                    *
- ***************************************************************************/
- void SetupHardware(void)
-{
+    IO.USB_stream = &USB_stream;                    // Assign the USB stream field
+    IO.LCD_stream = &LCD_stream;                    // Assign the LCD stream field
+    IO.I2C_port = &i2cport;                         // Assign the I2C stream field
+    i2cport.sdaport = &SDAPORT;                     // Assign the SDAPORT field
+    i2cport.sclport = &SCLPORT;                     // Assign the SCLPORT field
+    i2cport.sdaddr = &SDADDR;                       // Assign the SDADDR field
+    i2cport.sclddr = &SCLDDR;                       // Assign the SCLDDR field
+    i2cport.sdapin = &SDAPIN;                       // Assign the SDAPIN field
+    i2cport.sclpin = &SCLPIN;                       // Assign the SCLPIN field
+    i2cport.sda = SDA;                              // Assign the SDA field
+    i2cport.scl = SCL;                              // Assign the SCL field
+    i2cport.twbr = 25;                              // Assign the bit rate field - SCL frequency = (CPU Clock frequency)/(16 + 2*TWBR * 4^TWPS)
+    i2cport.twps = 0;                               // Note: TWBR should be 10 or higher if the TWI operates in Master mode. If TWBR is lower
+                                                    // than 10, the Master may produce an incorrect output on SDA and SCL for the reminder
+                                                    // of the byte. The problem occurs when operating the TWI in Master mode, sending
+                                                    // Start + SLA + R/W to a Slave (a Slave does not need to be connected to the bus for
+                                                    // the condition to happen).
+    // SetupHardware();                             // Initialize ports, pins and timers
+    
     CLKPR =_BV(CLKPCE);                             // Enable CLK prescaler change (CLKPCE)
     CLKPR = 0;                                      // Change CLK prescaler to divide by 1 (CLKPS[3..0])
     MCUSR &= ~_BV(WDRF);                            // Clear watchdog bit
@@ -148,22 +99,48 @@ int LCD_Put_Char (char the_char, FILE *stream)
                             (0 << ADPS1)    |       // ADC Clock Divider
                             (0 << ADPS0);           // Setting just ADPS2 high gives /16: 62.5kHz, 2us/bit, ~27uS conversion
     ADCSRB                = NTC_ADC_INPUTB;         // makes up the rest of the MUX[5:0] value.
-} // END SetupHardware()
+    
+    
+    
+    _delay_ms(512);                                 // Help USB get recognized on reset
+    USB_Init();                                     // LUFA stuff
+    CDC_init();                                     // LUFA stuff
+    sei();                                          // Enable interrupts
+    i2cTwiInit(IO.I2C_port);                        // Initialize I2C TWI Port
+    LCD_Init();                                     // Initialize the LCD display. Requires an already setup I2C port.
+    SCPI_Node_t *command_array[MAX_SCPI_NODES];     // Allocate the command array
+    setup_scpi_commands(command_array);         // Populate the command array
+    scpi_set_dac(0);                                // Added 4/9/2019 by FL: if load box is delivering current when micro is reset,
+                                                    // then when firmware boots up, the load box is still delivering current (DAC not reset)
+                                                    // even though the display reads zero current, which is misleading.
+    setup_icons();                                  // Send the H, L and lock icons to the screen
+    Run_Intro_Screen(IO);                           // Splash Screen on LCD
+    // fprintf(IO.USB_stream, "%s\r\n", "987mR654321A.0uB"); //Use in conjunction with the key monitor in touchpad.c
+    while (true)
+    {
+        process_USB();
+        process_scpi_input(command_array, IO);         // scpi_process_input(str_in, &str_len, commands_P, IO);
+        process_keypad(IO);
+        acquire_command(IO);
+        process_soft_timers(IO);
+    }
+}
+/****************************************************************************
+*  LCD_Put_Char is a wrapper to bundle the I2C port argument                *
+*  so that a single argument function can be passed to the stream handler   *
+*****************************************************************************/
+int LCD_Put_Char(char the_char, FILE *stream)
+{
+        LCD_Display_Char(the_char);
+        return 0;
+}
 /****************************************************************************
 *    Interrupt Service Routine for Timer 0 256us-OVF tdiv = 1us/tick        * Somehow about 1ms/cycle???
 *****************************************************************************/
 ISR(TIMER0_OVF_vect)
-{update_timers = YES;}
-/****************************************************************************
-*                                                                           *
-*****************************************************************************/
-void clear_keypad_timer()
-{keypad_timer = 0;}
-/****************************************************************************
-*                                                                           *
-*****************************************************************************/
-long get_keypad_timer()
-{return keypad_timer;}
+{
+    update_timers = true;
+}
 /****************************************************************************
 *                                                                           *
 *****************************************************************************/
@@ -173,9 +150,8 @@ void process_soft_timers(IO_pointers_t IO)
     {
         keypad_timer++;
         LCD_temperature_timer++;
-        update_timers = NO;
+        update_timers = false;
     }
-
     if (LCD_temperature_timer > INT_CYCLES_PER_LCD_NTC_UPDATE)
     {  
         if (!get_entry_mode_screen_active())
@@ -183,36 +159,3 @@ void process_soft_timers(IO_pointers_t IO)
         LCD_temperature_timer = 0;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

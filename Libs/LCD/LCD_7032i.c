@@ -1,9 +1,8 @@
-/*
- * LCD_7032i.h
- *
- * Created: 7/1/2012 10:06:56 AM
- *  Author: Steve
- */ 
+/****************************************************************************
+ *                                                                          *
+ *  LCD Driver                                                              *
+ *                                                                          *
+ ****************************************************************************/
 
 #include "LCD_7032i.h"
 /****************************************************************************
@@ -123,7 +122,7 @@ void CGRAM_Setup(uint8_t cgram_chars[8][8])
     i2cPutbyte(COMMAND);
     i2cPutbyte(SET_CGRAM_ADDRESS);                                                                              //Set CGRAM LCD_ADDRESS to 0x00
     STOP();
-    
+
     START();
     i2cPutbyte(LCD_ADDRESS);
     i2cPutbyte(DATA);
@@ -149,9 +148,7 @@ void LCD_Init()
     i2cPutbyte(CONTRAST_LO | CONTRAST_LOW_VALUE_7);
     i2cPutbyte(COMPOUND_COMMAND);
     i2cPutbyte(FOLLOWER_CONTROL | FOLLOWER_ON | FOLLOWER_RATIO_5);      // Just won't acknowledge this command!
-    // Follower Control needs a 200ms delay!!!!!!
-    for (long j = 0 ; j < 15e3 ; j++) // This comes out to 209ms
-        asm volatile("nop");
+    _delay_ms(200);  // Follower Control needs a 200ms delay!!!!!!
     i2cPutbyte(COMPOUND_COMMAND);
     i2cPutbyte(DISPLAY_MODE | DISPLAY_ENABLE | CURSOR_OFF | CURSOR_BLINK_OFF);
     i2cPutbyte(COMPOUND_COMMAND);
@@ -167,8 +164,8 @@ void LCD_Init()
  ****************************************************************************/
 void LCD_Backlight(uint8_t backlight_setting)
 {
-    if (backlight_setting == ON)
-            LCD_LED_PORT |= LCD_LED;
+    if (backlight_setting == true)
+        LCD_LED_PORT |= LCD_LED;
     else    
-            LCD_LED_PORT &= ~LCD_LED;
+        LCD_LED_PORT &= ~LCD_LED;
 }

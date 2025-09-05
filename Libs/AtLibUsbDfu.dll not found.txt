@@ -1,0 +1,2 @@
+From the Device manager find the unknown USB device of the device waiting to be flashed.
+Update its driver from the Devicemanager by searching for a driver in C:\ProgramFiles(x86)\Atmel\Flip 3.4.7

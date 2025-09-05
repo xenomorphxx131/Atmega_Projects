@@ -114,13 +114,9 @@ OBJDIR = .
 
 # Path to Libraries
 LIB_PATH = ../../Libs
-OLD_LIB_PATH = ./Libs
 
 # Path to the LUFA library
 LUFA_PATH = $(LIB_PATH)/LUFA
-
-# Path to I2C Library
-# I2C_PATH = $(OLD_LIB_PATH)/I2C
 
 # Path to USB Library
 USB_PATH = $(LIB_PATH)/USB
@@ -128,17 +124,11 @@ USB_PATH = $(LIB_PATH)/USB
 # Path to USB Library
 LCD_PATH = $(LIB_PATH)/LCD
 
-# Path to LCD Library
-LCD_PATH = $(LIB_PATH)/LCD
+# Path to SCPI Library
+SCPI_PATH = $(LIB_PATH)/SCPI
 
 # Path to THERMISTOR Library
 THERMISTOR_PATH = $(LIB_PATH)/THERMISTOR
-
-# Path to TOUCHPAD Library
-TOUCHPAD_PATH = $(LIB_PATH)/TOUCHPAD
-
-# Path to LCD Manager Library
-LCDMANAGER_PATH = $(LIB_PATH)/LCDMANAGER
 
 # Path to BOOTLOADER Library
 BOOTLOADER_PATH = $(LIB_PATH)/BOOTLOADER
@@ -155,18 +145,18 @@ include $(LUFA_PATH)/LUFA/makefile
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c \
-    scpi.c \
-    i2c_twi.c \
+    touchpad.c \
     Descriptors.c \
+    lcd_manager.c \
     Loadbox_scpi.c \
     $(LUFA_SRC_USB) \
     $(LUFA_SRC_USBCLASS) \
+    $(LCD_PATH)/i2c_twi.c \
     $(LCD_PATH)/LCD_7032i.c \
     $(USB_PATH)/process_USB.c \
-    $(TOUCHPAD_PATH)/touchpad.c \
+    $(SCPI_PATH)/scpi_parser.c \
     $(THERMISTOR_PATH)/thermistor.c \
-    $(BOOTLOADER_PATH)/bootloader.c \
-    $(LCDMANAGER_PATH)/lcd_manager.c
+    $(BOOTLOADER_PATH)/bootloader.c
 
 # List C++ source files here. (C dependencies are automatically generated.)
 CPPSRC =
@@ -198,11 +188,9 @@ DEBUG = dwarf-2
 EXTRAINCDIRS = $(LUFA_PATH)/
 EXTRAINCDIRS += $(LCD_PATH)/
 EXTRAINCDIRS += $(USB_PATH)/
+EXTRAINCDIRS += $(SCPI_PATH)/
 EXTRAINCDIRS += $(THERMISTOR_PATH)/
-EXTRAINCDIRS += $(TOUCHPAD_PATH) /
-EXTRAINCDIRS += $(LCDMANAGER_PATH) /
 EXTRAINCDIRS += $(BOOTLOADER_PATH)
-EXTRAINCDIRS += $(SCPI_PATH)
 
 # Compiler flag to set the C Standard level.
 #     c89   = "ANSI" C

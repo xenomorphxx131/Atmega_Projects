@@ -2,14 +2,6 @@
 
 bool entry_mode_screen_active = 0;
 /****************************************************************************
- *    Replace with a good soft timer!!!!!                                     *
- ***************************************************************************/
-void delay_100us(uint16_t delay)
-{uint16_t i,j;
-    for ( i = 0 ; i < delay ; i++ )
-          for (j = 0 ; j < 100 ; j++) asm volatile("nop");
-}
-/****************************************************************************
  *    Setup Icons                                                           *
  ****************************************************************************/
 void setup_icons()
@@ -66,18 +58,27 @@ void Run_Intro_Screen (IO_pointers_t IO)
     LCD_Set_Position(2, 16);
     scpi_prStr_P(PSTR("   HTX-9000SE   "), IO.LCD_stream);
     for (time = 0; time <= 129 ; time++)                            // Duty Cycles 1/255 - 1/1
-    {    increment = time >> 5;                                     // Increase by 3%/Step
+    {   
+        increment = time >> 5;                                     // Increase by 3%/Step
         if (increment == 0) increment = 1;
         duty_cycle += increment;                                    // Fade back light on expo
         if (duty_cycle > 255) duty_cycle = 255;
-        LCD_Backlight(OFF);    delay_100us(255 - duty_cycle);       // Time for 1 cycle = 25.5ms
-        LCD_Backlight(ON);    delay_100us(duty_cycle);
+        LCD_Backlight(false);
+        _delay_ms((255 - duty_cycle)*0.05);
+        LCD_Backlight(true);
+        _delay_ms(duty_cycle*0.05);
     }
-    for (uint16_t i = 1; i <= 10000 ; i++)
+    /**********************************************************************************
+    * Splash Screen Dwell                                                             *
+    ***********************************************************************************/
+    for (uint16_t i = 1; i <= 20000 ; i++)
     {
-        delay_100us(10);
+        _delay_ms(0.5);
         process_USB();
     }
+    /**********************************************************************************
+    * Splash Screen Left Shift                                                        *
+    ***********************************************************************************/
     for (uint8_t i = 0; i <= 15 ; i++)
     {
         LCD_Display_Shift_Right();                                  // Slide screen out from right to left
@@ -93,9 +94,9 @@ void setup_entry_mode_screen(IO_pointers_t IO)
     LCD_Set_Position(1, 0);
     scpi_prStr_P(PSTR("Desired Current:"), IO.LCD_stream);
     LCD_Set_Position(2, 0);
-    LCD_Cursor(ON);
+    LCD_Cursor(true);
 
-    set_entry_mode_screen_active(YES);
+    set_entry_mode_screen_active(true);
 }
 /****************************************************************************
  *    set_entry_mode_screen_active                                          *
@@ -116,7 +117,7 @@ bool get_entry_mode_screen_active()
 *****************************************************************************/
 void draw_status_screen(double current, double temperature, bool locked, bool range, IO_pointers_t IO)
 {
-    LCD_Cursor(OFF);
+    LCD_Cursor(false);
     LCD_Clear();
     LCD_Home();
     if (locked)
@@ -132,37 +133,44 @@ void draw_status_screen(double current, double temperature, bool locked, bool ra
         scpi_prStr_P(PSTR("A"), IO.LCD_stream);
     }
     else if (current >= 100e-3)
-    {   current = current * 1e3;
+    {
+        current = current * 1e3;
         fprintf(IO.LCD_stream, "%5.2f", current);
         scpi_prStr_P(PSTR("mA"), IO.LCD_stream);
     }
     else if (current >= 10e-3)
-    {   current = current * 1e3;
+    {
+        current = current * 1e3;
         fprintf(IO.LCD_stream, "%5.3f", current);
         scpi_prStr_P(PSTR("mA"), IO.LCD_stream);
     }
     else if (current >= 1e-3)
-    {   current = current * 1e3;
+    {
+        current = current * 1e3;
         fprintf(IO.LCD_stream, "%5.4f", current);
         scpi_prStr_P(PSTR("mA"), IO.LCD_stream);
     }
     else if (current >= 100e-6)
-    {   current = current * 1e6;
+    {
+        current = current * 1e6;
         fprintf(IO.LCD_stream, "%5.2f", current);
         scpi_prStr_P(PSTR("uA"), IO.LCD_stream);
     }
     else if (current >= 10e-6)
-    {   current = current * 1e6;
+    {
+        current = current * 1e6;
         fprintf(IO.LCD_stream, "%5.3f", current);
         scpi_prStr_P(PSTR("uA"), IO.LCD_stream);
     }
     else if (current >= 1e-6)
-    {   current = current * 1e6;
+    {
+        current = current * 1e6;
         fprintf(IO.LCD_stream, "%5.4f", current);
         scpi_prStr_P(PSTR("uA"), IO.LCD_stream);
     }
     else // if (current >= 0)
-    {   current = current * 1e9;
+    {
+        current = current * 1e9;
         fprintf(IO.LCD_stream, "%6.0f", current);
         scpi_prStr_P(PSTR("nA"), IO.LCD_stream);
     }

@@ -147,27 +147,4 @@
 #define ZERO                            (14 << 4)
 #define uA                              (15 << 4)
 
-#endif  // USB_LOAD_BOX_BOARD_H
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif

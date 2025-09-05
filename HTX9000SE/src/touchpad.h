@@ -2,15 +2,11 @@
 #define TOUCH_INTERRUPT_H_
 
 #include <Loadbox_scpi.h>
-#include "USB_Load_Box_Board.h"
-#include <util/delay.h>
 
-#define YES 1
-#define NO 0
 /****************************************************************************
 *                Timing    Constants                                            *
 *****************************************************************************/
-#define    LEAKAGE_TIME     10          // ?? How much time is this
+#define LEAKAGE_TIME        10          // ?? How much time is this
 #define DEBOUNCE_TIME       200         // ?? How much time is this
 #define KEYPAD_DWELL_TIME   60000       // Seems to be about 18 seconds.
 #define MAX_ENTRY_CHARS     12
@@ -25,9 +21,11 @@ typedef struct
     } touchpad_key_t;
 
 void kickoff_pin(uint8_t);
-bool process_key (touchpad_key_t*, IO_pointers_t);
+bool process_key(touchpad_key_t*, IO_pointers_t);
 void process_keypad(IO_pointers_t);
 void update_keys(void);
 void acquire_command(IO_pointers_t);
+void clear_keypad_timer(void);
+long get_keypad_timer(void);
 
 #endif

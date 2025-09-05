@@ -1,0 +1,40 @@
+import datetime, serial
+from PyICe import lab_core
+
+master = lab_core.master()
+loadbox = master.get_visa_serial_interface(f"COM{input('Enter COM Port Number: COM')}", timeout=1) 
+
+print("********************************************************************")
+print("               Old Values                                          *")
+print("********************************************************************")
+print("*IDN?:",                     loadbox.ask("*IDN?"))
+print("CAL DATE:               ",   loadbox.ask("CALibrate:DATE?"))
+print("CAL DAC HIGH SETTING:   ",   loadbox.ask("CALibrate:OUTPut:CURRent:DAC:RANGe:HIgh?"))
+print("CAL VALUE HIGH SETTING: ",   loadbox.ask("CALibrate:OUTPut:CURRent:VALue:RANGe:HIgh?"))
+print("CAL DAC LOW SETTING:    ",   loadbox.ask("CALibrate:OUTPut:CURRent:DAC:RANGe:LOw?"))
+print("CAL VALUE LOW SETTING:  ",   loadbox.ask("CALibrate:OUTPut:CURRent:VALue:RANGe:LOw?"))
+print("CAL LOW CHECKSUM:       ",   loadbox.ask("CALibrate:CHECKsum:LOw?"))
+print("CAL HIGH CHECKSUM:      ",   loadbox.ask("CALibrate:CHECKsum:HIgh?"))
+
+now = datetime.datetime.now()
+loadbox.write("CALibrate:BOArdrev D2")
+loadbox.write(f"CALibrate:DATE {now.strftime('%Y-%m-%d')}")
+loadbox.write("CALibrate:OUTPut:CURRent:DAC:RANGe:HI 65535")
+loadbox.write("CALibrate:OUTPut:CURRent:VALue:RANGe:HI 2.4998A")
+loadbox.write("CALibrate:OUTPut:CURRent:DAC:RANGe:LO 65535")
+loadbox.write("CALibrate:OUTPut:CURRent:VALue:RANGe:LO 24.9996mA")
+#loadbox.write("CALibrate:OUTPut:CURRent:VALue:RANGe:LO 24mA") # this causes the stuck touchpad
+
+print("********************************************************************")
+print("               New Values                                          *")
+print("********************************************************************")
+print("*IDN?:",                     loadbox.ask("*IDN?"))
+print("CAL DATE:               ",   loadbox.ask("CALibrate:DATE?"))
+print("CAL DAC HIGH SETTING:   ",   loadbox.ask("CALibrate:OUTPut:CURRent:DAC:RANGe:HIgh?"))
+print("CAL VALUE HIGH SETTING: ",   loadbox.ask("CALibrate:OUTPut:CURRent:VALue:RANGe:HIgh?"))
+print("CAL DAC LOW SETTING:    ",   loadbox.ask("CALibrate:OUTPut:CURRent:DAC:RANGe:LOw?"))
+print("CAL VALUE LOW SETTING:  ",   loadbox.ask("CALibrate:OUTPut:CURRent:VALue:RANGe:LOw?"))
+print("CAL LOW CHECKSUM:       ",   loadbox.ask("CALibrate:CHECKsum:LOw?"))
+print("CAL HIGH CHECKSUM:      ",   loadbox.ask("CALibrate:CHECKsum:HIgh?"))
+print("Setting Current to 1.2345A...")
+loadbox.write("curr 1.2345A")

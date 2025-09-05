@@ -2,22 +2,22 @@
 /****************************************************************************
 *                        Touch Pad Variables                                *
 *****************************************************************************/
-touchpad_key_t BACKSPACE_key = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t NINE_key      = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t EIGHT_key     = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t SEVEN_key     = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t mA_key        = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t HI_LO_key     = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t SIX_key       = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t FIVE_key      = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t FOUR_key      = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t THREE_key     = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t TWO_key       = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t ONE_key       = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t AMPS_key      = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t DECIMAL_key   = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t ZERO_key      = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t uA_key        = {.button_down = NO, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t BACKSPACE_key = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t NINE_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t EIGHT_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t SEVEN_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t mA_key        = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t HI_LO_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t SIX_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t FIVE_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t FOUR_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t THREE_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t TWO_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t ONE_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t AMPS_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t DECIMAL_key   = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t ZERO_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t uA_key        = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
 
 uint16_t    debounce_time           = 0;
 uint16_t    keypad_timeout          = 0;
@@ -25,9 +25,10 @@ uint8_t     key_pending_counter     = 0;
 uint8_t     hot_key                 = BACKSPACE;
 uint8_t     button                  = BACKSPACE;
 uint8_t     last_button             = uA;
-bool        key_pending             = NO;
-bool        key_encountered         = NO;
-bool        key_acknowledged        = YES;
+bool        key_pending             = false;
+bool        key_encountered         = false;
+bool        key_acknowledged        = true;
+extern      uint16_t keypad_timer;
 /****************************************************************************
 *    Kickoff the keypad key for timing measurement                          *
 *    Each button pin is high coming in here. First it is changed            *
@@ -46,10 +47,10 @@ void kickoff_pin(uint8_t button)
     cli();                                                  // Critical timing, no interrupts allowed here.
     TCCR1B               = 0;                               // Halt the timer before clearing.
     TCNT1                = 0;                               // Clear out the counter.
-    TCCR1B				 = _BV(CS10);                       // Enable Timer 1 prescaling /8 1us per tick. See Table 16-5 in the ATMEGA32u4 datasheet. 8MHz, 1us * 65,536 = 65.536ms overflow.
+    TCCR1B               = _BV(CS10);                       // Enable Timer 1 prescaling /8 1us per tick. See Table 16-5 in the ATMEGA32u4 datasheet. 8MHz, 1us * 65,536 = 65.536ms overflow.
     KEYPAD_SENSOR_PORT  &= ~KEYPAD_SENSOR_PIN;              // Set the value to 0, pin is now completely open with only the external 10M on the board to pull down.
     sei();                                                  // OK to allow interrupts after here, timer started and voltage on its way down to 0V.
-    key_pending          = YES;                             // Let the system know there is a measurement pending.
+    key_pending          = true;                            // Let the system know there is a measurement pending.
 }
 /****************************************************************************
 *            Routine for measuring the touch buttons                        *
@@ -75,7 +76,7 @@ bool process_key (touchpad_key_t *the_key, IO_pointers_t IO)
                                                                     //
     else                                                            // 
         the_key->leaktimer++;                                       // If the timer didn't trip on this cycle increment the slow leakage timer
-    key_pending = NO;                                               // Let the system know the key is done.
+    key_pending = false;                                            // Let the system know the key is done.
     
     return (current_falltime >  the_key->fastest_falltime * 1.15);   // 20% longer than fastest on record.
     
@@ -153,7 +154,7 @@ void process_keypad(IO_pointers_t IO)
         key_pending_counter++;                  // Empirically this only gets to about 4 max value
         if (key_pending_counter >= 100)
         {
-            key_pending = NO;                   // Kick start this bitch
+            key_pending = false;                   // Kick start this bitch
             key_pending_counter = 0;
         }
     }
@@ -165,22 +166,22 @@ void update_keys()
 {    
     if (!key_encountered)
         {
-        if      (BACKSPACE_key.button_down  )   {key_encountered = YES; key_acknowledged = NO; hot_key = BACKSPACE  ; keypad_timeout = 0;}
-        else if (NINE_key.button_down       )   {key_encountered = YES; key_acknowledged = NO; hot_key = NINE       ; keypad_timeout = 0;}
-        else if (EIGHT_key.button_down      )   {key_encountered = YES; key_acknowledged = NO; hot_key = EIGHT      ; keypad_timeout = 0;}
-        else if (SEVEN_key.button_down      )   {key_encountered = YES; key_acknowledged = NO; hot_key = SEVEN      ; keypad_timeout = 0;}
-        else if (mA_key.button_down         )   {key_encountered = YES; key_acknowledged = NO; hot_key = mA         ; keypad_timeout = 0;}
-        else if (HI_LO_key.button_down      )   {key_encountered = YES; key_acknowledged = NO; hot_key = HI_LO      ; keypad_timeout = 0;}
-        else if (SIX_key.button_down        )   {key_encountered = YES; key_acknowledged = NO; hot_key = SIX        ; keypad_timeout = 0;}
-        else if (FIVE_key.button_down       )   {key_encountered = YES; key_acknowledged = NO; hot_key = FIVE       ; keypad_timeout = 0;}
-        else if (FOUR_key.button_down       )   {key_encountered = YES; key_acknowledged = NO; hot_key = FOUR       ; keypad_timeout = 0;}
-        else if (THREE_key.button_down      )   {key_encountered = YES; key_acknowledged = NO; hot_key = THREE      ; keypad_timeout = 0;}
-        else if (TWO_key.button_down        )   {key_encountered = YES; key_acknowledged = NO; hot_key = TWO        ; keypad_timeout = 0;}
-        else if (ONE_key.button_down        )   {key_encountered = YES; key_acknowledged = NO; hot_key = ONE        ; keypad_timeout = 0;}
-        else if (AMPS_key.button_down       )   {key_encountered = YES; key_acknowledged = NO; hot_key = AMPS       ; keypad_timeout = 0;}
-        else if (DECIMAL_key.button_down    )   {key_encountered = YES; key_acknowledged = NO; hot_key = DECIMAL    ; keypad_timeout = 0;}
-        else if (ZERO_key.button_down       )   {key_encountered = YES; key_acknowledged = NO; hot_key = ZERO       ; keypad_timeout = 0;}
-        else if (uA_key.button_down         )   {key_encountered = YES; key_acknowledged = NO; hot_key = uA         ; keypad_timeout = 0;}
+        if      (BACKSPACE_key.button_down  )   {key_encountered = true; key_acknowledged = false; hot_key = BACKSPACE  ; keypad_timeout = 0;}
+        else if (NINE_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = NINE       ; keypad_timeout = 0;}
+        else if (EIGHT_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = EIGHT      ; keypad_timeout = 0;}
+        else if (SEVEN_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = SEVEN      ; keypad_timeout = 0;}
+        else if (mA_key.button_down         )   {key_encountered = true; key_acknowledged = false; hot_key = mA         ; keypad_timeout = 0;}
+        else if (HI_LO_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = HI_LO      ; keypad_timeout = 0;}
+        else if (SIX_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = SIX        ; keypad_timeout = 0;}
+        else if (FIVE_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = FIVE       ; keypad_timeout = 0;}
+        else if (FOUR_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = FOUR       ; keypad_timeout = 0;}
+        else if (THREE_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = THREE      ; keypad_timeout = 0;}
+        else if (TWO_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = TWO        ; keypad_timeout = 0;}
+        else if (ONE_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = ONE        ; keypad_timeout = 0;}
+        else if (AMPS_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = AMPS       ; keypad_timeout = 0;}
+        else if (DECIMAL_key.button_down    )   {key_encountered = true; key_acknowledged = false; hot_key = DECIMAL    ; keypad_timeout = 0;}
+        else if (ZERO_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = ZERO       ; keypad_timeout = 0;}
+        else if (uA_key.button_down         )   {key_encountered = true; key_acknowledged = false; hot_key = uA         ; keypad_timeout = 0;}
         }
     else if (debounce_time < 0xFFFE)
         debounce_time++;
@@ -204,7 +205,7 @@ void update_keys()
             uA_key.button_down)       
         )
     {
-        key_encountered = NO;
+        key_encountered = false;
         debounce_time   = 0;
     }
     if (keypad_timeout < 0xFFFE) keypad_timeout++;
@@ -215,7 +216,7 @@ void update_keys()
 void acquire_command(IO_pointers_t IO)
 {
     static char input_string[30];
-    static  uint8_t index = 0;
+    static uint8_t index = 0;
     if (!key_acknowledged)
     {
         if (hot_key == HI_LO)
@@ -247,16 +248,30 @@ void acquire_command(IO_pointers_t IO)
             if ((hot_key == AMPS) || (hot_key == mA) || (hot_key == uA))
             {
                 set_current_from_keypad(input_string, IO);
-                set_entry_mode_screen_active(NO);
+                set_entry_mode_screen_active(false);
                 index = 0;
             }
         }
-        key_acknowledged = YES;
+        key_acknowledged = true;
     }
     if (get_keypad_timer() > KEYPAD_DWELL_TIME)
     {
-        set_entry_mode_screen_active(NO);
+        set_entry_mode_screen_active(false);
         index = 0;
         clear_keypad_timer();  // Added on 4/9/2019 by FL. Untested, but if we don't have it, I think this if-clause will fire again the next time this function is called and we'll be forced out of the entry mode screen prematurely.
     }    
+}
+/****************************************************************************
+*                                                                           *
+*****************************************************************************/
+void clear_keypad_timer()
+{
+    keypad_timer = 0;
+}
+/****************************************************************************
+*                                                                           *
+*****************************************************************************/
+long get_keypad_timer()
+{
+    return keypad_timer;
 }
