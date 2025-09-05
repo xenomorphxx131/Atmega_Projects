@@ -670,13 +670,6 @@ uint16_t get_checksum(char * cal_date_string, char * val_cal_string, uint16_t da
     return checksum;
 }
 /**************************************************************************
-*  *OPC (Operation Complete Query) function                               *
-***************************************************************************/
-void st_OPC_q(char *arg, IO_pointers_t IO)
-{
-    fprintf(IO.USB_stream, "1\n");
-}
-/**************************************************************************
 *  VERSION? function                                                      *
 ***************************************************************************/
 void scpi_get_version_q(char *arg, IO_pointers_t IO)

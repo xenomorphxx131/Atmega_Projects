@@ -66,15 +66,16 @@ typedef struct
 /****************************************************************************
 * SCPI Core Functions                                                       *
 *****************************************************************************/
-    void process_scpi_input(SCPI_Node_t **scpi_nodes, IO_pointers_t IO);
-    void scpi_process_cmd_P( char* input_string, SCPI_Node_t **scpi_nodes, IO_pointers_t IO);
-    bool scpi_find_implied(SCPI_Node_t **current_command, char *token, SCPI_Node_t **scpi_nodes);
-    char *scpi_get_short_name(char *long_name);
-    void scpi_add_error_P(PGM_P error_message, char *bad_command, uint16_t max_length);
-    void scpi_add_error_too_few_parameters(void);
-    void scpi_prStr_P(PGM_P progmem_string, FILE *fstream);
-    void scpi_prStr_P_cr_nl(FILE *fstream);
-    void sys_error_q(char *arg, IO_pointers_t IO);
+void scpi_prStr_P_cr_nl(FILE *fstream);
+char *scpi_get_short_name(char *long_name);
+void st_OPC_q(char *arg, IO_pointers_t IO);
+void scpi_add_error_too_few_parameters(void);
+void sys_error_q(char *arg, IO_pointers_t IO);
+void scpi_prStr_P(PGM_P progmem_string, FILE *fstream);
+void process_scpi_input(SCPI_Node_t **scpi_nodes, IO_pointers_t IO);
+void scpi_add_error_P(PGM_P error_message, char *bad_command, uint16_t max_length);
+void scpi_process_cmd_P( char* input_string, SCPI_Node_t **scpi_nodes, IO_pointers_t IO);
+bool scpi_find_implied(SCPI_Node_t **current_command, char *token, SCPI_Node_t **scpi_nodes);
 /****************************************************************************
 *  Compulsory SCPI commands                                                 *
 *  see: http://www.ivifoundation.org/docs/scpi-99.pdf                       *

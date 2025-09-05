@@ -45,7 +45,10 @@ void process_scpi_input(SCPI_Node_t **scpi_nodes, IO_pointers_t IO)
                     input_string[++string_index] = NUL;                             // and terminate the string with the NUL character
                 }
                 else
-                    scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO.USB_stream);
+                {
+                    scpi_prStr_P(PSTR("ERROR command too long"), IO.USB_stream);
+                    scpi_prStr_P_cr_nl(IO.USB_stream);
+                }
             }
         }
         ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
@@ -231,7 +234,10 @@ void scpi_prStr_P(PGM_P progmem_string, FILE *fstream)
 void sys_error_q(char *arg, IO_pointers_t IO)
 {
     if (error_count == 0)
-        scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
+    {
+        scpi_prStr_P(PSTR("+0,\"No error\""), IO.USB_stream);
+        scpi_prStr_P_cr_nl(IO.USB_stream);
+    }
     else
     {
         scpi_prStr_P(error_log[error_count-1].error_message, IO.USB_stream);
@@ -239,6 +245,14 @@ void sys_error_q(char *arg, IO_pointers_t IO)
         scpi_prStr_P_cr_nl(IO.USB_stream);
         error_count--;
     }
+}
+/**************************************************************************
+*  *OPC (Operation Complete Query) function                               *
+***************************************************************************/
+void st_OPC_q(char *arg, IO_pointers_t IO)
+{
+    scpi_prStr_P(PSTR("1"), IO.USB_stream);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  SCPI Print New Line And Carriage Return                                  *

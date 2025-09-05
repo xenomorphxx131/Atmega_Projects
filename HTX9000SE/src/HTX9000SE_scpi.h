@@ -115,7 +115,6 @@ void        scpi_get_fan_state(char *arg, IO_pointers_t IO);
 double      Convert_Dietemp_To_DEGC(uint16_t NTC_ADC_Val);
 uint16_t    get_checksum(char *cal_date_string, char *val_cal_string, uint16_t dac_cal_value);
 void        update_screen(IO_pointers_t IO);
-void        st_OPC_q(char *arg, IO_pointers_t IO);
 void        sys_rst_btloader(char *arg, IO_pointers_t IO);
 void        scpi_get_version_q(char*, IO_pointers_t IO);
 
