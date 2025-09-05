@@ -1,17 +1,14 @@
-/*! \file LCD_manager.h \brief LCD Manager */
-//*****************************************************************************
-// File Name    : 'LCD_manager.h'
-// Title        : LCD manager
-// Author       : Steve Martin
-// Version      : 1
-// Target MCU   : Atmel AVR series
-//*****************************************************************************
-#ifndef LCD_MANAGER_H
-#define LCD_MANAGER_H
+/**************************************************************************
+*                                                                         *
+* HTX9000SE LCD Manager                                                   *
+*                                                                         *
+***************************************************************************/
+
+#ifndef HTX9000SE_LCD_MANAGER_H
+#define HTX9000SE_LCD_MANAGER_H
 
 #include <LCD_7032i.h>
 #include <scpi_parser.h> //  IO_pointers_t data type definition
-
 /**************************************************************************
 * GCRAM Defined Characters                                                *
 ***************************************************************************/

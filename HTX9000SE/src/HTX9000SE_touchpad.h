@@ -4,11 +4,10 @@
 *                                                                         *
 ***************************************************************************/
 
-#ifndef TOUCH_INTERRUPT_H_
-#define TOUCH_INTERRUPT_H_
+#ifndef HTX9000SE_TOUCHPAD_H
+#define HTX9000SE_TOUCHPAD_H
 
-#include <Loadbox_scpi.h>
-
+#include <HTX9000SE_scpi.h>
 /****************************************************************************
 *                Timing    Constants                                            *
 *****************************************************************************/

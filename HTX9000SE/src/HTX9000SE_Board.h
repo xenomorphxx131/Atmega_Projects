@@ -1,27 +1,15 @@
-/*
-     Copyright (C) Steve Martin, 2013.
-*/
+/**************************************************************************
+*                                                                         *
+* HTX9000SE Board                                                         *
+*                                                                         *
+***************************************************************************/
 
-/*! \file USB_Load_Box_Board.h \brief Define each of the pins for the USB load box project. */
-//*****************************************************************************
-//
-// File Name        : 'USB_Load_Box_Board.h'
-// Author            : Steve Martin - Copyright (C) 2013
-// Created            : 11/22/2011
-// Revised            : 1/27/2013
-// Version            : 1
-// Target MCU        : Atmel AVR series
-// Editor Tabs        : 4
-//
-//*****************************************************************************
-
-#ifndef USB_LOAD_BOX_BOARD_H
-#define USB_LOAD_BOX_BOARD_H
-
+#ifndef HTX9000SE_BOARD_H
+#define HTX9000SE_BOARD_H
 /****************************************************************************
 *                    I²C Addresses on the Board                             *
 *****************************************************************************/
-#define DISPLAYADDRS                    0x7C     // The LCD Display
+// #define DISPLAYADDRS                    0x7C     // The LCD Display
 /****************************************************************************
 *                    SPI Select Lines on the Board                          *
 *****************************************************************************/

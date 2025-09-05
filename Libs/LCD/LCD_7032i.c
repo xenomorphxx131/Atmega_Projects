@@ -148,7 +148,7 @@ void LCD_Init()
     i2cPutbyte(CONTRAST_LO | CONTRAST_LOW_VALUE_7);
     i2cPutbyte(COMPOUND_COMMAND);
     i2cPutbyte(FOLLOWER_CONTROL | FOLLOWER_ON | FOLLOWER_RATIO_5);      // Just won't acknowledge this command!
-    _delay_ms(200);  // Follower Control needs a 200ms delay!!!!!!
+    _delay_ms(200);                                                     // Follower Control needs a 200ms delay!!!!!!
     i2cPutbyte(COMPOUND_COMMAND);
     i2cPutbyte(DISPLAY_MODE | DISPLAY_ENABLE | CURSOR_OFF | CURSOR_BLINK_OFF);
     i2cPutbyte(COMPOUND_COMMAND);

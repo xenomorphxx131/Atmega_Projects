@@ -4,15 +4,15 @@
 *                                                                         *
 ***************************************************************************/
 
-#ifndef LOADBOX_SCPI_H_
-#define LOADBOX_SCPI_H_
+#ifndef HTX9000SE_SCPI_H
+#define HTX9000SE_SCPI_H
 
-#include <stdlib.h>         // atof()
-#include <lcd_manager.h>
+#include <stdlib.h> // Uses atof()
 #include <scpi_parser.h>
 #include <thermistor.h>
 #include <bootloader.h>
-#include "Loadbox_info.h"
+#include "HTX9000SE_info.h"
+#include "HTX9000SE_lcd_manager.h"
 /**************************************************************************
 * Define calibration string size                                          *
 ***************************************************************************/

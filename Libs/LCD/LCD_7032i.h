@@ -11,9 +11,10 @@
 //*****************************************************************************
 #ifndef LCD_7032i_H
 #define LCD_7032i_H
-#include "USB_Load_Box_Board.h" // Super Weak
 #include "i2c_twi.h"
 #include <stdbool.h>
+
+#include "HTX9000SE_Board.h" // Super Weak
 /****************************************************************************
  *                    Commands                                              *
  ****************************************************************************/
@@ -172,4 +173,4 @@
  void LCD_Init(void);
  void LCD_Backlight(uint8_t backlight_setting);
 
-#endif // LCD_7032i_H
+#endif

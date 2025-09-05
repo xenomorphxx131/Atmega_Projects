@@ -4,10 +4,10 @@
 *                                                                         *
 ***************************************************************************/
 
-#ifndef USBLOADBOX_H_
-#define USBLOADBOX_H_
+#ifndef HTX9000SE_H_
+#define HTX9000SE_H_
 
-    #include <touchpad.h>
+    #include "HTX9000SE_touchpad.h"
     #define INT_CYCLES_PER_LCD_NTC_UPDATE 9766  // at 256uS interrupt interval this is every 2.5 seconds
 
     int LCD_Put_Char(char the_char, FILE *stream);

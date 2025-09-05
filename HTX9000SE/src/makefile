@@ -105,7 +105,7 @@ F_USB = $(F_CPU)
 FORMAT = ihex
 
 # Target file name (without extension).
-TARGET = USB_Load_Box
+TARGET = HTX9000SE
 
 # Object files directory
 #     To put object files in current directory, use a dot (.), do NOT make
@@ -145,10 +145,10 @@ include $(LUFA_PATH)/LUFA/makefile
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c \
-    touchpad.c \
     Descriptors.c \
-    lcd_manager.c \
-    Loadbox_scpi.c \
+    HTX9000SE_scpi.c \
+    HTX9000SE_touchpad.c \
+    HTX9000SE_lcd_manager.c \
     $(LUFA_SRC_USB) \
     $(LUFA_SRC_USBCLASS) \
     $(LCD_PATH)/i2c_twi.c \

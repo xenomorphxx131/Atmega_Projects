@@ -3,21 +3,17 @@
 * SCPI Commands                                                           *
 *                                                                         *
 ***************************************************************************/
-#include "Loadbox_scpi.h"
 
-// EEPROM Hardware Revision
-uint8_t        EEMEM HARDWARE_REV[CAL_STRING_SIZE];
+#include "HTX9000SE_scpi.h"
 
-// EEPROM Calibration Date
-uint8_t        EEMEM CAL_DATE[CAL_STRING_SIZE];
-
-// EEPROM Calibration Data
-uint16_t EEMEM UPPER_RANGE_DAC_CAL_VALUE;
-uint16_t EEMEM LOWER_RANGE_DAC_CAL_VALUE;
-uint8_t EEMEM LOWER_RANGE_CAL_STRING[CAL_STRING_SIZE];
-uint8_t EEMEM UPPER_RANGE_CAL_STRING[CAL_STRING_SIZE];
-uint16_t EEMEM CALIBRATION_LO_CHECK_SUM;
-uint16_t EEMEM CALIBRATION_HI_CHECK_SUM;
+uint8_t     EEMEM HARDWARE_REV[CAL_STRING_SIZE];
+uint8_t     EEMEM CAL_DATE[CAL_STRING_SIZE];
+uint16_t    EEMEM UPPER_RANGE_DAC_CAL_VALUE;
+uint16_t    EEMEM LOWER_RANGE_DAC_CAL_VALUE;
+uint8_t     EEMEM LOWER_RANGE_CAL_STRING[CAL_STRING_SIZE];
+uint8_t     EEMEM UPPER_RANGE_CAL_STRING[CAL_STRING_SIZE];
+uint16_t    EEMEM CALIBRATION_LO_CHECK_SUM;
+uint16_t    EEMEM CALIBRATION_HI_CHECK_SUM;
 extern int error_count;
 bool fan_off_override = 0;
 char const DATE_ARG_TOO_LONG[] PROGMEM = "+10,\"ERR Date argument too long - max 15\"";
