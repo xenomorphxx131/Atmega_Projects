@@ -11,7 +11,7 @@
 //*****************************************************************************
 #ifndef LCD_7032i_H
 #define LCD_7032i_H
-#include "USB_Load_Box_Board.h"
+#include "USB_Load_Box_Board.h" // Super Weak
 #include "i2c_twi.h"
 /****************************************************************************
  *                    Commands                                              *
