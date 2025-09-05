@@ -1,15 +1,11 @@
 #ifndef I2C_TWI_H
 #define I2C_TWI_H
 
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <avr/io.h>
-#include <util/delay.h>	// Uses delay_us()
+#include <util/delay.h> // Uses delay_us()
 #include <util/twi.h>
-#define WRITE 0x00 		// I²C WRITE bit
-#define READ  0x01 		// I²C READ bit
-#define LAST  0x01 		// A flag for the last byte to NACK
+#define WRITE 0x00      // I²C WRITE bit
+#define READ  0x01      // I²C READ bit
+#define LAST  0x01      // A flag for the last byte to NACK
 #define MAX_ITER 10
 
 //                     CPU Freq 
@@ -41,11 +37,8 @@ typedef struct i2c_twi_node
   uint8_t twps;
 } i2c_twi_port_t;
 
-// functions
-
 char START2(void);
 char STOP2(void);
-
 void i2cTwiInit ( i2c_twi_port_t* );
 void i2cSetBusSpeed ( i2c_twi_port_t* );
 void disableTwi ( void );
