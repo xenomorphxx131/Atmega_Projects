@@ -7,11 +7,11 @@
 
 #ifndef THERMISTOR_H
 #define THERMISTOR_H
-#include <stdint.h>
+// #include <stdint.h>
 #include <avr/pgmspace.h>
 
 /****************************************************************************
- *			Function Declarations	 										*
+ *            Function Declarations                                         *
  ****************************************************************************/
-double		Convert_NTC_To_DEGC (uint16_t NTC_ADC_Val );
-#endif // THERMISTOR_H
+double Convert_NTC_To_DEGC (uint16_t NTC_ADC_Val);
+#endif
