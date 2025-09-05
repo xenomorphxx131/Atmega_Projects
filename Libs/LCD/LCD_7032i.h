@@ -1,20 +1,13 @@
-/*! \file LCD_7032i.h \brief Software I²C interface using port pins. */
-//*****************************************************************************
-// File Name    : 'LCD_7032i.h'
-// Title        : Software I²C interface using port pins
-// Author       : Steve Martin
-// Created      : 7/1/2012
-// Revised      : 7/1/2012
-// Version      : 1
-// Target MCU   : Atmel AVR series
-//
-//*****************************************************************************
+/****************************************************************************
+ *                                                                          *
+ *  LCD Driver                                                              *
+ *                                                                          *
+ ****************************************************************************/
 #ifndef LCD_7032i_H
 #define LCD_7032i_H
 #include "i2c_twi.h"
 #include <stdbool.h>
 
-#include "HTX9000SE_Board.h" // Super Weak
 /****************************************************************************
  *                    Commands                                              *
  ****************************************************************************/
@@ -161,16 +154,16 @@
 /****************************************************************************
  *            Function Declarations                                         *
  ****************************************************************************/
- void LCD_Display_Shift_Left(void);
- void LCD_Display_Shift_Right(void);
- void LCD_Clear(void);
- void LCD_Home(void);
- void LCD_Backspace(void);
- void LCD_Cursor(uint8_t);
- void LCD_Set_Position(uint8_t line_in, uint8_t position);
- void LCD_Display_Char(unsigned char the_char);
- void CGRAM_Setup(uint8_t cgram_chars[8][8]);
- void LCD_Init(void);
- void LCD_Backlight(uint8_t backlight_setting);
+void LCD_Init(void);
+void LCD_Home(void);
+void LCD_Clear(void);
+void LCD_Backspace(void);
+void LCD_Cursor(uint8_t);
+void LCD_Display_Shift_Left(void);
+void LCD_Display_Shift_Right(void);
+void LCD_Display_Char(unsigned char the_char);
+void CGRAM_Setup(uint8_t cgram_chars[8][8]);
+void LCD_Set_Position(uint8_t line_in, uint8_t position);
+void LCD_Backlight(volatile uint8_t *port, uint8_t pin, uint8_t backlight_setting);
 
 #endif

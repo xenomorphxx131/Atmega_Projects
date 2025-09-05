@@ -8,6 +8,8 @@
 #define HTX9000SE_H_
 
     #include "HTX9000SE_touchpad.h"
+    #include "HTX9000SE_board.h"
+
     #define INT_CYCLES_PER_LCD_NTC_UPDATE 9766  // at 256uS interrupt interval this is every 2.5 seconds
 
     int LCD_Put_Char(char the_char, FILE *stream);

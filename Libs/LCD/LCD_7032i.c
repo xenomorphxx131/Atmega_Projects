@@ -11,11 +11,11 @@
 void LCD_Display_Shift_Left()
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_0);
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_SCREEN | LEFT);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_0);
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_SCREEN | LEFT);
     STOP();
 }
 /****************************************************************************
@@ -24,11 +24,11 @@ void LCD_Display_Shift_Left()
 void LCD_Display_Shift_Right()
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_0);
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_SCREEN | RIGHT);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_0);
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_SCREEN | RIGHT);
     STOP();
 }
 /****************************************************************************
@@ -37,9 +37,9 @@ void LCD_Display_Shift_Right()
 void LCD_Clear()
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(CLEAR);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(CLEAR);
     STOP();
 }
 /****************************************************************************
@@ -61,17 +61,17 @@ void LCD_Home()
 void LCD_Backspace()
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_CURSOR | LEFT);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_CURSOR | LEFT);
     STOP();
     
     LCD_Display_Char(' ');  // Overwrite what's there but this will index pointer
     
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMMAND);    // So go back again.
-    i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_CURSOR | LEFT);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMMAND);    // So go back again.
+        i2cPutbyte(SHIFT_DISPLAY_OR_CURSOR | SHIFT_CURSOR | LEFT);
     STOP();
 }
 /****************************************************************************
@@ -80,9 +80,9 @@ void LCD_Backspace()
 void LCD_Cursor(uint8_t value)
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(DISPLAY_MODE | DISPLAY_ENABLE | (value ? CURSOR_ON : CURSOR_OFF)  | (value ? CURSOR_BLINK_ON : CURSOR_BLINK_OFF));
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(DISPLAY_MODE | DISPLAY_ENABLE | (value ? CURSOR_ON : CURSOR_OFF)  | (value ? CURSOR_BLINK_ON : CURSOR_BLINK_OFF));
     STOP();
 }
 /****************************************************************************
@@ -91,9 +91,9 @@ void LCD_Cursor(uint8_t value)
 void LCD_Set_Position(uint8_t line_in, uint8_t position)
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(SET_DDRAM_ADDRESS | ((line_in == 1) ? LINE1 : LINE2) | position);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(SET_DDRAM_ADDRESS | ((line_in == 1) ? LINE1 : LINE2) | position);
     STOP();
 }
 /****************************************************************************
@@ -102,9 +102,9 @@ void LCD_Set_Position(uint8_t line_in, uint8_t position)
 void LCD_Display_Char(unsigned char the_char)
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(DATA);
-    i2cPutbyte(the_char);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(DATA);
+        i2cPutbyte(the_char);
     STOP();
 }
 /****************************************************************************
@@ -116,19 +116,19 @@ void CGRAM_Setup(uint8_t cgram_chars[8][8])
     uint8_t    line_in_char = 0;
     
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_0);    //go to instruction table 0
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(SET_CGRAM_ADDRESS);                                                                              //Set CGRAM LCD_ADDRESS to 0x00
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_0);    //go to instruction table 0
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(SET_CGRAM_ADDRESS);                                                                              //Set CGRAM LCD_ADDRESS to 0x00
     STOP();
 
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(DATA);
-    for ( character = 0; character <= 7; character++)               //8 characters
-        for ( line_in_char = 0; line_in_char <= 7; line_in_char++)  //8 lines per character
-            i2cPutbyte(cgram_chars[character][line_in_char]);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(DATA);
+        for ( character = 0; character <= 7; character++)               //8 characters
+            for ( line_in_char = 0; line_in_char <= 7; line_in_char++)  //8 lines per character
+                i2cPutbyte(cgram_chars[character][line_in_char]);
     STOP();
 }
 /****************************************************************************
@@ -137,35 +137,32 @@ void CGRAM_Setup(uint8_t cgram_chars[8][8])
 void LCD_Init()
 {
     START();
-    i2cPutbyte(LCD_ADDRESS);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_1);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(BIAS_AND_OSCFREQ | BIASHI | OSCFREQ_183HZ);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(ICON_BOOST_AND_CONTRAST_HI | ICON_ON | BOOST_ON | CONTRAST_HI_VALUE_1);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(CONTRAST_LO | CONTRAST_LOW_VALUE_7);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(FOLLOWER_CONTROL | FOLLOWER_ON | FOLLOWER_RATIO_5);      // Just won't acknowledge this command!
-    _delay_ms(200);                                                     // Follower Control needs a 200ms delay!!!!!!
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(DISPLAY_MODE | DISPLAY_ENABLE | CURSOR_OFF | CURSOR_BLINK_OFF);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(CLEAR);
-    i2cPutbyte(COMPOUND_COMMAND);
-    i2cPutbyte(HOME);
-    i2cPutbyte(COMMAND);
-    i2cPutbyte(ENTRY_MODE | CURSOR_INCREMENT | DISPLAY_SHIFT_ENABLE);
+        i2cPutbyte(LCD_ADDRESS);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(FUNCTION_SET | EIGHT_BIT_MODE | DOUBLE_HEIGHT_OFF | NUMBER_OF_LINES_2 | INSTRUCTION_TABLE_1);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(BIAS_AND_OSCFREQ | BIASHI | OSCFREQ_183HZ);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(ICON_BOOST_AND_CONTRAST_HI | ICON_ON | BOOST_ON | CONTRAST_HI_VALUE_1);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(CONTRAST_LO | CONTRAST_LOW_VALUE_7);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(FOLLOWER_CONTROL | FOLLOWER_ON | FOLLOWER_RATIO_5);      // Just won't acknowledge this command!
+        _delay_ms(200);                                                     // Follower Control needs a 200ms delay!!!!!!
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(DISPLAY_MODE | DISPLAY_ENABLE | CURSOR_OFF | CURSOR_BLINK_OFF);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(CLEAR);
+        i2cPutbyte(COMPOUND_COMMAND);
+        i2cPutbyte(HOME);
+        i2cPutbyte(COMMAND);
+        i2cPutbyte(ENTRY_MODE | CURSOR_INCREMENT | DISPLAY_SHIFT_ENABLE);
     STOP();
 }
 /****************************************************************************
  *            Energize LCD Backlight                                        *
  ****************************************************************************/
-void LCD_Backlight(uint8_t backlight_setting)
+void LCD_Backlight(volatile uint8_t *port, uint8_t pin, uint8_t backlight_setting)
 {
-    if (backlight_setting == true)
-        LCD_LED_PORT |= LCD_LED;
-    else    
-        LCD_LED_PORT &= ~LCD_LED;
+    backlight_setting ? (*port |= pin) : (*port &= ~pin);
 }

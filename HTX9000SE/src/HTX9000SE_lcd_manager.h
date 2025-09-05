@@ -9,6 +9,7 @@
 
 #include <LCD_7032i.h>
 #include <scpi_parser.h> //  IO_pointers_t data type definition
+#include "HTX9000SE_board.h"
 /**************************************************************************
 * GCRAM Defined Characters                                                *
 ***************************************************************************/

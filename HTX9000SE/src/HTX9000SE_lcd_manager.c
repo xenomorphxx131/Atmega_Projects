@@ -47,7 +47,8 @@ void setup_icons()
  ****************************************************************************/
 void Run_Intro_Screen (IO_pointers_t IO)
 {
-    uint16_t duty_cycle = 0, increment = 0;
+    uint16_t duty_cycle = 0;
+    uint16_t increment = 0;
     uint8_t time = 0;
     LCD_Clear();
     LCD_Home();
@@ -64,13 +65,13 @@ void Run_Intro_Screen (IO_pointers_t IO)
     scpi_prStr_P(PSTR("   HTX-9000SE   "), IO.LCD_stream);
     for (time = 0; time <= 129 ; time++)                            // Duty Cycles 1/255 - 1/1
     {   
-        increment = time >> 5;                                     // Increase by 3%/Step
+        increment = time >> 5;                                      // Increase by 3%/Step
         if (increment == 0) increment = 1;
         duty_cycle += increment;                                    // Fade back light on expo
         if (duty_cycle > 255) duty_cycle = 255;
-        LCD_Backlight(false);
+        LCD_Backlight(&LCD_LED_PORT, LCD_LED, false);
         _delay_ms((255 - duty_cycle)*0.05);
-        LCD_Backlight(true);
+        LCD_Backlight(&LCD_LED_PORT, LCD_LED, true);
         _delay_ms(duty_cycle*0.05);
     }
     /**********************************************************************************

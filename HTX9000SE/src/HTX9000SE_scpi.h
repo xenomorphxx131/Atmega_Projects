@@ -12,6 +12,7 @@
 #include <thermistor.h>
 #include <bootloader.h>
 #include "HTX9000SE_info.h"
+#include "HTX9000SE_board.h"
 #include "HTX9000SE_lcd_manager.h"
 /**************************************************************************
 * Define calibration string size                                          *
