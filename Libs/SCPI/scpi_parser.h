@@ -72,9 +72,9 @@ typedef struct
     char *scpi_get_short_name(char *long_name);
     void scpi_add_error_P(PGM_P error_message, char *bad_command, uint16_t max_length);
     void scpi_add_error_too_few_parameters(void);
-    void scpi_prStr_P(PGM_P progmem_string, IO_pointers_t IO);
+    void scpi_prStr_P(PGM_P progmem_string, FILE *fstream);
+    void scpi_prStr_P_cr_nl(FILE *fstream);
     void sys_error_q(char *arg, IO_pointers_t IO);
-    void scpi_prStr_P_cr_nl(IO_pointers_t IO);
 /****************************************************************************
 *  Compulsory SCPI commands                                                 *
 *  see: http://www.ivifoundation.org/docs/scpi-99.pdf                       *

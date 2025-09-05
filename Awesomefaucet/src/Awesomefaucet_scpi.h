@@ -24,10 +24,10 @@
     void sys_rst_btloader(char *arg, IO_pointers_t IO);
     void scpi_get_version_q(char*, IO_pointers_t IO);
     void scpi_IDN_q(char *arg, IO_pointers_t IO);
-    void st_CLS(char *arg, IO_pointers_t IO);
-    void st_RST(char *arg, IO_pointers_t IO);
-    void st_TST(char *arg, IO_pointers_t IO);
-    void st_WAI(char *arg, IO_pointers_t IO);
+    // void st_CLS(char *arg, IO_pointers_t IO);
+    // void st_RST(char *arg, IO_pointers_t IO);
+    // void st_TST(char *arg, IO_pointers_t IO);
+    // void st_WAI(char *arg, IO_pointers_t IO);
     void debug(char *arg, IO_pointers_t IO);
     void scpi_get_range_q(char *arg, IO_pointers_t IO);
     void scpi_get_laserpower_q( char *arg, IO_pointers_t IO);

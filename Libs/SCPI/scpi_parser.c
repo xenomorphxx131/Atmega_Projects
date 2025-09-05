@@ -45,7 +45,7 @@ void process_scpi_input(SCPI_Node_t **scpi_nodes, IO_pointers_t IO)
                     input_string[++string_index] = NUL;                             // and terminate the string with the NUL character
                 }
                 else
-                    scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO);
+                    scpi_prStr_P(PSTR("ERROR command too long\r\n"), IO.USB_stream);
             }
         }
         ReceivedByte = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
@@ -214,14 +214,14 @@ void scpi_add_error_too_few_parameters()
 /****************************************************************************
 *  Prints a program memory string one char at a time to the terminal        *
 *****************************************************************************/
-void scpi_prStr_P(PGM_P progmem_string, IO_pointers_t IO)
+void scpi_prStr_P(PGM_P progmem_string, FILE *fstream)
 {
     uint16_t string_index=0;
     char the_char = pgm_read_byte(progmem_string);
 
     while (the_char != NUL)
     {
-        fputc(the_char, IO.USB_stream);
+        fputc(the_char, fstream);
         the_char = pgm_read_byte(&progmem_string[++string_index]);
     }
 }
@@ -231,19 +231,19 @@ void scpi_prStr_P(PGM_P progmem_string, IO_pointers_t IO)
 void sys_error_q(char *arg, IO_pointers_t IO)
 {
     if (error_count == 0)
-        scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO);
+        scpi_prStr_P(PSTR("+0,\"No error\"\r\n"), IO.USB_stream);
     else
     {
-        scpi_prStr_P(error_log[error_count-1].error_message, IO);
+        scpi_prStr_P(error_log[error_count-1].error_message, IO.USB_stream);
         fprintf(IO.USB_stream, "%s", error_log[error_count-1].entered_value);
-        scpi_prStr_P_cr_nl(IO);
+        scpi_prStr_P_cr_nl(IO.USB_stream);
         error_count--;
     }
 }
 /****************************************************************************
 *  SCPI Print New Line And Carriage Return                                  *
 *****************************************************************************/
-void scpi_prStr_P_cr_nl(IO_pointers_t IO)
+void scpi_prStr_P_cr_nl(FILE *fstream)
 {
-    scpi_prStr_P(PSTR("\r\n"), IO);
+    scpi_prStr_P(PSTR("\r\n"), fstream);
 }

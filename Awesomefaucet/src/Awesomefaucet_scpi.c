@@ -85,10 +85,10 @@ void setup_scpi_commands(SCPI_Node_t **command_array)
 /****************************************************************************
 *  *OPC (Operation Complete Query) function                                 *
 *****************************************************************************/
-void st_OPC_q ( char *arg, IO_pointers_t IO )
+void st_OPC_q (char *arg, IO_pointers_t IO)
 {
-    scpi_prStr_P(PSTR("1"), IO);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P(PSTR("1"), IO.USB_stream);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Write to the bootloader start address                                    *
@@ -100,62 +100,62 @@ void sys_rst_btloader(char *arg, IO_pointers_t IO)
 /****************************************************************************
 *  VERSION? function                                                        *
 *****************************************************************************/
-void scpi_get_version_q( char *arg, IO_pointers_t IO )
+void scpi_get_version_q(char *arg, IO_pointers_t IO)
 {
-    scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P(PSTR(FIRMWARE_VERSION),IO.USB_stream);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  *IDN? function                                                           *
 *****************************************************************************/
-void scpi_IDN_q( char *arg, IO_pointers_t IO )
+void scpi_IDN_q(char *arg, IO_pointers_t IO)
 {
-    scpi_prStr_P(PSTR(COMPANY_NAME), IO);
-    scpi_prStr_P(PSTR(" | "), IO);
-    scpi_prStr_P(PSTR(PROJECT_NAME), IO);
-    scpi_prStr_P(PSTR(" | "), IO);
-    scpi_prStr_P(PSTR("Firmware Revision: "), IO);
-    scpi_prStr_P(PSTR(FIRMWARE_VERSION), IO);
-    scpi_prStr_P(PSTR(" | "), IO);
-    scpi_prStr_P(PSTR("Sensor: "), IO);
-    scpi_prStr_P(PSTR(SENSOR), IO);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P(PSTR(COMPANY_NAME), IO.USB_stream);
+    scpi_prStr_P(PSTR(" | "), IO.USB_stream);
+    scpi_prStr_P(PSTR(PROJECT_NAME), IO.USB_stream);
+    scpi_prStr_P(PSTR(" | "), IO.USB_stream);
+    scpi_prStr_P(PSTR("Firmware Revision: "), IO.USB_stream);
+    scpi_prStr_P(PSTR(FIRMWARE_VERSION), IO.USB_stream);
+    scpi_prStr_P(PSTR(" | "), IO.USB_stream);
+    scpi_prStr_P(PSTR("Sensor: "), IO.USB_stream);
+    scpi_prStr_P(PSTR(SENSOR), IO.USB_stream);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  *CLS (Clear Status) function                                             *
 *****************************************************************************/
-void st_CLS( char *arg, IO_pointers_t IO ) {}
-/****************************************************************************
-*      On *RST call rt_open with "(@ALL)" to open all relays                *
-*****************************************************************************/
-void st_RST( char *arg, IO_pointers_t IO ) {}
-/****************************************************************************
-*   *TST                                                                    *
-*****************************************************************************/
-void st_TST( char *arg, IO_pointers_t IO ) {}
-/****************************************************************************
-*  *WAI (Wait To Complete) function                                         *
-*****************************************************************************/
-void st_WAI( char *arg, IO_pointers_t IO ) {}
+// void st_CLS(char *arg, IO_pointers_t IO) {}
+// /****************************************************************************
+// *      On *RST call rt_open with "(@ALL)" to open all relays                *
+// *****************************************************************************/
+// void st_RST(char *arg, IO_pointers_t IO) {}
+// /****************************************************************************
+// *   *TST                                                                    *
+// *****************************************************************************/
+// void st_TST(char *arg, IO_pointers_t IO) {}
+// /****************************************************************************
+// *  *WAI (Wait To Complete) function                                         *
+// *****************************************************************************/
+// void st_WAI(char *arg, IO_pointers_t IO) {}
 /****************************************************************************
 *  SCPI Get Range Reading                                                   *
 *****************************************************************************/
 void scpi_get_range_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%fmm", (double)distance_mm);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  SCPI Get Range and Max Range Readings - comma separated                  *
 *****************************************************************************/
 void scpi_get_range_and_maxrange_q(char *arg, IO_pointers_t IO)
 {
-    scpi_prStr_P(PSTR("{\"RANGE\":"), IO);
+    scpi_prStr_P(PSTR("{\"RANGE\":"), IO.USB_stream);
     fprintf(IO.USB_stream, "%f", (double)distance_mm);
-    scpi_prStr_P(PSTR(",\"MAXRANGE\":"), IO);
+    scpi_prStr_P(PSTR(",\"MAXRANGE\":"), IO.USB_stream);
     fprintf(IO.USB_stream, "%f", (double)max_distance_mm);
-    scpi_prStr_P(PSTR("}"), IO);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P(PSTR("}"), IO.USB_stream);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Clear Port                                                               *
@@ -194,7 +194,7 @@ void scpi_water_off (char *arg, IO_pointers_t IO)
 void scpi_water_state_q (char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%u", WATERPORT & WATER ? 1 : 0);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Store Laser Power to EEPROM                                              *
@@ -229,7 +229,7 @@ void retrieve_laserpower_setting()
 void scpi_get_laserpower_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%u", laser_power);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Store Water Debounce Timeout to EEPROM                                   *
@@ -260,15 +260,15 @@ void retrieve_water_debounce_timeout()
 /****************************************************************************
 *  SCPI Water Debounce Timeout Setting                                      *
 *****************************************************************************/
-void scpi_get_water_debounce_timeout_q( char *arg, IO_pointers_t IO )
+void scpi_get_water_debounce_timeout_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%u", water_debounce_timeout);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Store IIR Factor Alpha to EEPROM                                         *
 *****************************************************************************/
-void scpi_set_IIR_alpha( char *arg, IO_pointers_t IO )
+void scpi_set_IIR_alpha(char *arg, IO_pointers_t IO)
 {
     char *endptr;
     float value;
@@ -295,15 +295,15 @@ void retrieve_IIR_alpha()
 /****************************************************************************
 *  SCPI Print IIR Factor Alpha                                              *
 *****************************************************************************/
-void scpi_get_IIR_alpha_q( char *arg, IO_pointers_t IO )
+void scpi_get_IIR_alpha_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%f", (double)iir_alpha);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Store IIR Factor Beta to EEPROM                                          *
 *****************************************************************************/
-void scpi_set_IIR_beta( char *arg, IO_pointers_t IO )
+void scpi_set_IIR_beta(char *arg, IO_pointers_t IO)
 {
     char *endptr;
     float value;
@@ -330,15 +330,15 @@ void retrieve_IIR_beta()
 /****************************************************************************
 *  SCPI Print IIR Factor Beta                                               *
 *****************************************************************************/
-void scpi_get_IIR_beta_q( char *arg, IO_pointers_t IO )
+void scpi_get_IIR_beta_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%f", (double)iir_beta);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Store Detection Threshold to EEPROM                                      *
 *****************************************************************************/
-void scpi_set_detection_threshold_mm( char *arg, IO_pointers_t IO )
+void scpi_set_detection_threshold_mm(char *arg, IO_pointers_t IO)
 {
     char *endptr;
     float value;
@@ -364,15 +364,15 @@ void retrieve_detection_threshold_mm()
 /****************************************************************************
 *  SCPI Detection Threshold                                                 *
 *****************************************************************************/
-void scpi_get_detection_threshold_mm_q( char *arg, IO_pointers_t IO )
+void scpi_get_detection_threshold_mm_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%f", (double)threshold_mm);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Store Max Distance Leakage to EEPROM                                     *
 *****************************************************************************/
-void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO )
+void scpi_set_max_distance_leakage(char *arg, IO_pointers_t IO)
 {
     char *endptr;
     float value;
@@ -390,7 +390,7 @@ void scpi_set_max_distance_leakage( char *arg, IO_pointers_t IO )
 /****************************************************************************
 *  Store Max Distance Reset Rate to EEPROM                                  *
 *****************************************************************************/
-void scpi_set_max_distance_mm_reset_rate( char *arg, IO_pointers_t IO )
+void scpi_set_max_distance_mm_reset_rate(char *arg, IO_pointers_t IO)
 {
     char *endptr;
     float value;
@@ -424,10 +424,10 @@ void retrieve_max_distance_leakage()
 /******************************************************************************
 *  SCPI Print Max Distance Leakage Factor                                     *
 *******************************************************************************/
-void scpi_get_max_distance_leakage_q( char *arg, IO_pointers_t IO )
+void scpi_get_max_distance_leakage_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%f", (double)max_distance_leakage);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Compute IIR Gain                                                         *
@@ -439,43 +439,43 @@ void compute_iir_gain()
 /****************************************************************************
 *  SCPI Get IIR Gain                                                        *
 *****************************************************************************/
-void scpi_get_IIR_gain_q( char *arg, IO_pointers_t IO )
+void scpi_get_IIR_gain_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%f", (double)iir_gain);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  SCPI Get Blackbox Distances (mm)                                         *
 *****************************************************************************/
-void scpi_get_blackbox_q( char *arg, IO_pointers_t IO )
+void scpi_get_blackbox_q(char *arg, IO_pointers_t IO)
 {
-    scpi_prStr_P(PSTR("{\"RECORDING\": "), IO);
+    scpi_prStr_P(PSTR("{\"RECORDING\": "), IO.USB_stream);
     fprintf(IO.USB_stream, "%s, ", record ? "True" : "False");
-    scpi_prStr_P(PSTR("\"DISTANCE_mm\": ["), IO);
+    scpi_prStr_P(PSTR("\"DISTANCE_mm\": ["), IO.USB_stream);
     uint8_t count = 0;
     while (count < BLACKBOX_BUFFER_SIZE)
         fprintf(IO.USB_stream, "%.3f,", (double)blackbox[(blackbox_index + count++) & (BLACKBOX_BUFFER_SIZE - 1)].distance_mm);
-    scpi_prStr_P(PSTR("], \"MAX_DISTANCE_mm\": ["), IO);
+    scpi_prStr_P(PSTR("], \"MAX_DISTANCE_mm\": ["), IO.USB_stream);
     count = 0;
     while (count < BLACKBOX_BUFFER_SIZE)
         fprintf(IO.USB_stream, "%.3f,", (double)blackbox[(blackbox_index + count++) & (BLACKBOX_BUFFER_SIZE - 1)].max_distance_mm);
-    scpi_prStr_P(PSTR("]}"), IO);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P(PSTR("]}"), IO.USB_stream);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Record (enable Black Box)                                                *
 *****************************************************************************/
-void scpi_record( char *arg, IO_pointers_t IO )
+void scpi_record(char *arg, IO_pointers_t IO)
 {
     record = true;
 }
 /****************************************************************************
 *  SCPI Get Max Distance Reset Rate                                         *
 *****************************************************************************/
-void scpi_get_max_distance_mm_reset_rate_q( char *arg, IO_pointers_t IO )
+void scpi_get_max_distance_mm_reset_rate_q(char *arg, IO_pointers_t IO)
 {
     fprintf(IO.USB_stream, "%f", (double)max_distance_mm_reset_rate);
-    scpi_prStr_P_cr_nl(IO);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
 }
 /****************************************************************************
 *  Debug function                                                           *
