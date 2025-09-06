@@ -49,8 +49,6 @@ int main(void)
                                                     // of the byte. The problem occurs when operating the TWI in Master mode, sending
                                                     // Start + SLA + R/W to a Slave (a Slave does not need to be connected to the bus for
                                                     // the condition to happen).
-    // SetupHardware();                             // Initialize ports, pins and timers
-    
     CLKPR =_BV(CLKPCE);                             // Enable CLK prescaler change (CLKPCE)
     CLKPR = 0;                                      // Change CLK prescaler to divide by 1 (CLKPS[3..0])
     MCUSR &= ~_BV(WDRF);                            // Clear watchdog bit
