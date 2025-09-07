@@ -66,6 +66,7 @@ void setup_scpi_commands(SCPI_Node_t **command_array)
     SCPI(MX_DIST_MM_RST_RATEq, "MAX_DISTANCE_MM_RESET_RATE?",  &GET,       &scpi_get_max_distance_mm_reset_rate_q, false);
     SCPI(RANGESq,              "RANGE_AND_MAXRANGE?",          &GET,       &scpi_get_range_and_maxrange_q,         false);
     SCPI(WATER_STATEq,         "WATER_STATE?",                 &GET,       &scpi_water_state_q,                    false);
+    SCPI(SENSOR_TYPEq,         "SENSOR_TYPE?",                 &GET,       &scpi_get_sensor_q,                     false);
 
     SCPI(SET,              "SET",                              NULL,       NULL,                                   false);
     SCPI(IIR_ALPHA,            "IIR_ALPHA",                    &SET,       &scpi_set_IIR_alpha,                    false);
@@ -110,6 +111,14 @@ void scpi_IDN_q(char *arg, IO_pointers_t IO)
     scpi_prStr_P(PSTR(FIRMWARE_VERSION), IO.USB_stream);
     scpi_prStr_P(PSTR(" | "), IO.USB_stream);
     scpi_prStr_P(PSTR("Sensor: "), IO.USB_stream);
+    scpi_prStr_P(PSTR(SENSOR), IO.USB_stream);
+    scpi_prStr_P_cr_nl(IO.USB_stream);
+}
+/****************************************************************************
+*  Get Sensor Type                                                          *
+*****************************************************************************/
+void scpi_get_sensor_q(char *arg, IO_pointers_t IO)
+{
     scpi_prStr_P(PSTR(SENSOR), IO.USB_stream);
     scpi_prStr_P_cr_nl(IO.USB_stream);
 }
