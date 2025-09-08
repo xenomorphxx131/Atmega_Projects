@@ -114,21 +114,21 @@
 #define KEYPAD_ADDR                     PINF
 #define KEYPAD_DISABLE                  0
 
-#define BACKSPACE                       (0  << 4) // These are just enums but shifting
-#define NINE                            (1  << 4) // also allows their use as a direct
-#define EIGHT                           (2  << 4) // input to the keyboard scanning mux
-#define SEVEN                           (3  << 4) // hardware.
-#define mA                              (4  << 4)
-#define HI_LO                           (5  << 4) // Specifically, they now line up with the
-#define SIX                             (6  << 4) // port pins.
-#define FIVE                            (7  << 4)
-#define FOUR                            (8  << 4)
-#define THREE                           (9  << 4)
-#define TWO                             (10 << 4)
-#define ONE                             (11 << 4)
-#define AMPS                            (12 << 4)
-#define DECIMAL                         (13 << 4)
-#define ZERO                            (14 << 4)
-#define uA                              (15 << 4)
+#define KEYPAD_BACKSPACE                (0  << 4) // These are just enums but shifting
+#define KEYPAD_NINE                     (1  << 4) // also allows their use as a direct
+#define KEYPAD_EIGHT                    (2  << 4) // input to the keyboard scanning mux
+#define KEYPAD_SEVEN                    (3  << 4) // hardware.
+#define KEYPAD_mA                       (4  << 4)
+#define KEYPAD_HI_LO                    (5  << 4) // Specifically, they now line up with the
+#define KEYPAD_SIX                      (6  << 4) // port pins.
+#define KEYPAD_FIVE                     (7  << 4)
+#define KEYPAD_FOUR                     (8  << 4)
+#define KEYPAD_THREE                    (9  << 4)
+#define KEYPAD_TWO                      (10 << 4)
+#define KEYPAD_ONE                      (11 << 4)
+#define KEYPAD_AMPS                     (12 << 4)
+#define KEYPAD_DECIMAL                  (13 << 4)
+#define KEYPAD_ZERO                     (14 << 4)
+#define KEYPAD_uA                       (15 << 4)
 
 #endif

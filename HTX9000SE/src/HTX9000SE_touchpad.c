@@ -8,43 +8,43 @@
 /****************************************************************************
 *                        Touch Pad Variables                                *
 *****************************************************************************/
-touchpad_key_t BACKSPACE_key = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t NINE_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t EIGHT_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t SEVEN_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t mA_key        = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t HI_LO_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t SIX_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t FIVE_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t FOUR_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t THREE_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t TWO_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t ONE_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t AMPS_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t DECIMAL_key   = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t ZERO_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
-touchpad_key_t uA_key        = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static BACKSPACE_key = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static NINE_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static EIGHT_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static SEVEN_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static mA_key        = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static HI_LO_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static SIX_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static FIVE_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static FOUR_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static THREE_key     = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static TWO_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static ONE_key       = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static AMPS_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static DECIMAL_key   = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static ZERO_key      = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
+touchpad_key_t static uA_key        = {.button_down = false, .fastest_falltime = FALLTIME_INIT, .leaktimer = 0};
 
-uint16_t    debounce_time           = 0;
-uint16_t    keypad_timeout          = 0;
-uint8_t     key_pending_counter     = 0;
-uint8_t     hot_key                 = BACKSPACE;
-uint8_t     button                  = BACKSPACE;
-uint8_t     last_button             = uA;
-bool        key_pending             = false;
-bool        key_encountered         = false;
-bool        key_acknowledged        = true;
+uint16_t    static debounce_time        = 0;
+uint16_t    static keypad_timeout       = 0;
+uint8_t     static key_pending_counter  = 0;
+uint8_t     static hot_key              = KEYPAD_uA;
+uint8_t     static this_key             = KEYPAD_uA;
+uint8_t     static last_key             = KEYPAD_uA;
+bool        static key_pending          = false;
+bool        static key_encountered      = false;
+bool        static key_acknowledged     = true;
 extern      uint16_t keypad_timer;
 /****************************************************************************
 *    Kickoff the keypad key for timing measurement                          *
-*    Each button pin is high coming in here. First it is changed            *
+*    Each this_key pin is high coming in here. First it is changed            *
 *    from low-Z hi to pull-up resistor mode with the DDR bit. Then with the *
 *    "PORTx" bit it's set to pure hi Z.                                     *
 *****************************************************************************/
-void kickoff_pin(uint8_t button)
+void kickoff_pin(uint8_t this_key)
 {
     KEYPAD_ADDR_PORT    &= 0x0F;                            // Switch the key address selection to 'this' key.
-    KEYPAD_ADDR_PORT    |= button;                          // The wiring is such that the bits line up with PF7,PF6,PF5,PF4 and the button enums are pre-shifted to line up.
+    KEYPAD_ADDR_PORT    |= this_key;                          // The wiring is such that the bits line up with PF7,PF6,PF5,PF4 and the this_key enums are pre-shifted to line up.
     KEYPAD_SENSOR_PORT  |= KEYPAD_SENSOR_PIN;               // Set the pin to high (resistive pull up only after this line).
     KEYPAD_SENSOR_DDR   |= KEYPAD_SENSOR_PIN;               // Set the direction to output (low impedance pull up).
     _delay_us(100);
@@ -58,15 +58,18 @@ void kickoff_pin(uint8_t button)
     sei();                                                  // OK to allow interrupts after here, timer started and voltage on its way down to 0V.
     key_pending          = true;                            // Let the system know there is a measurement pending.
 }
-/****************************************************************************
-*            Routine for measuring the touch buttons                        *
-*    Each button pin is high coming in here. First it is changed            *
-*    from low-Z hi to pull-up resistor mode with the DDR bit. Then with the *
-*    "PORTx" bit it's set to pure hi Z.                                     *
-*****************************************************************************/
+/************************************************************************************
+*           Routine for Measuring the Touch Buttons                                 *
+*           ---------------------------------------                                 *
+*                                                                                   *
+*    Each this_key pin is high coming in here.                                      *
+*    First it is changed from low-Z hi to pull-up resistor mode with the DDR bit.   *
+*    Then with the "PORTx" bit it's set to pure hi Z.                               *
+*************************************************************************************/
 bool process_key (touchpad_key_t *the_key, IO_pointers_t IO)
 {   
     uint16_t current_falltime;                                      //
+
     TCCR1B = 0;                                                     // Found the fall time (capacitance), halt the timer.
     current_falltime = ICR1;                                        // Pick up the value that is presumably ready
     // if (( current_falltime < the_key->fastest_falltime ) &&      // Check if this falltime is the fastest on record and
@@ -97,43 +100,45 @@ void process_keypad(IO_pointers_t IO)
 {
     if (!key_pending)           // if there's no key currently pending kick one off.
     {
-        if      (last_button == BACKSPACE) {button = NINE       ;kickoff_pin(NINE     );}
-        else if (last_button == NINE     ) {button = EIGHT      ;kickoff_pin(EIGHT    );}
-        else if (last_button == EIGHT    ) {button = SEVEN      ;kickoff_pin(SEVEN    );}
-        else if (last_button == SEVEN    ) {button = mA         ;kickoff_pin(mA       );}
-        else if (last_button == mA       ) {button = HI_LO      ;kickoff_pin(HI_LO    );}
-        else if (last_button == HI_LO    ) {button = SIX        ;kickoff_pin(SIX      );}
-        else if (last_button == SIX      ) {button = FIVE       ;kickoff_pin(FIVE     );}
-        else if (last_button == FIVE     ) {button = FOUR       ;kickoff_pin(FOUR     );}
-        else if (last_button == FOUR     ) {button = THREE      ;kickoff_pin(THREE    );}
-        else if (last_button == THREE    ) {button = TWO        ;kickoff_pin(TWO      );}
-        else if (last_button == TWO      ) {button = ONE        ;kickoff_pin(ONE      );}
-        else if (last_button == ONE      ) {button = AMPS       ;kickoff_pin(AMPS     );}
-        else if (last_button == AMPS     ) {button = DECIMAL    ;kickoff_pin(DECIMAL  );}
-        else if (last_button == DECIMAL  ) {button = ZERO       ;kickoff_pin(ZERO     );}
-        else if (last_button == ZERO     ) {button = uA         ;kickoff_pin(uA       );}
-        else if (last_button == uA       ) {button = BACKSPACE  ;kickoff_pin(BACKSPACE);}
-        last_button = button;
+        // if      (last_key == KEYPAD_BACKSPACE) {this_key = NINE       ;kickoff_pin(KEYPAD_NINE     );}
+        // else if (last_key == KEYPAD_NINE     ) {this_key = EIGHT      ;kickoff_pin(KEYPAD_EIGHT    );}
+        // else if (last_key == KEYPAD_EIGHT    ) {this_key = SEVEN      ;kickoff_pin(KEYPAD_SEVEN    );}
+        // else if (last_key == KEYPAD_SEVEN    ) {this_key = mA         ;kickoff_pin(KEYPAD_mA       );}
+        // else if (last_key == KEYPAD_mA       ) {this_key = HI_LO      ;kickoff_pin(KEYPAD_HI_LO    );}
+        // else if (last_key == KEYPAD_HI_LO    ) {this_key = SIX        ;kickoff_pin(KEYPAD_SIX      );}
+        // else if (last_key == KEYPAD_SIX      ) {this_key = FIVE       ;kickoff_pin(KEYPAD_FIVE     );}
+        // else if (last_key == KEYPAD_FIVE     ) {this_key = FOUR       ;kickoff_pin(KEYPAD_FOUR     );}
+        // else if (last_key == KEYPAD_FOUR     ) {this_key = THREE      ;kickoff_pin(KEYPAD_THREE    );}
+        // else if (last_key == KEYPAD_THREE    ) {this_key = TWO        ;kickoff_pin(KEYPAD_TWO      );}
+        // else if (last_key == KEYPAD_TWO      ) {this_key = ONE        ;kickoff_pin(KEYPAD_ONE      );}
+        // else if (last_key == KEYPAD_ONE      ) {this_key = AMPS       ;kickoff_pin(KEYPAD_AMPS     );}
+        // else if (last_key == KEYPAD_AMPS     ) {this_key = DECIMAL    ;kickoff_pin(KEYPAD_DECIMAL  );}
+        // else if (last_key == KEYPAD_DECIMAL  ) {this_key = ZERO       ;kickoff_pin(KEYPAD_ZERO     );}
+        // else if (last_key == KEYPAD_ZERO     ) {this_key = uA         ;kickoff_pin(KEYPAD_uA       );}
+        // else if (last_key == KEYPAD_uA       ) {this_key = KEYPAD_BACKSPACE  ;kickoff_pin(KEYPAD_BACKSPACE);}
+        if (last_key == KEYPAD_uA       ) {this_key = KEYPAD_uA  ;kickoff_pin(KEYPAD_uA);}
+        last_key = this_key;
         key_pending_counter = 0;
     }
     else if (TIFR1 & _BV(ICF1)) // There is a pending key, see if has completed its fall through VTH yet.
     {                           // ICF1 in TIFR1 is the input capture event flag, something happened.
-        if      (button == NINE      ) {NINE_key.button_down      = process_key(&NINE_key     , IO);}
-        else if (button == EIGHT     ) {EIGHT_key.button_down     = process_key(&EIGHT_key    , IO);}
-        else if (button == SEVEN     ) {SEVEN_key.button_down     = process_key(&SEVEN_key    , IO);}
-        else if (button == mA        ) {mA_key.button_down        = process_key(&mA_key       , IO);}
-        else if (button == HI_LO     ) {HI_LO_key.button_down     = process_key(&HI_LO_key    , IO);}
-        else if (button == SIX       ) {SIX_key.button_down       = process_key(&SIX_key      , IO);}
-        else if (button == FIVE      ) {FIVE_key.button_down      = process_key(&FIVE_key     , IO);}
-        else if (button == FOUR      ) {FOUR_key.button_down      = process_key(&FOUR_key     , IO);}
-        else if (button == THREE     ) {THREE_key.button_down     = process_key(&THREE_key    , IO);}
-        else if (button == TWO       ) {TWO_key.button_down       = process_key(&TWO_key      , IO);}
-        else if (button == ONE       ) {ONE_key.button_down       = process_key(&ONE_key      , IO);}
-        else if (button == AMPS      ) {AMPS_key.button_down      = process_key(&AMPS_key     , IO);}
-        else if (button == DECIMAL   ) {DECIMAL_key.button_down   = process_key(&DECIMAL_key  , IO);}
-        else if (button == ZERO      ) {ZERO_key.button_down      = process_key(&ZERO_key     , IO);}
-        else if (button == uA        ) {uA_key.button_down        = process_key(&uA_key       , IO);}
-        else if (button == BACKSPACE ) {BACKSPACE_key.button_down = process_key(&BACKSPACE_key, IO);}
+        // if      (this_key == KEYPAD_NINE      ) {NINE_key.button_down      = process_key(&NINE_key     , IO);}
+        // else if (this_key == KEYPAD_EIGHT     ) {EIGHT_key.button_down     = process_key(&EIGHT_key    , IO);}
+        // else if (this_key == KEYPAD_SEVEN     ) {SEVEN_key.button_down     = process_key(&SEVEN_key    , IO);}
+        // else if (this_key == KEYPAD_mA        ) {mA_key.button_down        = process_key(&mA_key       , IO);}
+        // else if (this_key == KEYPAD_HI_LO     ) {HI_LO_key.button_down     = process_key(&HI_LO_key    , IO);}
+        // else if (this_key == KEYPAD_SIX       ) {SIX_key.button_down       = process_key(&SIX_key      , IO);}
+        // else if (this_key == KEYPAD_FIVE      ) {FIVE_key.button_down      = process_key(&FIVE_key     , IO);}
+        // else if (this_key == KEYPAD_FOUR      ) {FOUR_key.button_down      = process_key(&FOUR_key     , IO);}
+        // else if (this_key == KEYPAD_THREE     ) {THREE_key.button_down     = process_key(&THREE_key    , IO);}
+        // else if (this_key == KEYPAD_TWO       ) {TWO_key.button_down       = process_key(&TWO_key      , IO);}
+        // else if (this_key == KEYPAD_ONE       ) {ONE_key.button_down       = process_key(&ONE_key      , IO);}
+        // else if (this_key == KEYPAD_AMPS      ) {AMPS_key.button_down      = process_key(&AMPS_key     , IO);}
+        // else if (this_key == KEYPAD_DECIMAL   ) {DECIMAL_key.button_down   = process_key(&DECIMAL_key  , IO);}
+        // else if (this_key == KEYPAD_ZERO      ) {ZERO_key.button_down      = process_key(&ZERO_key     , IO);}
+        // else if (this_key == KEYPAD_uA        ) {uA_key.button_down        = process_key(&uA_key       , IO);}
+        if (this_key == KEYPAD_uA        ) {uA_key.button_down        = process_key(&uA_key       , IO);}
+        // else if (this_key == KEYPAD_BACKSPACE ) {BACKSPACE_key.button_down = process_key(&BACKSPACE_key, IO);}
         
         // This code is handy if the kaypad is ill behaved. It's a key monitor printed to the terminal. Needs IO passed in here.
         // if (NINE_key.button_down     ) fprintf(IO.USB_stream, "%s", "X"); else fprintf(IO.USB_stream, "%s", " ");
@@ -150,9 +155,9 @@ void process_keypad(IO_pointers_t IO)
         // if (AMPS_key.button_down     ) fprintf(IO.USB_stream, "%s", "X"); else fprintf(IO.USB_stream, "%s", " ");
         // if (DECIMAL_key.button_down  ) fprintf(IO.USB_stream, "%s", "X"); else fprintf(IO.USB_stream, "%s", " ");
         // if (ZERO_key.button_down     ) fprintf(IO.USB_stream, "%s", "X"); else fprintf(IO.USB_stream, "%s", " ");
-        // if (uA_key.button_down       ) fprintf(IO.USB_stream, "%s", "X"); else fprintf(IO.USB_stream, "%s", " ");
+        if (uA_key.button_down       ) fprintf(IO.USB_stream, "%s", "uA"); else fprintf(IO.USB_stream, "%s", "  ");
         // if (BACKSPACE_key.button_down) fprintf(IO.USB_stream, "%s", "X"); else fprintf(IO.USB_stream, "%s", " ");
-        // fprintf(IO.USB_stream, ":%d \r", (button >> 4));
+        // fprintf(IO.USB_stream, ":%d \r", (this_key >> 4));
         update_keys();                          // Deal with these keys.
     }
     else                                        // We must be waiting for a key to finish.
@@ -171,29 +176,30 @@ void process_keypad(IO_pointers_t IO)
 void update_keys()
 {    
     if (!key_encountered)
-        {
-        if      (BACKSPACE_key.button_down  )   {key_encountered = true; key_acknowledged = false; hot_key = BACKSPACE  ; keypad_timeout = 0;}
-        else if (NINE_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = NINE       ; keypad_timeout = 0;}
-        else if (EIGHT_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = EIGHT      ; keypad_timeout = 0;}
-        else if (SEVEN_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = SEVEN      ; keypad_timeout = 0;}
-        else if (mA_key.button_down         )   {key_encountered = true; key_acknowledged = false; hot_key = mA         ; keypad_timeout = 0;}
-        else if (HI_LO_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = HI_LO      ; keypad_timeout = 0;}
-        else if (SIX_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = SIX        ; keypad_timeout = 0;}
-        else if (FIVE_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = FIVE       ; keypad_timeout = 0;}
-        else if (FOUR_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = FOUR       ; keypad_timeout = 0;}
-        else if (THREE_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = THREE      ; keypad_timeout = 0;}
-        else if (TWO_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = TWO        ; keypad_timeout = 0;}
-        else if (ONE_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = ONE        ; keypad_timeout = 0;}
-        else if (AMPS_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = AMPS       ; keypad_timeout = 0;}
-        else if (DECIMAL_key.button_down    )   {key_encountered = true; key_acknowledged = false; hot_key = DECIMAL    ; keypad_timeout = 0;}
-        else if (ZERO_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = ZERO       ; keypad_timeout = 0;}
-        else if (uA_key.button_down         )   {key_encountered = true; key_acknowledged = false; hot_key = uA         ; keypad_timeout = 0;}
-        }
-    else if (debounce_time < 0xFFFE)
+    {
+        if      (BACKSPACE_key.button_down  )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_BACKSPACE  ; keypad_timeout = 0;}
+        else if (NINE_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_NINE       ; keypad_timeout = 0;}
+        else if (EIGHT_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_EIGHT      ; keypad_timeout = 0;}
+        else if (SEVEN_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_SEVEN      ; keypad_timeout = 0;}
+        else if (mA_key.button_down         )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_mA         ; keypad_timeout = 0;}
+        else if (HI_LO_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_HI_LO      ; keypad_timeout = 0;}
+        else if (SIX_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_SIX        ; keypad_timeout = 0;}
+        else if (FIVE_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_FIVE       ; keypad_timeout = 0;}
+        else if (FOUR_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_FOUR       ; keypad_timeout = 0;}
+        else if (THREE_key.button_down      )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_THREE      ; keypad_timeout = 0;}
+        else if (TWO_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_TWO        ; keypad_timeout = 0;}
+        else if (ONE_key.button_down        )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_ONE        ; keypad_timeout = 0;}
+        else if (AMPS_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_AMPS       ; keypad_timeout = 0;}
+        else if (DECIMAL_key.button_down    )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_DECIMAL    ; keypad_timeout = 0;}
+        else if (ZERO_key.button_down       )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_ZERO       ; keypad_timeout = 0;}
+        else if (uA_key.button_down         )   {key_encountered = true; key_acknowledged = false; hot_key = KEYPAD_uA         ; keypad_timeout = 0;}
+    }
+    else if (debounce_time != 0xFFFF)
         debounce_time++;
 
-    if ((debounce_time > DEBOUNCE_TIME) &&
-        !(  BACKSPACE_key.button_down   ||
+    if (
+         (debounce_time > DEBOUNCE_TIME)&&
+        !(BACKSPACE_key.button_down     ||
             NINE_key.button_down        ||
             EIGHT_key.button_down       ||
             SEVEN_key.button_down       ||
@@ -214,7 +220,7 @@ void update_keys()
         key_encountered = false;
         debounce_time   = 0;
     }
-    if (keypad_timeout < 0xFFFE) keypad_timeout++;
+    if (keypad_timeout != 0xFFFF) keypad_timeout++;
 }
 /**************************************************************************
 *  Respond to gesture command.                                            *
@@ -223,9 +229,10 @@ void acquire_command(IO_pointers_t IO)
 {
     static char input_string[30];
     static uint8_t index = 0;
+
     if (!key_acknowledged)
     {
-        if (hot_key == HI_LO)
+        if (hot_key == KEYPAD_HI_LO)
             toggle_range(IO);
         else
         {
@@ -233,25 +240,25 @@ void acquire_command(IO_pointers_t IO)
                 setup_entry_mode_screen(IO);
             switch(hot_key)
             {   
-                case BACKSPACE: if (index >  0)               {LCD_Backspace();                        index--;                    }  break;
-                case ZERO     : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "0");      input_string[index++] = '0';}  break;
-                case ONE      : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "1");      input_string[index++] = '1';}  break;
-                case TWO      : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "2");      input_string[index++] = '2';}  break;
-                case THREE    : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "3");      input_string[index++] = '3';}  break;
-                case FOUR     : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "4");      input_string[index++] = '4';}  break;
-                case FIVE     : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "5");      input_string[index++] = '5';}  break;
-                case SIX      : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "6");      input_string[index++] = '6';}  break;
-                case SEVEN    : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "7");      input_string[index++] = '7';}  break;
-                case EIGHT    : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "8");      input_string[index++] = '8';}  break;
-                case NINE     : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "9");      input_string[index++] = '9';}  break;
-                case DECIMAL  : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", ".");      input_string[index++] = '.';}  break;
-                case uA       : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "uA");     input_string[index++] = 'U';}  break;
-                case mA       : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "mA");     input_string[index++] = 'M';}  break;
-                case AMPS     : if (index < MAX_ENTRY_CHARS)  {fprintf(IO.LCD_stream, "%s", "A");      input_string[index++] = 'A';}  break;
+                case KEYPAD_BACKSPACE: if (index >  0)              {LCD_Backspace();                      index--;                    }  break;
+                case KEYPAD_ZERO     : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "0");    input_string[index++] = '0';}  break;
+                case KEYPAD_ONE      : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "1");    input_string[index++] = '1';}  break;
+                case KEYPAD_TWO      : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "2");    input_string[index++] = '2';}  break;
+                case KEYPAD_THREE    : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "3");    input_string[index++] = '3';}  break;
+                case KEYPAD_FOUR     : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "4");    input_string[index++] = '4';}  break;
+                case KEYPAD_FIVE     : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "5");    input_string[index++] = '5';}  break;
+                case KEYPAD_SIX      : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "6");    input_string[index++] = '6';}  break;
+                case KEYPAD_SEVEN    : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "7");    input_string[index++] = '7';}  break;
+                case KEYPAD_EIGHT    : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "8");    input_string[index++] = '8';}  break;
+                case KEYPAD_NINE     : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "9");    input_string[index++] = '9';}  break;
+                case KEYPAD_DECIMAL  : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", ".");    input_string[index++] = '.';}  break;
+                case KEYPAD_uA       : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "uA");   input_string[index++] = 'U';}  break;
+                case KEYPAD_mA       : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "mA");   input_string[index++] = 'M';}  break;
+                case KEYPAD_AMPS     : if (index < MAX_ENTRY_CHARS) {fprintf(IO.LCD_stream, "%s", "A");    input_string[index++] = 'A';}  break;
             }
             clear_keypad_timer();
             input_string[index] = NUL;
-            if ((hot_key == AMPS) || (hot_key == mA) || (hot_key == uA))
+            if ((hot_key == KEYPAD_AMPS) || (hot_key == KEYPAD_mA) || (hot_key == KEYPAD_uA))
             {
                 set_current_from_keypad(input_string, IO);
                 set_entry_mode_screen_active(false);
