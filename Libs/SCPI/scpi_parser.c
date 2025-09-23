@@ -9,7 +9,7 @@
 uint16_t error_count = 0;
 SCPI_Error_t error_log[ERROR_QUEUE_LENGTH];
 char const ARG_TOO_LONG[]        PROGMEM = "-112,Argument too long: ";
-char const BAD_PATH_OR_HEADER[]  PROGMEM = "-113,Bad path or header: ";
+char const BAD_PATH_OR_HEADER[]  PROGMEM = "-113,Undefined header: ";
 char const TOO_MANY_PARAMETERS[] PROGMEM = "-108,Too many parameters: ";
 char const TOO_FEW_PARAMETERS[]  PROGMEM = "-108,Too few parameters";
 /****************************************************************************
